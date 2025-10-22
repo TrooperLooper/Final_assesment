@@ -10,7 +10,7 @@ import Users from "./pages/Users";
 import Games from "./pages/Games";
 import Play from "./pages/Play";
 import Stats from "./pages/Stats";
-import Leaderboard from "./pages/Leaderboard";
+// import Leaderboard from "./pages/Leaderboard"; // No longer exists
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -22,7 +22,7 @@ createRoot(document.getElementById("root")!).render(
         <Route path="/games" element={<Games />} />
         <Route path="/play" element={<Play />} />
         <Route path="/stats" element={<Stats />} />
-        <Route path="/leaderboard" element={<Leaderboard />} />
+        {/* <Route path="/leaderboard" element={<Leaderboard />} /> */}
       </Routes>
     </BrowserRouter>
   </StrictMode>

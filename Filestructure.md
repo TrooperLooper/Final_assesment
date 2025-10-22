@@ -1,6 +1,6 @@
 final_assesment/
 │
-├── client/ # React frontend (Vite + TS)
+├── frontend/ # React frontend (Vite + TypeScript)
 │ ├── src/
 │ │ ├── pages/ # Route-level components (one per route)
 │ │ │ ├── Register.tsx
@@ -17,7 +17,7 @@ final_assesment/
 │ │ │ ├── Timer.tsx
 │ │ │ ├── StatisticsChart.tsx
 │ │ │ ├── LeaderboardTable.tsx
-│ │ │ ├── UserCarousel.tsx # Optional scrollable user selector
+│ │ │ ├── UserCarousel.tsx # Scrollable user selector
 │ │ │ └── ... (other UI components)
 │ │ ├── hooks/ # Custom React hooks
 │ │ │ └── useUsers.ts
@@ -36,7 +36,7 @@ final_assesment/
 │ ├── package.json
 │ └── vite.config.ts
 │
-├── server/ # Node.js backend (Express + TS)
+├── backend/ # Node.js backend (Express + TypeScript)
 │ ├── src/
 │ │ ├── models/ # Mongoose schemas/models
 │ │ │ ├── User.ts
@@ -61,6 +61,7 @@ final_assesment/
 │ │ ├── config/ # Config files (db, env)
 │ │ │ └── database.ts
 │ │ ├── uploads/ # Uploaded profile pictures
+│ │ ├── api/ # (suggested) API logic helpers, adapters, or versioning
 │ │ └── server.ts # Express app entry point
 │ ├── package.json
 │ └── tsconfig.json
