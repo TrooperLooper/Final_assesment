@@ -83,6 +83,8 @@ The application consists of **5 main pages** that create a complete game time tr
 - **Winston** (logging) 📝
 - **Zod** (validation) ✅
 - **Multer** (file uploads) 📁
+- **Axios** (HTTP client for API calls) 🌐
+- **CORS** (Cross-Origin Resource Sharing) 🌍
 
 ### 🧪 Development Tools
 
@@ -322,9 +324,9 @@ final_assesment/
 ### Backend Setup
 
 ```bash
-cd server
+cd backend
 npm init -y
-npm install express mongoose cors dotenv winston zod multer
+npm install express mongoose cors dotenv winston zod multer axios
 npm install -D @types/node @types/express @types/multer typescript ts-node nodemon eslint
 ````
 
@@ -375,93 +377,37 @@ export default defineConfig({
 - Tailwind v4 uses the new Vite plugin approach
 - Configuration is simplified and automatic
 
-## � API Client Setup (No Axios Needed!)
+## � API Client Setup (Axios Recommended!)
 
-- **Prisma**: Database ORM (Object-Relational Mapping) for database queries
+- **Axios**: HTTP client for frontend-backend API calls
+- **Prisma**: Database ORM (Object-Relational Mapping) for database queries (backend)
 
-  - You know this! Handles database connections and queries
-  - Used on the **backend** with your database
-  - Use Native Fetch!\*\*
+### 🔧 **API Client Implementation with Axios**
 
-### 🔧 **API Client Implementation with Fetch**
+**Install Axios:**
+
+```bash
+npm install axios
+```
 
 **Create API Client Utility:**
 
 ```typescript
-// client/src/api/apiClient.ts
+// frontend/src/api/apiClient.ts
+import axios from "axios";
+
 const API_BASE_URL = "http://localhost:3000/api";
 
-class ApiClient {
-  private async request<T>(
-    endpoint: string,
-    options: RequestInit = {}
-  ): Promise<T> {
-    const url = `${API_BASE_URL}${endpoint}`;
+export const apiClient = axios.create({
+  baseURL: API_BASE_URL,
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
 
-    const config: RequestInit = {
-      headers: {
-        "Content-Type": "application/json",
-        ...options.headers,
-      },
-      ...options,
-    };
-
-    const response = await fetch(url, config);
-
-    if (!response.ok) {
-      throw new Error(`API Error: ${response.status} ${response.statusText}`);
-    }
-
-    return response.json();
-  }
-
-  // User endpoints
-  async createUser(userData: CreateUserData) {
-    return this.request("/users", {
-      method: "POST",
-      body: JSON.stringify(userData),
-    });
-  }
-
-  async getUsers() {
-    return this.request("/users");
-  }
-
-  async getUserById(id: string) {
-    return this.request(`/users/${id}`);
-  }
-
-  // Game endpoints
-  async getGames() {
-    return this.request("/games");
-  }
-
-  // Game session endpoints
-  async startGameSession(userId: string, gameId: string) {
-    return this.request("/sessions/start", {
-      method: "POST",
-      body: JSON.stringify({ userId, gameId }),
-    });
-  }
-
-  async stopGameSession(sessionId: string) {
-    return this.request("/sessions/stop", {
-      method: "POST",
-      body: JSON.stringify({ sessionId }),
-    });
-  }
-
-  // Statistics endpoints
-  async getUserStats(userId: string) {
-    return this.request(`/statistics/user/${userId}`);
-  }
-
-  async getLeaderboard() {
-    return this.request("/statistics/leaderboard");
-  }
-}
-
-export const apiClient = new ApiClient();
+// Usage example:
+// apiClient.get("/users").then(res => ...)
+// apiClient.post("/users", userData)
 ```
 
 **Usage in React Components:**
