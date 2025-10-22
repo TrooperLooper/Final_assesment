@@ -7,8 +7,7 @@ final_assesment/
 │ │ │ ├── Users.tsx
 │ │ │ ├── Games.tsx
 │ │ │ ├── Play.tsx
-│ │ │ ├── Stats.tsx
-│ │ │ └── Leaderboard.tsx
+│ │ │ └── Stats.tsx
 │ │ ├── components/ # Reusable UI components
 │ │ │ ├── WeatherWidget.tsx
 │ │ │ ├── GlobalSearch.tsx
@@ -18,6 +17,7 @@ final_assesment/
 │ │ │ ├── Timer.tsx
 │ │ │ ├── StatisticsChart.tsx
 │ │ │ ├── LeaderboardTable.tsx
+│ │ │ ├── UserCarousel.tsx # Optional scrollable user selector
 │ │ │ └── ... (other UI components)
 │ │ ├── hooks/ # Custom React hooks
 │ │ │ └── useUsers.ts
@@ -50,12 +50,14 @@ final_assesment/
 │ │ │ ├── userController.ts
 │ │ │ ├── gameController.ts
 │ │ │ └── sessionController.ts
-│ │ ├── middleware/ # Custom middleware (auth, error, upload)
-│ │ │ ├── auth.ts
-│ │ │ ├── errorHandler.ts
-│ │ │ └── upload.ts
+│ │ ├── middleware/ # Custom middleware (auth, error, upload, logging)
+│ │ │ ├── auth.tsx
+│ │ │ ├── errorHandler.tsx
+│ │ │ ├── upload.tsx
+│ │ │ └── logger.tsx # Winston logging for game sessions
 │ │ ├── utils/ # Utility functions (e.g., seeding)
-│ │ │ └── seedDatabase.ts
+│ │ │ ├── seedDatabase.tsx
+│ │ │ └── server.ts # Server utility functions
 │ │ ├── config/ # Config files (db, env)
 │ │ │ └── database.ts
 │ │ ├── uploads/ # Uploaded profile pictures
