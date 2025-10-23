@@ -5,16 +5,15 @@ import dotenv from "dotenv";
 import { z } from "zod";
 import cors from "cors";
 
+//Models
+import { User } from './models/User';
+import { Game } from './models/Game';
+import { GameSession } from './models/GameSession';
 
 // Load environment variables first
 dotenv.config();
 
-// Validate environment variables with Zod
-const envSchema = z.object({
-  PORT: z.string().optional(),
-  MONGO_URL: z.string().min(1, "MongoDB URL is required"),
-  NODE_ENV: z.enum(['development', 'production', 'test']).optional()
-});
+
 
 dotenv.config();
 
@@ -26,19 +25,22 @@ const PORT = process.env.PORT || 5000; // Avoid conflict with frontend (3000)
 app.use(cors()); // Allow frontend to connect
 app.use(express.json()); 
 
-// MongoDB connection
-const connectDB = async () => {
-  try {
-    await mongoose.connect(process.env.MONGO_URL!, {
-      dbName: 'game-tracker',
-    });
-    logger.info('MongoDB connected');
-  } catch (error) {
-    logger.error('MongoDB connection error: ' + error);
+//MongoDB connection
+mongoose.connect(process.env.MONGO_URL ?? 'mongodb://localhost:27017/finalAssesment_mongodb')
+  .then(() => logger.info('MongoDB connected'))
+  .catch((err) => {
+    logger.error('MongoDB connection failed', err);
     process.exit(1);
-  }
-};
-connectDB();
+  });
+
+// Zod Schemas
+  const userCreate_SCHEMA = z.object({
+    email: z.string().email('Invalid email'),
+    firstName: z.string().min(1, 'First name required'),
+    lastName: z.string().optional(),
+    profilePictureUrl: z.string().url().optional(),
+  });
+
 
 // Mongoose Schemas
 const userSchema = new mongoose.Schema({
@@ -59,11 +61,6 @@ const gameSchema = new mongoose.Schema({
 const sessionSchema = new mongoose.Schema({
   userId:
 */
-
-const User = mongoose.model('User', userSchema);
-const Game = mongoose.model('Game', gameSchema);
-// const Session = mongoose.model('Session', sessionSchema);
-
 // Zod schema for validation?
 
 //Routes?
