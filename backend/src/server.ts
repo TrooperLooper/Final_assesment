@@ -48,3 +48,29 @@ const userSchema = new mongoose.Schema({
   profilePictureUrl: { type: String, default: '' },
   createdAt: { type: Date, default: Date.now },
 });
+
+const gameSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  imageUrl: { type: String, default: '' },
+  createdAt: { type: Date, default: Date.now }
+});
+
+/* ??
+const sessionSchema = new mongoose.Schema({
+  userId:
+*/
+
+const User = mongoose.model('User', userSchema);
+const Game = mongoose.model('Game', gameSchema);
+// const Session = mongoose.model('Session', sessionSchema);
+
+// Zod schema for validation?
+
+//Routes?
+
+//Users: Post/Get/Patch?
+
+app.listen(PORT, () => {
+  logger.info(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`);
+});
+
