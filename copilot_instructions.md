@@ -2,12 +2,13 @@
 
 ## 📋 Project Overview
 
-Create a full-stack application where users can register, play classic retro games, track their playtime, and view statistics. This project combines user management, time tracking, and data visualization in a modern web application.
+Assist in creating a full-stack application where users can register, play classic retro games, track their playtime, and view statistics. This project combines user management, time tracking, and data visualization in a modern web application.
 
-**Team Setup**: 2-person team with **14-day deadline**
+**Team Setup**: 2-person student team with **14-day deadline**
 
 - **Both members**: Work on both frontend and backend for balanced skill development
 - **Pair programming approach**: Take turns on different features
+- \*\*Do not solve the whole assignment with a complete codes, but provide support needed to acheive goals/ milestones.
 
 ## 🎯 Core Requirements
 
