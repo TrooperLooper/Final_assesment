@@ -1,7 +1,7 @@
-# 🎮 Game Time Tracker — Kanban Tasks (ADHD-friendly)
+# 🎮 Game Time Tracker — Kanban Tasks (ADHD-friendly, teacher-style)
 
-A compact, colorful, and checklist-focused version of the task list for the Game Time Tracker project.  
-Use this file to create Issues quickly by copy/pasting each section into GitHub Issues. Tasks are grouped by Phase and separated into Back (server) / Front (client).
+A compact, checklist-focused task list for the Game Time Tracker project.  
+This version adds a few "do-first" items (ERD + API contract), uses plain language, and replaces heavy automated-test tasks with simple manual test steps you can run in Insomnia/Postman. Use this file to create Issues quickly by copy/pasting each section into GitHub Issues. Tasks are grouped by Phase and separated into Back (server) / Front (client).
 
 Legend
 
@@ -9,10 +9,17 @@ Legend
 - ⚠️ Medium priority
 - ✅ Low priority
 - 🧾 Docs / Chore
-- 🧪 Test
+- 🧪 Manual Test (use Insomnia/Postman)
 - 🛠️ Dev task
 - ⏱️ Estimate (story points)
 - 🧩 Acceptance criteria and short checklists are included for quick copying
+
+A few team decisions to keep in one place
+
+- Database access library: Mongoose only (Prisma removed)
+- Frontend HTTP client: Axios (example client is provided in repo)
+- Package manager: npm
+- Testing approach for the classroom: manual API checks in Insomnia/Postman (automated tests optional / later)
 
 ---
 
@@ -21,21 +28,22 @@ Legend
 - Copy the issue title as the Issue title
 - Copy the description block (under **Description**) into the Issue body
 - Paste the checklist into the Issue body to get ready-made subtasks
+- Use the "Demo seed" script while presenting so your demo data is stable
 
 ---
 
-## Phase 0 — Docs & Housekeeping (Do first)
+## Phase 0 — Docs & Housekeeping (Do first, same day)
 
 ### 🧾 Update docs: remove Prisma, confirm Mongoose-only architecture 🔥 ⏱️ 1
 
-Description
-We are using Mongoose only for MongoDB access. Remove Prisma mentions and update docs.
+Description  
+We are using Mongoose only. Remove Prisma mentions and update docs so everyone reads the same stack.
 
 Acceptance criteria
 
-- copilot_instructions.md and README.md updated to remove Prisma
-- package.json docs examples updated
-- short rationale added to README
+- copilot_instructions.md and README.md say Mongoose (not Prisma)
+- package.json examples in docs updated
+- short rationale added to README explaining the choice
 
 Checklist
 
@@ -46,68 +54,73 @@ Checklist
 
 Labels: docs, backend, high
 
-<details>
-<summary>Copyable Issue Body</summary>
+---
+
+### 🗺️ Create ERD (Entity-Relationship Diagram) — draw first 🔥 ⏱️ 1
 
 Description  
-We are using Mongoose only for MongoDB access. Remove Prisma mentions from docs and adjust instructions and dependency lists accordingly.
+Draw a simple ERD so everyone sees the data relationships before building models. A quick hand-drawn PNG or a dbdiagram.io export is fine.
+
+Why this helps (teacher note)
+
+- Visual map: shows Users, Games, Sessions and how they connect.
+- Prevents rework later (you can update models from the diagram).
+- Quick to do: 15–60 minutes.
 
 Acceptance criteria
 
-- copilot_instructions.md and README.md updated to remove Prisma and mention Mongoose only
-- package.json examples (in docs) updated to not reference Prisma
-- A short note explaining why Mongoose was chosen added to README
+- ERD.png or dbdiagram snippet added to repo (docs/ or root)
+- README links to ERD.png
+- Team agrees on relationships (User 1→N Session, Game 1→N Session)
 
 Checklist
 
-- [ ] Update copilot_instructions.md (remove Prisma references)
-- [ ] Update README.md architecture section to state Mongoose only
-- [ ] Add short rationale in README (1-2 paragraphs)
-- [ ] Commit changes and link files in the PR
+- [ ] Draw ERD and save as ERD.png (or create dbdiagram.io snippet)
+- [ ] Add ERD file to repo (docs/ or root)
+- [ ] Add short explanation in README linking to the ERD
 
-Labels: docs, backend, high  
-Estimate: 1
+Labels: docs, design, high
 
-</details>
+---
+
+### 📝 API contract (simple, human-friendly) ⚠️ ⏱️ 1
+
+Description  
+Write a short API.md that lists each endpoint, required fields, example request and example response. Think of this as a recipe both frontend and backend follow.
+
+Why this helps (teacher note)
+
+- Frontend and backend talk the same language.
+- Saves time: you won't have to guess request/response shapes.
+
+Acceptance criteria
+
+- API.md added to repo root with all main endpoints and examples
+- Frontend devs refer to API.md when building forms / fetch calls
+- Keep it short and update as routes change
+
+Checklist
+
+- [ ] Create API.md listing endpoints and examples
+- [ ] Put API.md in repo root
+- [ ] Share with teammate and confirm a quick read-through
+
+Labels: docs, backend, high
 
 ---
 
 ### 🧾 Add .env.example and document secrets usage ⚠️ ⏱️ 1
 
 Description
-Add .env.example with required env keys and document local setup.
+Add `.env.example` with required env keys and simple local setup steps.
 
 Checklist
 
-- [ ] Create .env.example
-- [ ] Update README with .env setup steps
-- [ ] Add TIMER and weather key examples
+- [ ] Create `.env.example` (MONGODB_URI, PORT, TIMER_MULTIPLIER, VITE_API_URL, WEATHER_API_KEY)
+- [ ] Update README with `.env` setup steps (copy .env.example → .env)
+- [ ] Add small note about keeping secrets local (don’t commit real keys)
 
 Labels: docs, infra, low
-
-<details>
-<summary>Copyable Issue Body</summary>
-
-Description  
-Add a `.env.example` file listing environment variables used by server and client (TIMER_MULTIPLIER, MONGODB_URI, WEATHER_API_KEY, PORT, etc.). Update README with instructions to copy to `.env`.
-
-Acceptance criteria
-
-- `.env.example` added at repo root with all required env keys
-- README includes instructions for local .env setup and where to put API keys
-- copilot_instructions.md includes example env snippet for TIMER_MULTIPLIER and OpenWeatherMap key
-
-Checklist
-
-- [ ] Create `.env.example` with all required keys and comments
-- [ ] Update README with `.env` setup steps
-- [ ] Add brief example for `TIMER_MULTIPLIER` and weather API usage
-- [ ] Add note about storing secrets securely (local only for this project)
-
-Labels: docs, infra, low  
-Estimate: 1
-
-</details>
 
 ---
 
@@ -119,33 +132,10 @@ Make timer multiplier configurable via environment variable so 1s=1min is demo-m
 Checklist
 
 - [ ] Add `TIMER_MULTIPLIER` to `.env.example`
-- [ ] Document demo/run instructions in README
-- [ ] Add sample snippet for server & client
+- [ ] Document demo/run instructions in README (how to set `TIMER_MULTIPLIER=60` for demo)
+- [ ] Add sample snippet for server & client showing how to read this env var
 
 Labels: backend, docs, medium
-
-<details>
-<summary>Copyable Issue Body</summary>
-
-Description  
-Make timer multiplier configurable via env var `TIMER_MULTIPLIER`. Document how to run demo mode (1s = 1min) locally.
-
-Acceptance criteria
-
-- Environment variable referenced in server/client config examples
-- README shows how to set `TIMER_MULTIPLIER=60` for demo or `1` for real seconds
-- Example usage added to copilot_instructions.md
-
-Checklist
-
-- [ ] Add `TIMER_MULTIPLIER` to `.env.example`
-- [ ] Add README instructions for demo vs real mode
-- [ ] Add short code snippet for reading env var (server & client)
-
-Labels: backend, docs, medium  
-Estimate: 1
-
-</details>
 
 ---
 
@@ -155,42 +145,19 @@ Estimate: 1
 
 #### 🛠️ Initialize server repo with TypeScript & Express 🔥 ⏱️ 2
 
-Description
+Description  
 Scaffold server with TypeScript, Express, ESLint, basic scripts and a health route.
 
 Checklist
 
-- [ ] Create server package.json with scripts
+- [ ] Create server package.json with scripts: dev, build, start
 - [ ] Add tsconfig.json and ESLint
-- [ ] Implement server/src/server.ts with GET /api/health
-- [ ] Add README server start instructions
+- [ ] Implement `server/src/server.ts` with GET `/api/health`
+- [ ] Add server README start instructions (npm install, npm run dev)
 
 Labels: backend, setup, high
 
-<details>
-<summary>Copyable Issue Body</summary>
-
-Description  
-Scaffold the `server/` folder with TypeScript, Express, ESLint, and basic dev scripts.
-
-Acceptance criteria
-
-- `server/package.json` contains scripts: `dev`, `build`, `start`
-- TypeScript configured (`tsconfig.json`)
-- ESLint basic config present
-- `server/src/server.ts` starts an Express app that responds to `GET /api/health`
-
-Checklist
-
-- [ ] Create server `package.json` with scripts
-- [ ] Add `tsconfig.json` and minimal ESLint config
-- [ ] Implement `server/src/server.ts` (Express app + `/api/health` route)
-- [ ] Add server README start instructions
-
-Labels: backend, setup, high  
-Estimate: 2
-
-</details>
+Teacher tip: Start the server and open http://localhost:4000/api/health in the browser to confirm it's alive.
 
 ---
 
@@ -201,72 +168,30 @@ Implement connectDB util using Mongoose and log success/failure.
 
 Checklist
 
-- [ ] Implement connectDB utility (server/src/config/database.ts)
+- [ ] Implement `server/src/config/database.ts` exporting `connectDB()`
 - [ ] Wire connectDB into server startup
-- [ ] Add basic logging statements (winston or console)
+- [ ] Add simple console logs (or Winston if you prefer)
 
 Labels: backend, infra, high
 
-<details>
-<summary>Copyable Issue Body</summary>
-
-Description  
-Implement a reusable DB connection module using Mongoose and log connection status.
-
-Acceptance criteria
-
-- `server/src/config/database.ts` (or `db.ts`) exports `connectDB()`
-- `connectDB` reads `MONGODB_URI` from env and connects
-- Successful connection logs host; failures log and exit process
-
-Checklist
-
-- [ ] Implement `connectDB` utility
-- [ ] Wire `connectDB` into server startup
-- [ ] Add basic logging statements
-
-Labels: backend, infra, high  
-Estimate: 1
-
-</details>
+Teacher tip: If connection fails, the console will show the error and help find the missing .env value.
 
 ---
 
 #### 🛠️ Seed script for 4 retro games ⚠️ ⏱️ 1
 
 Description
-Seed the games collection if empty.
+Seed the games collection if empty. This provides predictable demo data.
 
 Checklist
 
-- [ ] Implement `seedGames`
-- [ ] Add `npm run seed`
+- [ ] Implement `seedGames` (`server/src/utils/seedDatabase.ts`)
+- [ ] Add `npm run seed` script in server/package.json
 - [ ] Document seed usage in README
 
 Labels: backend, chore, medium
 
-<details>
-<summary>Copyable Issue Body</summary>
-
-Description  
-Implement a seed script that inserts the four retro games into `games` collection if not present.
-
-Acceptance criteria
-
-- `server/src/utils/seedDatabase.ts` available
-- `npm run seed` populates games collection
-- Script is documented in README
-
-Checklist
-
-- [ ] Implement `seedGames` function
-- [ ] Add npm script: `seed`
-- [ ] Document how to run seed in README
-
-Labels: backend, chore, medium  
-Estimate: 1
-
-</details>
+Teacher tip: Run `npm run seed` before demo; this fills the games collection with the 4 canonical games.
 
 ---
 
@@ -280,322 +205,187 @@ Scaffold the client app with routes for the 5 pages.
 Checklist
 
 - [ ] Create Vite React TS app
-- [ ] Configure Tailwind plugin in vite.config.ts
+- [ ] Configure Tailwind plugin in `vite.config.ts`
 - [ ] Implement AppRoutes placeholders
-- [ ] Add client README snippet
+- [ ] Add client README snippet (npm install, npm run dev)
 
 Labels: frontend, setup, low
 
-<details>
-<summary>Copyable Issue Body</summary>
-
-Description  
-Scaffold the `client/` folder with Vite React TypeScript template, Tailwind plugin, and basic App shell (Navigation + placeholder pages).
-
-Acceptance criteria
-
-- `client/` created and Vite React app runs
-- Tailwind plugin configured
-- Basic routes registered for `/register`, `/users`, `/games`, `/play/:gameId`, `/stats/:userId`
-- README includes client start instructions
-
-Checklist
-
-- [ ] Create Vite app with React TS template
-- [ ] Add tailwind plugin to `vite.config.ts` and `index.css` import
-- [ ] Implement AppRoutes with placeholders for 5 pages
-- [ ] Add client README snippet
-
-Labels: frontend, setup, low  
-Estimate: 1
-
-</details>
+Teacher tip: Keep the UI simple first; aim for working pages, then polish.
 
 ---
 
 ## Phase 2 — Core Features (Days 4–8)
 
+> Note: large items are split into teacher-sized steps so each can be a small PR.
+
 ### Back (server)
 
-#### 🛠️ Implement User model & CRUD endpoints 🔥 ⏱️ 3
+#### 🛠️ User model — create schema & basic model 🔥 ⏱️ 1
 
 Description
-Create Mongoose User model and CRUD with Zod validation.
+Create the Mongoose User schema and export the model.
 
 Checklist
 
-- [ ] Implement User schema/model
-- [ ] POST, GET (all & by id), PUT, DELETE endpoints
-- [ ] Zod validations for POST/PUT
-- [ ] Basic tests for user create & fetch
+- [ ] Create `server/src/models/User.ts` with fields: email (unique), firstName, lastName, profilePicture (default)
+- [ ] Export the User model
+- [ ] Commit and push working model
 
 Labels: backend, feature, high
 
-<details>
-<summary>Copyable Issue Body</summary>
+---
 
-Description  
-Create a Mongoose User model and user CRUD endpoints with Zod validation for create and update.
+#### 🛠️ Create user endpoint (POST /api/users) 🔥 ⏱️ 1
 
-Acceptance criteria
-
-- `User` schema with `email` (unique), `firstName`, `lastName`, `profilePicture` default
-- Routes: `POST /api/users`, `GET /api/users`, `GET /api/users/:id`, `PUT /api/users/:id`, `DELETE /api/users/:id`
-- Request validation via Zod on `POST` and `PUT`
-- Basic unit/integration tests for create & fetch
+Description
+Implement endpoint to create a user and return the created record.
 
 Checklist
 
-- [ ] Implement `User` Mongoose schema and model
-- [ ] Implement routes & controllers with Zod validation
-- [ ] Add tests for create & get
-- [ ] Update API client docs/examples
+- [ ] Implement POST `/api/users`
+- [ ] Use simple server-side validation (check required fields)
+- [ ] Return 201 + created user object
+- [ ] Manual test with Insomnia: create a user and confirm response
 
-Labels: backend, feature, high  
-Estimate: 3
+Labels: backend, feature, high
 
-</details>
+Teacher tip: Manual testing steps for Insomnia/Postman are in API.md.
+
+---
+
+#### 🛠️ Read endpoints (GET /api/users, GET /api/users/:id) ⚠️ ⏱️ 1
+
+Description
+Return all users and a single user by id.
+
+Checklist
+
+- [ ] Implement GET `/api/users`
+- [ ] Implement GET `/api/users/:id`
+- [ ] Manual tests: confirm GET returns expected objects
+
+Labels: backend, feature, medium
+
+---
+
+#### 🛠️ Update & delete endpoints (PUT /api/users/:id, DELETE /api/users/:id) ✅ ⏱️ 1
+
+Description
+Add simple update & delete functionality.
+
+Checklist
+
+- [ ] Implement PUT `/api/users/:id` (partial updates allowed)
+- [ ] Implement DELETE `/api/users/:id`
+- [ ] Manual tests in Insomnia for update and delete flows
+
+Labels: backend, feature, medium
 
 ---
 
 #### 🛠️ Avatar upload & static serving ⚠️ ⏱️ 2
 
 Description
-Add Multer upload endpoint and serve /uploads as static.
+Add Multer upload endpoint and serve `/uploads` as static.
 
 Checklist
 
-- [ ] Implement upload route (POST /api/users/:id/upload-avatar)
-- [ ] Validate PNG
-- [ ] Update user doc with avatar path
-- [ ] Serve /uploads static
+- [ ] Implement upload route POST `/api/users/:id/upload-avatar` (Multer)
+- [ ] Validate PNG (basic check)
+- [ ] Update user document with avatar path
+- [ ] Static middleware: serve `server/uploads` folder
 
 Labels: backend, feature, medium
 
-<details>
-<summary>Copyable Issue Body</summary>
-
-Description  
-Add file upload route for avatars using Multer and ensure uploaded images are served as static assets.
-
-Acceptance criteria
-
-- `POST /api/users/:id/upload-avatar` uses Multer, accepts PNGs, stores in `server/uploads`
-- User document updated with `profilePicture` path
-- Express static middleware serves `/uploads` directory
-- Frontend upload docs/example in README
-
-Checklist
-
-- [ ] Implement upload route and Multer config
-- [ ] Add file type validation (png)
-- [ ] Serve `/uploads` statically
-- [ ] Update user record with avatar path
-
-Labels: backend, feature, medium  
-Estimate: 2
-
-</details>
+Teacher tip: In the client, use `FormData` and let the browser set Content-Type.
 
 ---
 
-#### 🛠️ Implement Game model & GET /api/games endpoints ✅ ⏱️ 1
+#### 🛠️ Game model & GET /api/games endpoints ✅ ⏱️ 1
 
 Description
-Game schema + GET endpoints.
-
-Checklist
-
-- [ ] Implement Game schema
-- [ ] GET /api/games and GET /api/games/:id
-- [ ] Tests for endpoints
-
-Labels: backend, feature, low
-
-<details>
-<summary>Copyable Issue Body</summary>
-
-Description  
-Add a Game Mongoose model and endpoints to get all games and get a game by id. Use seeded data.
-
-Acceptance criteria
-
-- `Game` Mongoose schema exists
-- `GET /api/games` returns seeded games
-- `GET /api/games/:id` returns single game
+Game schema + GET endpoints (uses seeded games).
 
 Checklist
 
 - [ ] Implement `Game` schema & model
-- [ ] Implement `GET /api/games` and `/api/games/:id`
-- [ ] Add simple tests for endpoints
+- [ ] GET `/api/games` and GET `/api/games/:id`
+- [ ] Manual test to confirm seeded games are returned
 
-Labels: backend, feature, low  
-Estimate: 1
-
-</details>
+Labels: backend, feature, low
 
 ---
 
-#### 🛠️ Implement GameSession model & start/stop endpoints 🔥 ⏱️ 3
+#### 🛠️ GameSession model & start/stop endpoints 🔥 ⏱️ 3
 
 Description
-Sessions: start/stop, one active session per user, duration calculation (TIMER_MULTIPLIER), logging.
-
-Checklist
-
-- [ ] Implement GameSession schema
-- [ ] POST /api/sessions/start
-- [ ] POST /api/sessions/stop
-- [ ] Enforce single active session per user
-- [ ] Log start/stop
-
-Labels: backend, feature, high
-
-<details>
-<summary>Copyable Issue Body</summary>
-
-Description  
-Add `GameSession` model and endpoints to start and stop sessions. Enforce only one active session per user. Calculate `durationMinutes` using `TIMER_MULTIPLIER`.
-
-Acceptance criteria
-
-- `GameSession` model implemented
-- `POST /api/sessions/start` creates a session (`userId`, `gameId`, `startTime`, `isActive:true`)
-- `POST /api/sessions/stop` updates `endTime`, sets `isActive:false`, stores `durationMinutes`
-- Enforce at most one active session per user (return `409`)
-- Winston or console logs start/stop events
+Sessions: start/stop, one active session per user, store seconds or minutes.
 
 Checklist
 
 - [ ] Implement `GameSession` schema & model
-- [ ] Implement start and stop endpoints with validation
-- [ ] Enforce single active session per user
-- [ ] Log events on start/stop
+- [ ] POST `/api/sessions/start` (create session; check no active session for user)
+- [ ] POST `/api/sessions/stop` (set endTime, calculate durationSeconds)
+- [ ] Log start/stop events (console or Winston)
+- [ ] Manual test: start session → stop session and verify stored duration
 
-Labels: backend, feature, high  
-Estimate: 3
+Labels: backend, feature, high
 
-</details>
+Teacher tip: Store seconds for precision; UI can convert to minutes. Use TIMER_MULTIPLIER for demo speed if you want to simulate minutes.
 
 ---
 
 #### 🛠️ Search endpoint (users + games) ✅ ⏱️ 2
 
 Description
-Unified search for global search bar.
+Unified search for the global search bar.
 
 Checklist
 
-- [ ] Implement GET /api/search?q=
-- [ ] Return unified result format (type, id, name, route)
-- [ ] Limit results (e.g., 10)
-- [ ] Docs in README
+- [ ] Implement GET `/api/search?q=`
+- [ ] Return simple results: { type, id, name, route }
+- [ ] Limit results (e.g., max 10)
+- [ ] Manual test: try queries in Insomnia and verify shape
 
 Labels: backend, feature, medium
-
-<details>
-<summary>Copyable Issue Body</summary>
-
-Description  
-Implement a unified search endpoint that returns user and game matches for a given query (case-insensitive, partial matches). This powers the frontend global search dropdown.
-
-Acceptance criteria
-
-- `GET /api/search?q=` returns array of `SearchResult {type, id, name, route}`
-- Limits results (e.g., max 10)
-- Endpoint documented in README
-
-Checklist
-
-- [ ] Implement `/api/search?q=` with aggregation or combined queries
-- [ ] Add response shape examples in README
-- [ ] Add tests
-
-Labels: backend, feature, medium  
-Estimate: 2
-
-</details>
 
 ---
 
 ### Front (client)
 
-#### ⚙️ API client utility (native fetch) + hooks ✅ ⏱️ 1
+#### ⚙️ API client utility (Axios) + simple hooks ✅ ⏱️ 1
 
 Description
-Implement apiClient with fetch and simple hooks (useUsers, useGames).
+Implement `client/src/api/apiClient.ts` using Axios and small hooks like `useUsers`.
 
 Checklist
 
-- [ ] apiClient implemented
-- [ ] useUsers, useGames hooks
-- [ ] Example usage in pages
+- [ ] Add `apiClient` (axios.create) reading base URL from `VITE_API_URL`
+- [ ] Add `getUsers`, `createUser`, `startSession`, `stopSession`, `getGames`
+- [ ] Simple hooks: `useUsers`, `useGames` returning data/loading/error
+- [ ] Manual test: use the hooks in placeholder pages and confirm data loads
 
 Labels: frontend, feature, medium
 
-<details>
-<summary>Copyable Issue Body</summary>
-
-Description  
-Implement `client/src/api/apiClient.ts` (native fetch wrapper) including user, games, sessions, statistics methods. Add hooks like `useUsers`.
-
-Acceptance criteria
-
-- `apiClient` implemented and exported
-- Hooks `useUsers`, `useGames` exist and return loading/error states
-- Frontend components can call client methods
-
-Checklist
-
-- [ ] Implement `apiClient` with error handling
-- [ ] Implement hooks: `useUsers`, `useGames`
-- [ ] Add usage examples on `UsersHub` and `GamesList` placeholders
-
-Labels: frontend, feature, medium  
-Estimate: 1
-
-</details>
+Teacher tip: If Axios is new: it's a small helper that makes requests easier. Use the provided example in API.md.
 
 ---
 
 #### ⚙️ Registration page + upload UI integration 🔥 ⏱️ 2
 
 Description
-Registration form with Zod validation and avatar preview/upload.
+Registration form with client-side validation (Zod optional) and avatar preview/upload.
 
 Checklist
 
 - [ ] Implement registration form
-- [ ] Avatar preview and upload flow
-- [ ] Redirect to /users on success
+- [ ] Show avatar preview before upload
+- [ ] On submit: POST /api/users, then upload avatar if provided
+- [ ] Redirect to `/users` on success
+- [ ] Manual test: create user via UI and check server data in Insomnia
 
 Labels: frontend, feature, medium
-
-<details>
-<summary>Copyable Issue Body</summary>
-
-Description  
-Build the `/register` page form with Zod validation and avatar upload support (upload to `POST /api/users/:id/upload-avatar` after creating user or as part of flow).
-
-Acceptance criteria
-
-- Registration form validates required fields
-- Avatar preview before upload
-- On success redirect to `/users`
-- Graceful error messages
-
-Checklist
-
-- [ ] Implement registration form with Zod client-side validation
-- [ ] Show avatar preview and upload flow
-- [ ] Redirect to `/users` on success
-- [ ] Show error/success messages
-
-Labels: frontend, feature, medium  
-Estimate: 2
-
-</details>
 
 ---
 
@@ -608,67 +398,23 @@ Checklist
 
 - [ ] Implement UsersHub UI
 - [ ] Implement UserCarousel & UserCard
-- [ ] Avatar click navigates to /stats/:userId
+- [ ] Avatar click navigates to `/stats/:userId`
 
 Labels: frontend, feature, medium
-
-<details>
-<summary>Copyable Issue Body</summary>
-
-Description  
-Implement `/users` page with grid of `UserCard`s and a `UserCarousel` for selection. Clicking avatar navigates to `/stats/:userId`.
-
-Acceptance criteria
-
-- `/users` lists users with avatars
-- `UserCarousel` implemented and reusable in Stats page
-- Avatar click navigates to user stats page
-
-Checklist
-
-- [ ] Implement `UsersHub` page UI
-- [ ] Implement `UserCarousel` and `UserCard` components
-- [ ] Connect to API `getUsers`
-
-Labels: frontend, feature, medium  
-Estimate: 2
-
-</details>
 
 ---
 
 #### ⚙️ Games Library page ✅ ⏱️ 1
 
 Description
-Games list and navigation to /play/:gameId.
+Games list and navigation to `/play/:gameId`.
 
 Checklist
 
 - [ ] Implement GamesList & RetroGameCard
-- [ ] Clicking a game navigates to /play/:gameId
+- [ ] Clicking a game navigates to `/play/:gameId`
 
 Labels: frontend, feature, low
-
-<details>
-<summary>Copyable Issue Body</summary>
-
-Description  
-Implement games listing page with `RetroGameCard` components for 4 games. Clicking a game navigates to `/play/:gameId`.
-
-Acceptance criteria
-
-- `/games` lists seeded games with image/icon/description
-- Clicking a game navigates to play route
-
-Checklist
-
-- [ ] Implement `GamesList` & `RetroGameCard`
-- [ ] Integrate with `apiClient.getGames`
-
-Labels: frontend, feature, low  
-Estimate: 1
-
-</details>
 
 ---
 
@@ -679,40 +425,16 @@ Estimate: 1
 #### 🛠️ User statistics aggregation endpoint 🔥 ⏱️ 3
 
 Description
-Implement `/api/statistics/user/:userId` returning totalMinutes, per-game stats, session counts, weekly series.
+Implement `/api/statistics/user/:userId` returning totals and per-game breakdown.
 
 Checklist
 
 - [ ] Aggregation pipeline for gameStats
-- [ ] totalMinutes in response
-- [ ] weekly series for charts
-- [ ] Response documented
+- [ ] Include `totalMinutes` (or totalSeconds) and `sessionCount`
+- [ ] Provide simple weekly series for charts
+- [ ] Manual test: call endpoint in Insomnia and verify numbers
 
 Labels: backend, feature, high
-
-<details>
-<summary>Copyable Issue Body</summary>
-
-Description  
-Implement `GET /api/statistics/user/:userId` that returns `totalMinutes`, per-game minutes/percentages, `sessionCount`, most-played game, and weekly series for charts.
-
-Acceptance criteria
-
-- Aggregation pipeline returns `gameStats` with `name`, `minutes`, `percentage`, `sessionCount`
-- `totalMinutes` present
-- Weekly data for past N days/weeks available
-- Documented response schema
-
-Checklist
-
-- [ ] Implement aggregation pipeline for per-user stats
-- [ ] Add example response in README or docs
-- [ ] Add tests validating aggregated numbers against seeded sessions
-
-Labels: backend, feature, high  
-Estimate: 3
-
-</details>
 
 ---
 
@@ -723,69 +445,25 @@ Leaderboard API for top players (integrated into stats page).
 
 Checklist
 
-- [ ] Implement leaderboard aggregation
-- [ ] Return top 10 users sorted by totalMinutes
-- [ ] Document endpoint
+- [ ] Implement `GET /api/statistics/global`
+- [ ] Return top users by total time
+- [ ] Manual test and confirm ordering
 
 Labels: backend, feature, medium
 
-<details>
-<summary>Copyable Issue Body</summary>
-
-Description  
-Implement `GET /api/statistics/global` (or integrated in user stats response) to support leaderboard table.
-
-Acceptance criteria
-
-- Endpoint returns top users ranked by `totalMinutes` (limit 10)
-- Response includes user name and `totalMinutes`
-- Endpoint documented
-
-Checklist
-
-- [ ] Implement leaderboard aggregation
-- [ ] Add tests for sorting and limits
-- [ ] Expose in stats user endpoint if desired
-
-Labels: backend, feature, medium  
-Estimate: 2
-
-</details>
-
 ---
 
-#### 🧩 Indexes for aggregation performance ✅ ⏱️ 1
+#### 🧩 Add indexes for aggregation performance ✅ ⏱️ 1
 
 Description
-Add indexes on `GameSession.userId`, `gameId`, `isActive` for faster aggregations.
+Create indexes for `GameSession.userId`, `gameId`, `isActive` to speed aggregations.
 
 Checklist
 
-- [ ] Add indexes in init or migration
-- [ ] Document in README
+- [ ] Add index creation in seed or connect step
+- [ ] Document indexes in README
 
 Labels: backend, perf, low
-
-<details>
-<summary>Copyable Issue Body</summary>
-
-Description  
-Create recommended MongoDB indexes to speed up aggregation queries.
-
-Acceptance criteria
-
-- Index creation documented
-- Indexes created during DB connect or seed step (optional script)
-
-Checklist
-
-- [ ] Add indexes for `GameSession.userId`, `GameSession.gameId`, `isActive`
-- [ ] Document index creation in README
-
-Labels: backend, perf, low  
-Estimate: 1
-
-</details>
 
 ---
 
@@ -805,37 +483,12 @@ Checklist
 
 Labels: frontend, feature, high
 
-<details>
-<summary>Copyable Issue Body</summary>
-
-Description  
-Build `/stats/:userId` with personal stats (bar chart, donut, total time), interactive filters, and integrated leaderboard.
-
-Acceptance criteria
-
-- Bar chart (minutes per game) and donut chart (percent) using Recharts
-- Leaderboard table at bottom showing top users
-- Game selector filters charts
-- Loading and error states present
-
-Checklist
-
-- [ ] Implement `GameTimeBar`, `GamePercentageItem`, `TotalTimeDisplay`
-- [ ] Integrate Recharts chart components
-- [ ] Add `LeaderboardTable` component
-- [ ] Add loading and empty states
-
-Labels: frontend, feature, high  
-Estimate: 4
-
-</details>
-
 ---
 
 #### ⏱️ Play session page & Timer component 🔥 ⏱️ 3
 
 Description
-Implement `/play/:gameId` with timer and start/stop flow (uses TIMER_MULTIPLIER).
+Implement `/play/:gameId` with timer and start/stop flow (uses TIMER_MULTIPLIER for demo).
 
 Checklist
 
@@ -846,186 +499,77 @@ Checklist
 
 Labels: frontend, feature, high
 
-<details>
-<summary>Copyable Issue Body</summary>
-
-Description  
-Implement `/play/:gameId` with `Timer` and `SessionControls`. Timer uses `TIMER_MULTIPLIER`. Start calls `/api/sessions/start`, Stop calls `/api/sessions/stop` and then navigates to `/stats/:userId`.
-
-Acceptance criteria
-
-- Timer count visible and updates with multiplier
-- Start button calls server and creates session; Stop stops and stores session
-- UI displays current player info
-- Prevent starting if another active session exists (server enforces and client shows message)
-
-Checklist
-
-- [ ] Implement `Timer` component with configurable multiplier
-- [ ] Implement `SessionControls` (start/stop) calling API
-- [ ] Handle server error when a user already has an active session
-- [ ] Redirect to `/stats/:userId` on stop
-
-Labels: frontend, feature, high  
-Estimate: 3
-
-</details>
-
 ---
 
 #### 🌤️ WeatherWidget & 🔍 GlobalSearch components ✅ ⏱️ 2
 
 Description
-Weather widget (OpenWeatherMap) and global search dropdown.
+Weather widget and global search dropdown in header.
 
 Checklist
 
-- [ ] WeatherWidget shows date, temp, icon
-- [ ] GlobalSearch queries /api/search?q=
-- [ ] Both present in header
+- [ ] WeatherWidget shows date, temp, icon (WEATHER_API_KEY optional)
+- [ ] GlobalSearch queries `/api/search?q=` and navigates
+- [ ] Add both to NavigationBar
 
 Labels: frontend, feature, medium
 
-<details>
-<summary>Copyable Issue Body</summary>
-
-Description  
-Implement the `WeatherWidget` (top-left) using OpenWeatherMap and the `GlobalSearch` component (top-center) that queries `/api/search?q=`.
-
-Acceptance criteria
-
-- `WeatherWidget` shows date, temperature, icon; uses `WEATHER_API_KEY` from env
-- `GlobalSearch` accepts input and shows dropdown results (users + games) with routes
-- Both components included in main layout/header
-
-Checklist
-
-- [ ] Implement `WeatherWidget` with fetch to OpenWeatherMap (local API key)
-- [ ] Implement `GlobalSearch` dropdown and navigation
-- [ ] Add to `NavigationBar` across pages
-
-Labels: frontend, feature, medium  
-Estimate: 2
-
-</details>
-
 ---
 
-## Phase 4 — Testing, Polish & Submit (Days 13–14)
+## Phase 4 — Manual Testing, Polish & Submit (Days 13–14)
 
 ### Back (server)
 
-#### 🧪 Basic integration tests for core endpoints 🧪 ⏱️ 3
+#### 🧪 Manual integration checks for core endpoints 🧪 ⏱️ 2
 
-Description
-Add Jest + Supertest to test user creation, start/stop session, and stats.
+Description (teacher-friendly)
 
-Checklist
+- Instead of automated tests for this course, use Insomnia/Postman to check core flows. This is quick, teaches how APIs work, and is accepted for the assignment.
 
-- [ ] Add jest + supertest
-- [ ] Add tests for core flows
-- [ ] Add npm test script
+Checklist (manual checks)
+
+- [ ] POST /api/users — create user (save returned id)
+- [ ] GET /api/users — confirm created user is listed
+- [ ] POST /api/sessions/start — start session for user (verify active)
+- [ ] POST /api/sessions/stop — stop session and check duration stored
+- [ ] GET /api/statistics/user/:userId — confirm numbers reflect session
+- [ ] Test avatar upload using form-data POST `/api/users/:id/upload-avatar`
 
 Labels: test, backend, high
 
-<details>
-<summary>Copyable Issue Body</summary>
-
-Description  
-Add Jest + Supertest tests for core server flows: create user, start/stop session, statistics aggregation.
-
-Acceptance criteria
-
-- Jest configured with ts-jest or node test setup
-- Tests cover user creation, session start/stop, and stats endpoint
-- `npm test` script exists and runs locally
-
-Checklist
-
-- [ ] Add jest + supertest dependencies
-- [ ] Implement 3-4 integration tests
-- [ ] Add `npm test` script
-
-Labels: test, backend, high  
-Estimate: 3
-
-</details>
+Teacher tip: Keep the Insomnia collection saved inside the repo (export) so teammates can run the same requests.
 
 ---
 
-#### 🛠️ Logger middleware (Winston) for session events ✅ ⏱️ 1
+#### 🛠️ Logger middleware (Winston or console) for session events ✅ ⏱️ 1
 
 Description
-Add Winston logger for session start/stop events.
+Add a logger for session start/stop events (console is fine for class).
 
 Checklist
 
-- [ ] Winston configured
-- [ ] Start/stop events logged
-- [ ] README documents logs location
+- [ ] Add basic logger and call it from session handlers
+- [ ] Document where to see logs (terminal)
+- [ ] Commit and push
 
 Labels: backend, chore, low
-
-<details>
-<summary>Copyable Issue Body</summary>
-
-Description  
-Add a logger middleware or logger module to record session start/stop messages using Winston.
-
-Acceptance criteria
-
-- Winston configured in `server/src/middleware/logger.ts`
-- Session start/stop events logged with `userId`, `sessionId`, `gameId`, timestamps
-- README documents where logs are written
-
-Checklist
-
-- [ ] Add Winston config
-- [ ] Integrate logger calls in start/stop endpoints
-- [ ] Document logging in README
-
-Labels: backend, chore, low  
-Estimate: 1
-
-</details>
 
 ---
 
 #### 🧾 Final README polish + ERD image ✅ ⏱️ 1
 
 Description
-Finalize README with setup, seed, run instructions, and include ERD.png.
+Finish README with setup, seed, run instructions and link ERD.png.
 
 Checklist
 
-- [ ] README full local setup
-- [ ] ERD.png added
-- [ ] Demo instructions (TIMER_MULTIPLIER)
+- [ ] README full local setup (server & client) with npm commands
+- [ ] ERD.png added and linked
+- [ ] Demo instructions (TIMER_MULTIPLIER set to 60 for demo)
 
 Labels: docs, chore, low
 
-<details>
-<summary>Copyable Issue Body</summary>
-
-Description  
-Complete README with setup and run instructions, how to seed DB, how to start client and server in dev, and include ERD diagram (`ERD.png`).
-
-Acceptance criteria
-
-- README contains full local setup (server & client)
-- `ERD.png` added to repo root or `docs/` folder
-- README points to `copilot_instructions.md` for project breakdown
-
-Checklist
-
-- [ ] Update README with setup & seed steps
-- [ ] Add `ERD.png` and link in README
-- [ ] Add short demo run instructions (`TIMER_MULTIPLIER`)
-
-Labels: docs, chore, low  
-Estimate: 1
-
-</details>
+Teacher tip: Add a one-paragraph "How I will demo this locally" with exact commands.
 
 ---
 
@@ -1034,68 +578,74 @@ Estimate: 1
 #### ♿ Responsive & accessibility polish ✅ ⏱️ 1
 
 Description
-Make pages responsive and accessible.
+Make pages responsive and check keyboard navigation.
 
 Checklist
 
 - [ ] Test mobile/desktop breakpoints
 - [ ] Add alt & ARIA attributes
-- [ ] Ensure keyboard navigation
+- [ ] Ensure keyboard focus order works
 
 Labels: frontend, accessibility, low
-
-<details>
-<summary>Copyable Issue Body</summary>
-
-Description  
-Ensure all pages are responsive and have basic accessibility (keyboard nav, alt text, ARIA where needed).
-
-Acceptance criteria
-
-- Pages tested at mobile/desktop sizes (no overflow)
-- Focus states visible and keyboard navigation works
-- Charts have accessible titles/descriptions
-
-Checklist
-
-- [ ] Test responsive layout, fix major breakpoints
-- [ ] Add alt text and ARIA attributes
-- [ ] Verify keyboard navigation flows
-
-Labels: frontend, accessibility, low  
-Estimate: 1
-
-</details>
 
 ---
 
 ## Optional (only after core features are perfect)
 
-> These are nice-to-have extras — only take on if core functionality is complete and tested.
-
 ### ✨ Add simple page transitions (Framer Motion) — optional ⏱️ 2
 
-- Install `framer-motion`
+- Install `framer-motion` only if you have time
 - Add `PageWrapper` and wrap routes
 - Respect `prefers-reduced-motion`
 
-Labels: frontend, enhancement, optional  
-Estimate: 2
+Labels: frontend, enhancement, optional
 
 ---
 
-## Tips for ADHD-friendly sprints
+## Practical teacher-style workflow notes (plain English)
 
-- Work in 30–45 minute focused blocks, track progress by checking off subtasks.
-- Start with one page end-to-end (e.g., user registration → users hub) before branching out.
-- Use small PRs (one component or one endpoint per PR).
-- Daily sync: show what’s done vs blocked (2–3 quick bullets).
+1. What is a PR (Pull Request)?
+
+- A PR is a request asking the team to add your work into the shared main branch. It shows exactly what changed and lets the team check it before merging.
+- Simple steps: make a branch (git checkout -b feature/thing), push it, open a PR on GitHub, ask your teammate to review it, then merge.
+
+2. What is CI and what does "CI runs on PRs" mean?
+
+- CI = automatic checks run by GitHub when you open a PR. These checks can install dependencies, build the project, and run lints. They help catch basic problems before merging. For this class, running the build and checking there are no errors is enough.
+
+3. CORS (very short):
+
+- Browsers block requests to other servers unless the server allows it. When your client (http://localhost:5173) talks to the server (http://localhost:4000), add a small cors allow rule on the server to permit the client origin. (We gave a code snippet in docs.)
+
+4. Axios & npm (decision):
+
+- Use Axios in the frontend because it makes calls easier (we include an example apiClient). Everyone should use npm commands to install and run.
+
+5. Manual testing (class-friendly):
+
+- Use Insomnia/Postman to follow the API.md "recipe" for each endpoint. Save and share the exported Insomnia collection in the repo so both presenters run the same demo.
+
+6. Presentation prep (short):
+
+- Create a "seed:demo" script that creates predictable users & sessions. Use it before your live demo so you don't have to create everything by hand.
+
+---
+
+## Tips for ADHD-friendly sprints (teacher tone)
+
+- Work in 30–45 minute focused blocks with clear, concrete goals (e.g., "Make POST /api/users work and test in Insomnia").
+- Keep tasks small: one small endpoint or one UI page per PR.
+- Use a demo seed so the presentation is repeatable.
+- Daily quick sync (2–3 bullets): what I did, what's blocked, what I'll do next.
 
 ---
 
 If you'd like, I can:
 
-- Produce these as individual Issue markdown files (one per task) ready to paste, or
-- Create the issues in GitHub for you (I’ll need confirmation to run the create tool).
+- Produce each small task above as an Issue markdown file ready to paste, or
+- Create the issues directly in GitHub for you (I can do that if you want me to push).
+  Which do you prefer? If you'd like the Issue files, tell me which phase to start with and I'll produce them in teacher-friendly language.
 
-Would you like the individual issue files next (one file per issue), or shall I create the issues in the repo for you now?
+```
+
+```
