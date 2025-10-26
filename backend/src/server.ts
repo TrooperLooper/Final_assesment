@@ -1,9 +1,10 @@
 import express from "express";
+import cors from "cors";
 import dotenv from "dotenv";
-import connectDB from "./config/database";
+import { connectDB } from "./config/database";
 import logger from "./utils/logger";
 import userRouter from "./routes/userRoutes";
-import gamesRouter from "./routes/gamesRoutes";
+import gamesRouter from "./routes/gameRoutes";
 import sessionRouter from "./routes/sessionRoutes";
 
 dotenv.config(); //Load .env file

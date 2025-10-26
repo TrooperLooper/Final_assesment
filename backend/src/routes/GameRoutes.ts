@@ -1,17 +1,17 @@
 import { Router } from "express";
 
-const router = Router();
+const gamesRouter = Router();
 
 // GET /api/games
-router.get("/", (req, res) => {
+gamesRouter.get("/", (req, res) => {
   // Get all games
   res.send("Get games endpoint");
 });
 
 // GET /api/games/:id
-router.get("/:id", (req, res) => {
+gamesRouter.get("/:id", (req, res) => {
   // Get game by ID
   res.send("Get game by ID endpoint");
 });
 
-export default router;
+export default gamesRouter;
