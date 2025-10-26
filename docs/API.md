@@ -1,5 +1,31 @@
-````markdown
+```markdown
 # API Contract
+
+✅ What’s Included:
+CRUD endpoints for Users, Games, GameSessions
+Filtering via query parameters
+Statistics endpoints for user, games, global leaderboard, and charts
+Profile picture upload endpoint (no game image upload, as required)
+Clear response shapes and request examples
+
+❗ What’s Missing/Needs Adjustment:
+Authentication endpoints (register, login, get current user) are not yet included—add these for completeness.
+Formatting: There are some formatting issues and duplicated summary sections at the end. Clean up extra lines and ensure each endpoint is clearly separated.
+Consistency: Make sure all endpoints use plural resource names (users, games, gameSessions).
+Summary: Keep only one summary section at the end.
+
+# ✅ Summary
+
+- API contract covers all CRUD operations for Users, Games, and GameSessions.
+- Filtering is supported via query parameters for collections.
+- Statistics endpoints provide data for dashboards and charts.
+- Profile picture upload endpoint included (no game image upload).
+- Authentication endpoints for registration, login, and current user.
+- All endpoints follow RESTful conventions and match project requirements.
+- Ready for frontend and backend teams to implement and test with tools like Insomnia or Compass.
+```
+
+---
 
 ## User Endpoints
 
@@ -42,13 +68,26 @@
   ```json
   {
     "email": "janedoe@example.com",
+    "password": "securePassword123",
     "firstName": "Jane",
-    "lastName": "Doe",
-    "profilePictureUrl": "/uploads/jane.jpg"
+    "lastName": "Doe"
   }
   ```
 - **Response:**  
   Created user object.
+  ```json
+  {
+    "message": "User registered successfully",
+    "user": {
+      "_id": "123",
+      "email": "janedoe@example.com",
+      "firstName": "Jane",
+      "lastName": "Doe",
+      "profilePictureUrl": "/uploads/jane.jpg"
+    },
+    "token": "jwt-token-string"
+  }
+  ```
 
 ### `PUT /users/:id`
 
@@ -226,6 +265,7 @@
   ```json
   [
     {
+      "userId": "user123",
       "userName": "Nicklas Svensson",
       "game": "Pac-Man",
       "timePlayed": "2 hours 20 minutes"
@@ -275,6 +315,83 @@
 
 ---
 
+## Authentication Endpoints
+
+### `POST /auth/register`
+
+- **Description:** Register a new user (with optional profile picture upload).
+- **Request:**
+  - Content-Type: `application/json` or `multipart/form-data`
+  - Body:
+    ```json
+    {
+      "email": "janedoe@example.com",
+      "firstName": "Jane",
+      "lastName": "Doe",
+      "password": "securePassword123"
+      // "profilePictureUrl": "/uploads/jane.jpg" (optional)
+    }
+    ```
+- **Response:**
+  ```json
+  {
+    "message": "User registered successfully",
+    "user": {
+      "_id": "123",
+      "email": "janedoe@example.com",
+      "firstName": "Jane",
+      "lastName": "Doe",
+      "profilePictureUrl": "/uploads/jane.jpg"
+    },
+    "token": "jwt-token-string"
+  }
+  ```
+
+### `POST /auth/login`
+
+- **Description:** Authenticate user and return a JWT token.
+- **Request:**
+  - Content-Type: `application/json`
+  - Body:
+    ```json
+    {
+      "email": "janedoe@example.com",
+      "password": "securePassword123"
+    }
+    ```
+- **Response:**
+  ```json
+  {
+    "message": "Login successful",
+    "user": {
+      "_id": "123",
+      "email": "janedoe@example.com",
+      "firstName": "Jane",
+      "lastName": "Doe",
+      "profilePictureUrl": "/uploads/jane.jpg"
+    },
+    "token": "jwt-token-string"
+  }
+  ```
+
+### `GET /auth/me`
+
+- **Description:** Get the currently authenticated user's profile.
+- **Request:**
+  - Header: `Authorization: Bearer <jwt-token-string>`
+- **Response:**
+  ```json
+  {
+    "_id": "123",
+    "email": "janedoe@example.com",
+    "firstName": "Jane",
+    "lastName": "Doe",
+    "profilePictureUrl": "/uploads/jane.jpg"
+  }
+  ```
+
+---
+
 ## Filtering Examples
 
 - `/users?firstName=Anna` — Get users with firstName "Anna"
@@ -283,17 +400,3 @@
 - `/gameSessions?startTime=2024-10-01&endTime=2024-10-07` — Get sessions in a date range
 
 ---
-
-# ✅ **Summary**
-
-- **API contract covers all CRUD operations** for Users, Games, and GameSessions.
-- **Filtering** is supported via query parameters for collections.
-- **Statistics endpoints** provide data for dashboards and charts.
-- **All endpoints follow RESTful conventions** and match your project requirements.
-- **Response shapes** are based on your shared TypeScript interfaces.
-- **Ready for frontend and backend teams to implement and test with tools like Insomnia or Compass.**
-
----
-
-vi behöver: authentication endpoints, file upload routes, or have questions about any part of this contract!
-````
