@@ -1,18 +1,4 @@
 import { createLogger, format, transports } from "winston";
-
-const logger = createLogger({
-  level: "info",
-  format: format.combine(
-    format.timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
-    format.printf(
-      ({ timestamp, level, message }) =>
-        `${timestamp} [${level.toUpperCase()}]: ${message}`
-    )
-  ),
-  transports: [
-    new transports.Console(),
-    new transports.File({ filename: "application.log" }),
-  ],
+connectDB().then(() => { // Connect to DB before starting
+  app.listen(port, () => console.log(`Server on port ${port}`)); // Start server
 });
-
-export default logger;
