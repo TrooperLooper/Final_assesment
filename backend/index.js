@@ -6,6 +6,8 @@ const app = express();
 app.use(express.json());
 
 mongoose.connect("mongodb://localhost:27017/myfirstdatabase", {});
+useNewUrlParser: true;
+useUnifiedTopology: true;
 
 const userSchema = new mongoose.Schema({
   firstName: String,
