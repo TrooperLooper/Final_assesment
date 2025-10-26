@@ -51,12 +51,12 @@ final_assesment/
 │ │ │ ├── gameController.ts
 │ │ │ └── sessionController.ts
 │ │ ├── middleware/ # Custom middleware (auth, error, upload, logging)
-│ │ │ ├── auth.tsx
-│ │ │ ├── errorHandler.tsx
-│ │ │ ├── upload.tsx
-│ │ │ └── logger.tsx # Winston logging for game sessions
+│ │ │ ├── auth.ts
+│ │ │ ├── errorHandler.ts
+│ │ │ ├── upload.ts
+│ │ │ └── logger.ts # Winston logging for game sessions
 │ │ ├── utils/ # Utility functions (e.g., seeding)
-│ │ │ ├── seedDatabase.tsx
+│ │ │ ├── seedDatabase.ts
 │ │ │ └── server.ts # Server utility functions
 │ │ ├── config/ # Config files (db, env)
 │ │ │ └── database.ts
