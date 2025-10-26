@@ -5,12 +5,11 @@ import "./index.css";
 import App from "./App";
 
 // Import your page components
-import Register from "./pages/Register";
-import Users from "./pages/Users";
-import Games from "./pages/Games";
-import Play from "./pages/Play";
-import Stats from "./pages/Stats";
-// import Leaderboard from "./pages/Leaderboard"; // No longer exists
+import Register from "./pages/Register.tsx";
+import Users from "./pages/Users.tsx";
+import Games from "./pages/Games.tsx";
+import Play from "./pages/Play.tsx";
+import Stats from "./pages/Stats.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
@@ -22,7 +21,6 @@ createRoot(document.getElementById("root")!).render(
         <Route path="/games" element={<Games />} />
         <Route path="/play" element={<Play />} />
         <Route path="/stats" element={<Stats />} />
-        {/* <Route path="/leaderboard" element={<Leaderboard />} /> */}
       </Routes>
     </BrowserRouter>
   </StrictMode>

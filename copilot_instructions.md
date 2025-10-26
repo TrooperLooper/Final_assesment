@@ -1776,7 +1776,7 @@ export const AnimatedSpeechBubble: React.FC<AnimatedSpeechBubbleProps> = ({
       className="relative bg-yellow-300 rounded-lg p-3 text-sm font-bold"
     >
       {message}
-      <div className="absolute bottom-[-8px] left-4 w-0 h-0 border-l-8 border-r-8 border-t-8 border-transparent border-t-yellow-300" />
+      <div className="absolute bottom-2 left-4 w-0 h-0 border-l-8 border-r-8 border-t-8 border-transparent border-t-yellow-300" />
     </motion.div>
   );
 };
