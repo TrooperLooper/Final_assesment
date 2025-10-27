@@ -8,10 +8,10 @@ dotenv.config(); // Load .env file
 
 async function seedDatabase() {     // Seed initial game data
     const games = [
-        { name: "Pac-man", imageUrl: "/images/pacman.png" },
-        { name: "Tetris", imageUrl: "/images/tetris.png" },
-        { name: "Space Invaders", imageUrl: "/images/spaceinvaders.png" },
-        { name: "Donkey Kong", imageUrl: "/images/donkeykong.png" }
+        { name: "Pac-man", imageUrl: "frontend/src/assets/pacman_gameicon.gif" },
+        { name: "Tetris", imageUrl: "frontend/src/assets/tetris_gameicon.gif" },
+        { name: "Space Invaders", imageUrl: "frontend/src/assets/space_gameicon.gif" },
+        { name: "Asteroids", imageUrl: "frontend/src/assets/asteroids_gameicon.gif" }
     ];
 
     console.log("Seeding database finished");
