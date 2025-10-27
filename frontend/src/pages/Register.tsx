@@ -43,7 +43,7 @@ function Register() {
           Game Timer
         </h1>
 
-        <div className="w-full max-w-3xl bg-pink-500 bg-opacity-80 rounded-xl shadow-lg px-8 py-6 flex flex-col items-center gap-4">
+        <div className="w-full max-w-3xl bg-pink-500 bg-opacity-40 rounded-xl shadow-lg px-8 py-6 flex flex-col items-center gap-4">
           <h3 className="Create_user text-white font-bold self-start text-2xl  mb-2">
             Create user
           </h3>
