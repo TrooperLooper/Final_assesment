@@ -1,17 +1,20 @@
-import { Router } from "express";
+import express from "express";
+import { Game } from "../models/Game";
+import logger from "../utils/logger";
 
-const gamesRouter = Router();
+const router = express.Router();
 
-// GET /api/games
-gamesRouter.get("/", (req, res) => {
-  // Get all games
-  res.send("Get games endpoint");
+router.get("/", async (req, res) => {
+  const games = await Game.find();
+  logger.info("Fetched all games");
+  res.json(games);
 });
 
-// GET /api/games/:id
-gamesRouter.get("/:id", (req, res) => {
-  // Get game by ID
-  res.send("Get game by ID endpoint");
+
+router.get("/:id", async (req, res) => {
+  const game = await Game.findById(req.params.id);
+  if (!game) return res.status(404).json({ error: "Game not found" });
+  res.json(game);
 });
 
-export default gamesRouter;
+export default router;

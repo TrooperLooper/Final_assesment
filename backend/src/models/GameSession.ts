@@ -5,7 +5,8 @@ const gameSessionSchema = new mongoose.Schema({
   gameId: { type: mongoose.Schema.Types.ObjectId, ref: 'Game', required: true }, // Reference to Game
   startTime: { type: Date, required: true }, // Start time
   endTime: { type: Date }, // End time 
-  isActive: { type: Boolean, default: true } // Track active status
+  isActive: { type: Boolean, default: true }, // Track active status
+  durationSeconds: { type: Number }, // Duration in seconds
 });
 
 export const GameSession = mongoose.model('GameSession', gameSessionSchema);

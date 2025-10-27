@@ -2,6 +2,9 @@ import express from "express";
 import mongoose from "mongoose";
 import { start } from "repl";
 
+//TA BORT?
+
+
 const app = express();
 app.use(express.json());
 
