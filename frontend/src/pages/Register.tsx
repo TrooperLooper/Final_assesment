@@ -30,7 +30,7 @@ function Register() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-t from-yellow-400 via-pink-700 to-purple-900">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-t from-pink-400 via-pink-700 to-red-700">
       <div className="flex flex-col items-center w-full">
         <img
           src="./src/assets/svamp_animation.gif"
@@ -43,7 +43,7 @@ function Register() {
           Game Timer
         </h1>
 
-        <div className="w-full max-w-3xl bg-pink-500 bg-opacity-40 rounded-xl shadow-lg px-8 py-6 flex flex-col items-center gap-4">
+        <div className="w-full max-w-xl bg-pink-500 bg-opacity-40 rounded-xl shadow-lg px-8 py-6 flex flex-col items-center gap-4">
           <h3 className="Create_user text-white font-bold self-start text-2xl  mb-2">
             Create user
           </h3>
@@ -67,7 +67,7 @@ function Register() {
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   required
-                  className="w-full rounded px-3 py-2 bg-white opacity-80 text-black border-2 border-pink-400 focus:outline-none focus:border-yellow-300 text-sm"
+                  className="w-full rounded px-3 py-1 bg-white opacity-80 text-black border-2 border-pink-400 focus:outline-none focus:border-yellow-300 text-sm"
                 />
               </div>
 
@@ -85,7 +85,7 @@ function Register() {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className="w-full rounded px-3 py-2 bg-white opacity-80 text-black border-2 border-pink-400 focus:outline-none focus:border-yellow-300 text-sm"
+                  className="w-full rounded px-3 py-1 bg-white opacity-80 text-black border-2 border-pink-400 focus:outline-none focus:border-yellow-300 text-sm"
                 />
               </div>
             </div>
@@ -128,10 +128,10 @@ function Register() {
               <button
                 type="submit"
                 disabled={!isFormValid}
-                className={`self-end py-2 px-6 rounded-lg font-bold text-base shadow-lg transition-all ${
+                className={`self-end py-1 px-4 rounded-lg font-bold text-base shadow-lg transition-all ${
                   isFormValid
                     ? "bg-yellow-400 text-pink-900 hover:bg-yellow-300"
-                    : "bg-gray-400 text-gray-700 cursor-not-allowed"
+                    : "bg-gray-400 opacity-50 text-gray-700 cursor-not-allowed"
                 }`}
               >
                 REGISTER
