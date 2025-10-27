@@ -12,9 +12,18 @@
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.15",
+<<<<<<< Updated upstream
     "express": "^5.1.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
+=======
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0",
+    "mongoose": "^8.19.2",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0",
+>>>>>>> Stashed changes
     "react-router-dom": "^7.9.4",
     "recharts": "^3.3.0",
     "tailwindcss": "^4.1.15",
@@ -23,10 +32,20 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.38.0",
+<<<<<<< Updated upstream
     "@types/express": "^5.0.3",
     "@types/node": "^24.6.0",
     "@types/react": "^19.1.16",
     "@types/react-dom": "^19.1.9",
+=======
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.3",
+    "@types/mongoose": "^5.11.96",
+    "@types/node": "^24.9.1",
+    "@types/react": "^19.2.2",
+    "@types/react-dom": "^19.2.2",
+    "@types/winston": "^2.4.4",
+>>>>>>> Stashed changes
     "@typescript-eslint/eslint-plugin": "^8.46.2",
     "@typescript-eslint/parser": "^8.46.2",
     "@vitejs/plugin-react": "^5.0.4",
