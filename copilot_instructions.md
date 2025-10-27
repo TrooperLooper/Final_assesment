@@ -12,7 +12,7 @@ Assist in creating a full-stack application where users can register, play class
 
 ## 🎯 Core Requirements
 
-- **👤 User Registration & Management**: Create users with optional profile picture upload
+- **👤 User Registration & Management**: Create users with optional profile picture upload (no login required)
 - **🎮 Game Selection**: Choose from 4 classic retro games (Pac-Man, Tetris, Space Invaders, Asteroids)
 - **⏱️ Time Tracking**: Start/stop timers for game sessions
 - **📊 Statistics Dashboard**: View personal and comparative statistics
@@ -617,6 +617,10 @@ const retroGames = [
 - **Purpose**: Personal statistics with integrated global leaderboard
 - **Key Features**: Time bars, percentages, total time, **UserCarousel** for switching players, integrated leaderboard section
 - **Figma Reference**: User profile with detailed statistics + leaderboard at bottom
+
+**Note:**
+
+- **No login/authentication required.** Users register and are selectable for play and statistics. No login/logout flow is needed.
 
 ### 🌤️ Weather API Integration
 
@@ -1715,142 +1719,4 @@ message="Loading your stats..."
 
 ```
 
-### 📁 **Animation Assets Structure**
-
 ```
-
-client/src/assets/
-├── animations/
-│ ├── lottie/
-│ │ ├── pacman-eating.json
-│ │ ├── tetris-falling.json
-│ │ ├── space-invader-flying.json
-│ │ ├── speech-bubble-pop.json
-│ │ └── celebration-confetti.json
-│ ├── svg/
-│ │ ├── game-icons-animated.svg
-│ │ └── ui-elements.svg
-│ └── gifs/ (fallback)
-│ └── retro-loader.gif
-
-````
-
-### 🛠 **Implementation Setup**
-
-**Install Animation Libraries:**
-
-```bash
-# Lottie for complex animations
-npm install react-lottie-player
-
-# Framer Motion for UI animations
-npm install framer-motion
-
-# Optional: React Spring for physics-based animations
-npm install react-spring
-````
-
-**Basic Animation Component:**
-
-```typescript
-// components/AnimatedElement.tsx
-import { LottiePlayer } from "react-lottie-player";
-import { motion } from "framer-motion";
-
-interface AnimatedSpeechBubbleProps {
-  message: string;
-  autoShow?: boolean;
-  delay?: number;
-}
-
-export const AnimatedSpeechBubble: React.FC<AnimatedSpeechBubbleProps> = ({
-  message,
-  autoShow = false,
-  delay = 0,
-}) => {
-  return (
-    <motion.div
-      initial={{ opacity: 0, scale: 0 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ delay, type: "spring", bounce: 0.5 }}
-      className="relative bg-yellow-300 rounded-lg p-3 text-sm font-bold"
-    >
-      {message}
-      <div className="absolute bottom-2 left-4 w-0 h-0 border-l-8 border-r-8 border-t-8 border-transparent border-t-yellow-300" />
-    </motion.div>
-  );
-};
-```
-
-### 🎯 **Optional Animation Timeline** ⚠️
-
-> **⚡ ONLY implement animations AFTER core functionality is complete and working!**
-
-**📋 Core Features Must Be Done First:**
-✅ User registration and management  
-✅ Game selection and timer functionality  
-✅ Statistics dashboard with basic charts  
-✅ All 5 pages working with navigation  
-✅ Database operations stable
-
-**🎨 Optional Enhancement Phases (If Time Permits):**
-
-**Optional Phase 1 (Days 11-12): Basic Polish** _(Only if core is 100% done)_
-
-- [ ] Install animation libraries
-- [ ] Simple button hover effects
-- [ ] Basic loading animations
-- [ ] Smooth page transitions
-
-**Optional Phase 2 (Day 13): Advanced Features** _(Only if Phase 1 complete)_
-
-- [ ] Create/import Pac-Man eating animation
-- [ ] Add speech bubbles for guidance
-- [ ] Timer pulse animations
-- [ ] Chart loading animations
-
-**Optional Phase 3 (Day 14): Final Polish** _(Only if everything else perfect)_
-
-- [ ] Celebration animations for achievements
-- [ ] Micro-interactions throughout app
-- [ ] Easter eggs and hidden animations
-- [ ] Performance optimization
-
-**Phase 4 (Days 13-14): Final Polish**
-
-- [ ] Easter eggs and hidden animations
-- [ ] Accessibility considerations
-- [ ] Performance testing
-- [ ] Animation refinements
-
-### 🎨 **Design Integration Tips**
-
-**Your Illustrator → Lottie Workflow:**
-
-1. **Design in Illustrator**: Create vector game characters
-2. **Import to After Effects**: Add movement and timing
-3. **Export with Bodymovin**: Generate Lottie JSON files
-4. **Test in React**: Import and implement animations
-
-**Animation Best Practices:**
-
-- **Performance**: Keep animations under 2MB
-- **Accessibility**: Respect `prefers-reduced-motion`
-- **Loading**: Show animations only after critical content loads
-- **Context**: Match animation style to retro gaming theme
-
-### 🔥 **Creative Animation Ideas**
-
-**Game-Specific Features:**
-
-- **Pac-Man**: Dots disappear as timer counts up
-- **Tetris**: Completed rows animate away in stats
-- **Space Invaders**: Laser beam effects on button clicks
-- **Asteroids**: Floating debris background elements
-
-**Contextual Animations:**
-
-- **New High Score**: Confetti and celebration
-- **First Game**: Tutorial animations and guidance
-- **Empty States**: Encouraging mascot animations
-- **Errors**: Friendly error character animations
