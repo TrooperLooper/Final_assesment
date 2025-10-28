@@ -1711,12 +1711,6 @@ const retroSlideVariants = {
 };
 ```
 
-// Loading states
-<LoadingAnimation
-type="retro-spinner" // pac-man, tetris-blocks, space-ship
-message="Loading your stats..."
-/>
-
 ```
 
 ```

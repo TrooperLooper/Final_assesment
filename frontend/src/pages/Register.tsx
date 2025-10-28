@@ -1,5 +1,7 @@
 // @ts-nocheck
 import { useState } from "react";
+import Star from "../components/Star";
+import axios from "axios";
 
 function Register() {
   const [username, setUsername] = useState("");
@@ -23,26 +25,90 @@ function Register() {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // TODO: Send data to backend (username, password, profileImage)
-    console.log({ username, password, profileImage });
+
+    // Prepare form data for user registration
+    const formData = new FormData();
+    formData.append("username", username);
+    formData.append("password", password);
+    if (profileImage) {
+      formData.append("profileImage", profileImage);
+    }
+
+    try {
+      const response = await axios.post("/api/users", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+
+      if (response.status === 201 || response.status === 200) {
+        alert("Registration successful!");
+        // Optionally, reset form or redirect
+      } else {
+        alert("Registration failed!");
+      }
+    } catch (error) {
+      alert("Error: " + (error.response?.data?.message || error.message));
+    }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-t from-pink-400 via-pink-700 to-red-700">
-      <div className="flex flex-col items-center w-full">
-        <img
-          src="./src/assets/svamp_animation.gif"
-          alt="A cute mushroom animation"
-          height={180}
-          width={180}
-          className="mb-2"
-        />
-        <h1 className="text-6xl font-bold font-['Pixelify_Sans'] text-yellow-300 drop-shadow-lg mb-18">
-          Game Timer
-        </h1>
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-t from-pink-400 via-pink-700 to-red-700">
+      <style>{`
+        .star-animate {
+          animation: twinkle 1s infinite ease-in-out, rotateStar 8s linear infinite;
+        }
+        @keyframes twinkle {
+          0%, 100% { opacity: 0.5; transform: scale(1); }
+          70% { opacity: 1; transform: scale(10); }
+        }
+        @keyframes rotateStar {
+          0% { transform: rotate(0deg); }
+          100% { transform: rotate(360deg); }
+        }
+      `}</style>
 
+      {/* Headline on top, centered */}
+      <div className="w-full flex justify-center mt-8 mb-4">
+        <h1 className="text-8xl font-bold font-['Pixelify_Sans'] text-yellow-300 drop-shadow-lg mb-0 text-center">
+          GAME TIMER
+        </h1>
+      </div>
+
+      {/* Main content below headline */}
+      <div className="flex flex-col items-center w-full">
+        {/* Grid row for mushroom and stars */}
+        <div className="grid grid-cols-8 w-full mb-2" style={{ maxWidth: 600 }}>
+          {/* Left star (columns 1-2) */}
+          <div className="col-span-2 flex items-center justify-center">
+            <Star size={20} delay="0s" />
+          </div>
+          {/* Mushroom (columns 3-6) */}
+          <div className="col-span-4 flex items-center justify-center">
+            <img
+              src="./src/assets/svamp_animation.gif"
+              alt="A cute mushroom animation"
+              height={180}
+              width={180}
+              className="mb-2"
+            />
+          </div>
+          {/* Empty right cell (columns 7-8) */}
+          <div className="col-span-2" />
+        </div>
+        {/* Grid row for headline and right star */}
+        <div className="grid grid-cols-8 w-full mb-6" style={{ maxWidth: 600 }}>
+          {/* Empty left cell (columns 1-2) */}
+          <div className="col-span-2" />
+          {/* Headline (columns 3-6) */}
+          <div className="col-span-4 flex items-center justify-center"></div>
+          {/* Right star (columns 7-8) */}
+          <div className="col-span-2 flex items-center justify-center">
+            <Star size={12} delay="0.7s" />
+          </div>
+        </div>
         <div className="w-full max-w-xl bg-pink-500 bg-opacity-40 rounded-xl shadow-lg px-8 py-6 flex flex-col items-center gap-4">
           <h3 className="Create_user text-white font-bold self-start text-2xl  mb-2">
             Create user
