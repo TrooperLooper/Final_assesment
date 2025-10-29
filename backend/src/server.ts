@@ -1,27 +1,34 @@
 import express from "express";
+import mongoose from "mongoose";
 import cors from "cors";
 import dotenv from "dotenv";
-import { connectDB } from "./config/database";
 import logger from "./utils/logger";
 import userRouter from "./routes/userRoutes";
 import gamesRouter from "./routes/GameRoutes";
 import sessionRouter from "./routes/sessionRoutes";
+import { seedDatabase } from "./utils/seedDatabase";
 
-dotenv.config(); //Load .env file
+dotenv.config();
 
-const app = express(); //Creates the express app
-app.use(express.json()); //Middleware
+const app = express();
 app.use(cors());
+app.use(express.json());
+
 
 app.use("/uploads", express.static("uploads")); //Profile pictures (static folder)
 app.use("/api/users", userRouter); //User routes
 app.use("/api/games", gamesRouter); //Games routes
 app.use("/api/sessions", sessionRouter); //Sessions routes
 
-const port = process.env.PORT || 3000;
 
-connectDB().then(() => {
-  app.listen(port, () => logger.info(`Server running on port ${port}`));
-}).catch((err) => {
-  logger.error("Failed to connect to MongoDB", err);
+const PORT = process.env.PORT || 3000;
+const MONGO = process.env.MONGO_URI || 'mongodb://localhost:27017/game-time-tracker';
+
+mongoose.connect(MONGO).then(async () => {
+  console.log('Connected to MongoDB');
+  await seedDatabase();
+  app.listen(PORT, () => console.log(`Server listening on ${PORT}`));
+}).catch(err => {
+  console.error('Mongo connection error', err);
 });
+
