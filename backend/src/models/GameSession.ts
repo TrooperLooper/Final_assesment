@@ -1,14 +1,30 @@
-import mongoose from "mongoose";
+import mongoose, { Schema } from "mongoose";
 
-const gameSessionSchema = new mongoose.Schema({
-  userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true }, // Reference to User
-  gameId: { type: mongoose.Schema.Types.ObjectId, ref: "Game", required: true }, // Reference to Game
-  startTime: { type: Date, required: true }, // Start time of the session
-  endTime: { type: Date }, // End time of the session
-  durationMinutes: { type: Number }, // Duration of the session in minutes
-  playedAt: { type: Date, default: Date.now }, // When the session was played
-  isActive: { type: Boolean, default: true }, // Track active status
-  createdAt: { type: Date, default: Date.now }, // Creation timestamp
+export interface IGameSession {
+  userId: mongoose.Types.ObjectId;
+  gameId: mongoose.Types.ObjectId;
+  startTime: Date;
+  endTime?: Date;
+  playedSeconds?: number;
+  durationMinutes?: number;
+  playedAt?: Date;
+  isActive?: boolean;
+  createdAt?: Date;
+}
+
+const gameSessionSchema = new Schema<IGameSession>({
+  userId: { type: Schema.Types.ObjectId, ref: "User", required: true },
+  gameId: { type: Schema.Types.ObjectId, ref: "Game", required: true },
+  startTime: { type: Date, required: true },
+  endTime: { type: Date },
+  playedSeconds: { type: Number },
+  durationMinutes: { type: Number },
+  playedAt: { type: Date, default: Date.now },
+  isActive: { type: Boolean, default: true },
+  createdAt: { type: Date, default: Date.now },
 });
 
-export const GameSession = mongoose.model("GameSession", gameSessionSchema);
+export const GameSession = mongoose.model<IGameSession>(
+  "GameSession",
+  gameSessionSchema
+);

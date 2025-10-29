@@ -1,36 +1,35 @@
 import express from "express";
+import mongoose from "mongoose";
 import cors from "cors";
 import dotenv from "dotenv";
-import { connectDB } from "./config/database.js";
-import logger from "./utils/logger.js";
-import userRouter from "./routes/userRoutes.js";
-import gamesRouter from "./routes/gameRoutes.js";
-import sessionRouter from "./routes/sessionRoutes.js";
+import logger from "./utils/logger";
+import userRouter from "./routes/userRoutes";
+import gamesRouter from "./routes/GameRoutes";
+import sessionRouter from "./routes/sessionRoutes";
+import { seedDatabase } from "./utils/seedDatabase";
 
-// Load environment variables
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 3000;
-
-// Middleware
 app.use(cors());
 app.use(express.json());
-app.use("/uploads", express.static("uploads"));
 
-// Routes
-app.use("/api/users", userRouter);
-app.use("/api/games", gamesRouter);
-app.use("/api/sessions", sessionRouter);
+app.use("/uploads", express.static("uploads")); //Profile pictures (static folder)
+app.use("/api/users", userRouter); //User routes
+app.use("/api/games", gamesRouter); //Games routes
+app.use("/api/sessions", sessionRouter); //Sessions routes
 
-// Connect to database and start server
-connectDB()
-  .then(() => {
-    app.listen(PORT, () => {
-      logger.info(`Server running on port ${PORT}`);
-    });
+const PORT = process.env.PORT || 3000;
+const MONGO =
+  process.env.MONGO_URI || "mongodb://localhost:27017/game-time-tracker";
+
+mongoose
+  .connect(MONGO)
+  .then(async () => {
+    console.log("Connected to MongoDB");
+    await seedDatabase();
+    app.listen(PORT, () => console.log(`Server listening on ${PORT}`));
   })
   .catch((err) => {
-    logger.error("Failed to connect to database:", err);
-    process.exit(1);
+    console.error("Mongo connection error", err);
   });
