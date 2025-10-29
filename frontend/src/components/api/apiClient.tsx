@@ -25,3 +25,14 @@ export const fetchGameById = async (gameId: string) => {
     throw error;
   }
 };
+
+// ADD THESE SESSION METHODS
+export const startSession = async (userId: string, gameId: string) => {
+  const response = await apiClient.post('/sessions/start', { userId, gameId });
+  return response.data;
+};
+
+export const stopSession = async (sessionId: string) => {
+  const response = await apiClient.post(`/sessions/stop/${sessionId}`);
+  return response.data;
+};

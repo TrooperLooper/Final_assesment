@@ -60,6 +60,7 @@ function Register() {
         return;
       }
       const userId = userRes.data.id || userRes.data._id;
+      localStorage.setItem("currentUserId", userRes.data._id);
 
       // 2. Upload avatar (if selected)
       if (profileImage && userId) {

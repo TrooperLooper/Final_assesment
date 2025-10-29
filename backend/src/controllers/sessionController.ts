@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { GameSession } from "../models/GameSession";
 
+
 export const startSession = async (req: Request, res: Response) => {
   const { userId, gameId } = req.body;
   const session = await GameSession.create({
