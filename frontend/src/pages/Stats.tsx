@@ -3,9 +3,10 @@ import { fetchGameById } from "../components/api/apiClient";
 import BarGraph from "../components/Statistics/BarGraph";
 import PieChart from "../components/Statistics/PieChart";
 import TotalTimePlayed from "../components/Statistics/TotalTimePlayed";
-import Leaderboard from "../components/Statistics/Leaderboard";
 import SessionsGraph from "../components/Statistics/SessionsGraph";
 import WeeklyPlayTimeGraph from "../components/Statistics/WeeklyPlayTimeGraph";
+import LeaderboardTable from "../components/Statistics/LeaderboardTable";
+import AllUsersBarGraph from "../components/Statistics/AllUsersBarGraph";
 
 function Stats() {
   const [gameStats, setGameStats] = useState([]);
@@ -16,7 +17,6 @@ function Stats() {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        // Example game IDs (replace with actual IDs from the backend)
         const gameIds = ["1", "2", "3", "4"];
         const stats = await Promise.all(
           gameIds.map(async (gameId) => {
@@ -24,23 +24,21 @@ function Stats() {
             return {
               gameName: game.name,
               iconUrl: game.imageUrl,
-              minutesPlayed: Math.floor(Math.random() * 60), // Mock data for minutes played
+              minutesPlayed: Math.floor(Math.random() * 60),
             };
           })
         );
         setGameStats(stats);
 
-        // Mock data for sessions (replace with actual data from the backend)
         const mockSessionsData = gameIds.map((id) => ({
           gameId: id,
           sessions: Math.floor(Math.random() * 100),
         }));
         setSessionsData(mockSessionsData);
 
-        // Mock data for weekly stats (replace with actual data from the backend)
         const mockWeeklyStats = gameIds.map((id) => ({
           gameId: id,
-          minutesPlayed: Math.floor(Math.random() * 420), // Mock data for weekly minutes played
+          minutesPlayed: Math.floor(Math.random() * 420),
         }));
         setWeeklyStats(mockWeeklyStats);
 
@@ -67,29 +65,26 @@ function Stats() {
         <PieChart data={gameStats} />
       </div>
       <div>
-        <h2>Component showing total time played (personal stats).</h2>
+        <h2>Total Time Played (personal stats)</h2>
         <TotalTimePlayed data={gameStats} />
       </div>
-
       <div>
-        <h2>Dotgraph showing time played per day per user (all users stats)</h2>
+        <h2>Dotgraph: Time Played Per Day Per User (all users stats)</h2>
         <SessionsGraph data={sessionsData} />
       </div>
       <div>
-        <h2>Bargraph showing time played per day per user (all users stats)</h2>
+        <h2>Line graph: Weekly Play Time (all users stats)</h2>
         <WeeklyPlayTimeGraph data={weeklyStats} />
       </div>
       <div>
-        <h2>Leaderboard (all users stats)</h2>
-        <Leaderboard data={gameStats} />
+        <h2>
+          Bargraph All: Total time per game across all users. (all users stats)
+        </h2>
+        <AllUsersBarGraph data={gameStats} />
       </div>
       <div>
-        <h2>Sessions Graph (all users stats)</h2>
-        <SessionsGraph data={sessionsData} />
-      </div>
-      <div>
-        <h2>Weekly Play Time Graph (all users stats)</h2>
-        <WeeklyPlayTimeGraph data={weeklyStats} />
+        <h2>Leaderboard Table (all users stats)</h2>
+        <LeaderboardTable data={gameStats} />
       </div>
     </div>
   );

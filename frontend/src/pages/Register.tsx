@@ -16,8 +16,8 @@ function Register() {
   const [password, setPassword] = useState("");
   const [profileImage, setProfileImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(
-    "/src/assets/user_default.jpeg"
-  ); // updated default image path
+    "/src/components/assets/user_default.jpeg"
+  );
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
 
@@ -123,7 +123,7 @@ function Register() {
           {/* Mushroom (columns 3-6) */}
           <div className="col-span-4 flex items-center justify-center">
             <img
-              src="./src/assets/svamp_animation.gif"
+              src="./src/components/assets/svamp_animation.gif"
               alt="A cute mushroom animation"
               height={180}
               width={180}
