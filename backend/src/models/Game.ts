@@ -2,14 +2,9 @@ import mongoose from "mongoose";
 
 const gameSchema = new mongoose.Schema({
   name: { type: String, required: true },
-<<<<<<< Updated upstream
-  description: { type: String },
-  createdAt: { type: Date, default: Date.now }
-});
-=======
-  imageUrl: { type: String, default: '' },
-  createdAt: { type: Date, default: Date.now }
+  description: { type: String }, // Game description
+  imageUrl: { type: String, default: "" }, // Game image URL
+  createdAt: { type: Date, default: Date.now }, // Creation timestamp
 });
 
->>>>>>> Stashed changes
-export const Game = mongoose.model('Game', gameSchema);
+export const Game = mongoose.model("Game", gameSchema);

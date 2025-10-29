@@ -1,0 +1,28 @@
+// frontend/src/api/apiClient.ts
+import axios from "axios";
+
+const API_BASE_URL = "http://localhost:3000/api";
+
+export const apiClient = axios.create({
+  baseURL: API_BASE_URL,
+  headers: {
+    "Content-Type": "application/json",
+  },
+});
+
+// Usage example:
+// apiClient.get("/users").then(res => ...)
+// apiClient.post("/users", userData)
+// apiClient.post("/users/upload-avatar", formData, {
+//   headers: { "Content-Type": "multipart/form-data" },
+// });
+
+export const fetchGameById = async (gameId: string) => {
+  try {
+    const response = await apiClient.get(`/games/${gameId}`);
+    return response.data; // Game data
+  } catch (error) {
+    console.error("Failed to fetch game:", error);
+    throw error;
+  }
+};

@@ -1,28 +1,8 @@
-import express, { Request, Response } from "express";
+import express from "express";
+import { testController } from "../controllers/gameController";
 
-<<<<<<< Updated upstream
-const gamesRouter = Router();
-
-// GET /api/games
-gamesRouter.get("/", (req, res) => {
-=======
 const router = express.Router();
 
-// GET /api/games
-router.get("/", (req: Request, res: Response) => {
->>>>>>> Stashed changes
-  // Get all games
-  res.send("Get games endpoint");
-});
+router.get("/test", testController);
 
-// GET /api/games/:id
-<<<<<<< Updated upstream
-gamesRouter.get("/:id", (req, res) => {
-=======
-router.get("/:id", (req: Request, res: Response) => {
->>>>>>> Stashed changes
-  // Get game by ID
-  res.send("Get game by ID endpoint");
-});
-
-export default gamesRouter;
+export default router;
