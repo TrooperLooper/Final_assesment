@@ -2,9 +2,8 @@ import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
 import dotenv from "dotenv";
-import logger from "./utils/logger";
 import userRouter from "./routes/userRoutes";
-import gamesRouter from "./routes/GameRoutes";
+import gamesRouter from "./routes/gameRoutes";
 import sessionRouter from "./routes/sessionRoutes";
 import { seedDatabase } from "./utils/seedDatabase";
 
