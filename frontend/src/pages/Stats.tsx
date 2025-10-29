@@ -1,10 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { fetchGameById } from "../components/api/apiClient";
-import BarGraph from "../components/BarGraph";
-import PieChart from "../components/PieChart";
+import BarGraph from "../components/Statistics/BarGraph";
+import PieChart from "../components/Statistics/PieChart";
+import TotalTimePlayed from "../components/Statistics/TotalTimePlayed";
+import Leaderboard from "../components/Statistics/Leaderboard";
+import SessionsGraph from "../components/Statistics/SessionsGraph";
+import WeeklyPlayTimeGraph from "../components/Statistics/WeeklyPlayTimeGraph";
 
 function Stats() {
   const [gameStats, setGameStats] = useState([]);
+  const [sessionsData, setSessionsData] = useState([]);
+  const [weeklyStats, setWeeklyStats] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -23,6 +29,21 @@ function Stats() {
           })
         );
         setGameStats(stats);
+
+        // Mock data for sessions (replace with actual data from the backend)
+        const mockSessionsData = gameIds.map((id) => ({
+          gameId: id,
+          sessions: Math.floor(Math.random() * 100),
+        }));
+        setSessionsData(mockSessionsData);
+
+        // Mock data for weekly stats (replace with actual data from the backend)
+        const mockWeeklyStats = gameIds.map((id) => ({
+          gameId: id,
+          minutesPlayed: Math.floor(Math.random() * 420), // Mock data for weekly minutes played
+        }));
+        setWeeklyStats(mockWeeklyStats);
+
         setLoading(false);
       } catch (error) {
         console.error("Failed to fetch stats:", error);
@@ -45,22 +66,32 @@ function Stats() {
         <h2>Percent of Total Time Per Game (personal stats)</h2>
         <PieChart data={gameStats} />
       </div>
-       <div>
+      <div>
         <h2>Component showing total time played (personal stats).</h2>
-        {/* Add your graph component here */}
+        <TotalTimePlayed data={gameStats} />
       </div>
-    
-       <div>
+
+      <div>
         <h2>Dotgraph showing time played per day per user (all users stats)</h2>
-        {/* Add your graph component here */}
+        <SessionsGraph data={sessionsData} />
       </div>
-      <div><h2>Bargraph showing time played per day per user (all users stats)</h2>
-        {/* Add your graph component here */}
+      <div>
+        <h2>Bargraph showing time played per day per user (all users stats)</h2>
+        <WeeklyPlayTimeGraph data={weeklyStats} />
       </div>
-       
-      <div><h2>Leaderboard (all users stats)</h2>
-        {/* Add your leaderboard component here */}
+      <div>
+        <h2>Leaderboard (all users stats)</h2>
+        <Leaderboard data={gameStats} />
       </div>
+      <div>
+        <h2>Sessions Graph (all users stats)</h2>
+        <SessionsGraph data={sessionsData} />
+      </div>
+      <div>
+        <h2>Weekly Play Time Graph (all users stats)</h2>
+        <WeeklyPlayTimeGraph data={weeklyStats} />
+      </div>
+    </div>
   );
 }
 

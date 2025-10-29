@@ -1,11 +1,11 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
-import { connectDB } from "./config/database";
-import logger from "./utils/logger";
-import userRouter from "./routes/userRoutes";
-import gamesRouter from "./routes/gameRoutes";
-import sessionRouter from "./routes/sessionRoutes";
+import { connectDB } from "./config/database.js";
+import logger from "./utils/logger.js";
+import userRouter from "./routes/userRoutes.js";
+import gamesRouter from "./routes/gameRoutes.js";
+import sessionRouter from "./routes/sessionRoutes.js";
 
 // Load environment variables
 dotenv.config();

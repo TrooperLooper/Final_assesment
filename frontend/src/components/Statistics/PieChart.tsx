@@ -1,14 +1,23 @@
-import React from "react";
 import { Pie } from "react-chartjs-2";
 
-const PieChart = ({ data }) => {
+interface GameStat {
+  gameName: string;
+  minutesPlayed: number;
+  iconUrl: string;
+}
+
+interface PieChartProps {
+  data: GameStat[];
+}
+
+const PieChart = ({ data }: PieChartProps) => {
   const totalTime = data.reduce((sum, item) => sum + item.minutesPlayed, 0);
 
   const chartData = {
-    labels: data.map((item) => item.gameName), // Game names
+    labels: data.map((item) => item.gameName),
     datasets: [
       {
-        data: data.map((item) => (item.minutesPlayed / totalTime) * 100), // Percent of total time
+        data: data.map((item) => (item.minutesPlayed / totalTime) * 100),
         backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0"],
       },
     ],
