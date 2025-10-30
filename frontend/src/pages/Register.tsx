@@ -37,17 +37,31 @@ const Register: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-purple-700 via-blue-800 to-blue-950">
-      <div className="bg-white p-8 rounded-xl shadow-2xl max-w-md w-full">
-        <h1 className="text-4xl font-bold text-center mb-6 text-gray-800">
-          Register
-        </h1>
+    <>
+      <Header />
+      {/* Gradient background as a -z layer */}
+      <div className="fixed inset-0 -z-10 w-full h-full bg-gradient-to-t from-pink-400 via-pink-700 to-red-700" />
+      <div className="min-h-screen flex flex-col items-center justify-center">
+        <style>{`
+          .star-animate {
+            animation: twinkle 1s infinite ease-in-out, rotateStar 8s linear infinite;
+          }
+          @keyframes twinkle {
+            0%, 100% { opacity: 0.5; transform: scale(1); }
+            70% { opacity: 1; transform: scale(10); }
+          }
+          @keyframes rotateStar {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+          }
+        `}</style>
 
-        {error && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-            {error}
-          </div>
-        )}
+        {/* Headline on top, centered */}
+        <div className="w-full flex justify-center ">
+          <h1 className="text-8xl font-bold font-['Pixelify_Sans'] text-yellow-300 drop-shadow-lg text-center">
+            GAME TIMER
+          </h1>
+        </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>

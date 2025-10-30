@@ -53,8 +53,18 @@ export default function Timer({ duration, onTimeUp, autoStart = false }: TimerPr
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
-  const toggleTimer = () => {
-    setIsRunning(!isRunning);
+  const startTimer = () => {
+    if (!isRunning) {
+      setIsRunning(true);
+      intervalRef.current = setInterval(() => {
+        setSeconds((prev) => prev + 1);
+      }, 1000);
+    }
+  };
+
+  const stopTimer = () => {
+    setIsRunning(false);
+    if (intervalRef.current) clearInterval(intervalRef.current);
   };
 
   const resetTimer = () => {
@@ -88,11 +98,18 @@ export default function Timer({ duration, onTimeUp, autoStart = false }: TimerPr
           onClick={toggleTimer}
           className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors"
         >
-          {isRunning ? 'Pause' : 'Resume'}
+          Start
         </button>
-        <button 
+        <button
+          onClick={stopTimer}
+          disabled={!isRunning}
+          className="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg font-bold text-lg transition"
+        >
+          Pause
+        </button>
+        <button
           onClick={resetTimer}
-          className="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg transition-colors"
+          className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-bold text-lg transition"
         >
           Reset
         </button>
