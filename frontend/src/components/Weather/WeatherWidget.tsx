@@ -1,4 +1,7 @@
+/// <reference types="vite/client" />
+
 import React, { useEffect, useState } from "react";
+import { FiCloudRain } from "react-icons/fi";
 
 interface WeatherWidgetProps {}
 
@@ -67,21 +70,23 @@ const WeatherWidget: React.FC<WeatherWidgetProps> = () => {
   }, []);
 
   return (
-    <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-      <div>
-        <div style={{ fontWeight: "bold" }}>{date}</div>
-        {weather && (
-          <div>
-            <img
-              src={`https://openweathermap.org/img/wn/${weather.icon}@2x.png`}
-              alt={weather.description}
-              style={{ verticalAlign: "middle", width: 32, height: 32 }}
-            />
-            <span style={{ fontSize: "1.2em" }}>{weather.temp} °C</span>
-            <span style={{ marginLeft: 8 }}>{weather.city}</span>
-          </div>
-        )}
-      </div>
+    <div className="flex items-center gap-2 text-xs font-normal bg-black/20 rounded px-3 py-2 min-w-[140px] max-w-[200px] text-white">
+      <div className="font-bold">{date}</div>
+      {weather ? (
+        <div className="flex items-center gap-1">
+          <img
+            src={`https://openweathermap.org/img/wn/${weather.icon}.png`}
+            alt={weather.description}
+            className="w-5 h-5 filter invert brightness-200"
+          />
+          <span className="ml-1">{weather.temp} °C</span>
+        </div>
+      ) : (
+        <div className="flex items-center gap-1 opacity-60">
+          <FiCloudRain className="w-5 h-5" />
+          <span>-- °C</span>
+        </div>
+      )}
     </div>
   );
 };
