@@ -1,7 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { apiClient } from '../components/api/apiClient';
+import { useParams, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
+const apiClient = axios.create({
+  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3000/api'
+});
+
+const TIMER_MULTIPLIER = parseInt(import.meta.env.VITE_TIMER_MULTIPLIER || '60');
+const gameHourInMs = TIMER_MULTIPLIER * 1000; // 60 seconds = 1 game hour
 
 interface Game {
   _id: string;
@@ -11,190 +17,109 @@ interface Game {
   gifUrl?: string;
 }
 
-const Games: React.FC = () => {
+const Play: React.FC = () => {
+  const { gameId } = useParams<{ gameId: string }>();
   const navigate = useNavigate();
-  const [games, setGames] = useState<Game[]>([]);
+  const [game, setGame] = useState<Game | null>(null);
   const [loading, setLoading] = useState(true);
-  const [showForm, setShowForm] = useState(false);
-  const [editingGame, setEditingGame] = useState<Game | null>(null);
-  const [formData, setFormData] = useState({
-    name: '',
-    description: '',
-    gifUrl: ''
-  });
+  const [gameTime, setGameTime] = useState(0); // Time in game hours
+  const [startTime] = useState(Date.now());
 
   useEffect(() => {
-    fetchGames();
-  }, []);
-
-  useEffect(() => {
-    if (editingGame) {
-      setFormData({
-        name: editingGame.name,
-        description: editingGame.description || '',
-        gifUrl: editingGame.gifUrl || ''
-      });
-      setShowForm(true);
+    if (gameId) {
+      fetchGame(gameId);
     }
-  }, [editingGame]);
+  }, [gameId]);
 
-  const fetchGames = async () => {
+  useEffect(() => {
+    // Update game time using gameHourInMs
+    const interval = setInterval(() => {
+      const elapsedMs = Date.now() - startTime;
+      const gameHours = elapsedMs / gameHourInMs; // Now it's being used
+      setGameTime(gameHours);
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [startTime, gameHourInMs]);
+
+  const fetchGame = async (id: string) => {
     try {
-      const response = await apiClient.get('/games');
-      setGames(response.data);
+      const response = await apiClient.get(`/games/${id}`);
+      setGame(response.data);
     } catch (error) {
-      console.error('Error fetching games:', error);
+      console.error('Error fetching game:', error);
     } finally {
       setLoading(false);
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleEndGame = async () => {
+    const durationInSeconds = (Date.now() - startTime) / 1000;
+    
     try {
-      if (editingGame) {
-        await apiClient.put(`/games/${editingGame._id}`, formData);
-      } else {
-        await apiClient.post('/games', formData);
-      }
-      setFormData({ name: '', description: '', gifUrl: '' });
-      setShowForm(false);
-      setEditingGame(null);
-      fetchGames();
+      await apiClient.post('/games/complete', {
+        gameId,
+        durationInSeconds
+      });
+      navigate('/games');
     } catch (error) {
-      console.error('Error saving game:', error);
+      console.error('Error ending game:', error);
     }
   };
 
-  const handleCancel = () => {
-    setShowForm(false);
-    setEditingGame(null);
-    setFormData({ name: '', description: '', gifUrl: '' });
-  };
-
   if (loading) {
-    return <div className="flex justify-center items-center min-h-screen text-white">Loading...</div>;
+    return <div className="flex justify-center items-center min-h-screen text-white">Loading game...</div>;
+  }
+
+  if (!game) {
+    return <div className="flex justify-center items-center min-h-screen text-white">Game not found</div>;
   }
 
   return (
-    <div className="min-h-screen bg-black flex flex-col items-center py-12 px-4">
-      <h1 className="text-5xl font-extrabold text-white mb-10 retro-shadow text-center">
-        Choose a game to play
-      </h1>
-      
-      <button 
-        onClick={() => setShowForm(!showForm)} 
-        className="px-6 py-3 bg-indigo-600 text-white rounded-lg font-medium mb-8 hover:bg-indigo-700 transition-colors"
-      >
-        {showForm ? 'Cancel' : 'Add New Game'}
-      </button>
-
-      {showForm && (
-        <form onSubmit={handleSubmit} className="bg-white p-8 rounded-xl shadow-md mb-8 space-y-4 max-w-lg w-full">
-          <h2 className="text-2xl font-semibold mb-4 text-gray-800">
-            {editingGame ? 'Edit Game' : 'Create New Game'}
-          </h2>
-          <input
-            type="text"
-            placeholder="Game Name"
-            value={formData.name}
-            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-black"
-            required
-          />
-          <textarea
-            placeholder="Description (optional)"
-            value={formData.description}
-            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent min-h-[100px] resize-y text-black"
-          />
-          <input
-            type="text"
-            placeholder="GIF URL (e.g., /pacman_gameicon.gif)"
-            value={formData.gifUrl}
-            onChange={(e) => setFormData({ ...formData, gifUrl: e.target.value })}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-black"
-          />
-          {formData.gifUrl && (
-            <div className="max-w-xs rounded-lg overflow-hidden">
-              <img src={formData.gifUrl} alt="Preview" className="w-full h-auto" />
-            </div>
-          )}
-          <div className="flex gap-3">
-            <button 
-              type="submit"
-              className="flex-1 px-4 py-3 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-colors"
-            >
-              {editingGame ? 'Update Game' : 'Create Game'}
-            </button>
-            <button 
-              type="button"
-              onClick={handleCancel}
-              className="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300 transition-colors"
-            >
-              Cancel
-            </button>
-          </div>
-        </form>
-      )}
-
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 w-full max-w-6xl">
-        {games.map((game) => (
-          <GameCard 
-            key={game._id} 
-            game={game} 
-            onEdit={setEditingGame}
-            onPlay={() => navigate(`/play/${game._id}`)}
-          />
-        ))}
-      </div>
-    </div>
-  );
-};
-
-const GameCard: React.FC<{ 
-  game: Game; 
-  onEdit: (game: Game) => void;
-  onPlay: () => void;
-}> = ({ game, onEdit, onPlay }) => {
-  const [imageError, setImageError] = useState(false);
-
-  return (
-    <div 
-      onClick={onPlay}
-      className="flex flex-col items-center rounded-xl shadow-lg bg-gradient-to-br from-indigo-500 to-purple-600 p-4 transition-transform hover:scale-105 group cursor-pointer w-full max-w-[180px] mx-auto"
-    >
-      <div className="overflow-hidden rounded-lg border-4 border-white mb-3 w-[140px] h-[140px]">
-        {game.gifUrl && !imageError ? (
-          <img 
-            src={game.gifUrl} 
-            alt={`${game.name} game animation`}
-            className="object-cover w-full h-full"
-            onError={() => setImageError(true)}
-          />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-purple-700 to-indigo-700 text-white text-6xl font-bold">
-            {game.name.charAt(0).toUpperCase()}
+    <div className="min-h-screen bg-black flex flex-col items-center justify-center py-12 px-4">
+      <div className="bg-gray-800 p-8 rounded-xl shadow-lg max-w-2xl w-full">
+        <h1 className="text-4xl font-bold text-white mb-4 text-center">
+          {game.name}
+        </h1>
+        
+        {game.gifUrl && (
+          <div className="mb-6">
+            <img 
+              src={game.gifUrl} 
+              alt={game.name}
+              className="w-full max-h-96 object-contain rounded-lg"
+            />
           </div>
         )}
+        
+        {game.description && (
+          <p className="text-gray-300 text-lg mb-6 text-center">{game.description}</p>
+        )}
+        
+        <div className="bg-gray-700 p-4 rounded-lg mb-6">
+          <p className="text-white text-xl text-center">
+            Game Time: <span className="font-bold">{gameTime.toFixed(2)} hours</span>
+          </p>
+          <p className="text-gray-400 text-sm text-center mt-2">
+            (Timer Multiplier: {TIMER_MULTIPLIER}x - {TIMER_MULTIPLIER} real seconds = 1 game hour)
+          </p>
+        </div>
+
+        <div className="text-center text-gray-300 mb-6">
+          <p className="text-3xl mb-4">🎮</p>
+          <p>Game is running...</p>
+          <p className="text-sm text-gray-400 mt-2">This is a demo. Actual game logic would go here.</p>
+        </div>
+        
+        <button
+          onClick={handleEndGame}
+          className="w-full px-6 py-3 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition-colors"
+        >
+          End Game & Save
+        </button>
       </div>
-      <h4 className="text-lg font-bold text-white text-center drop-shadow mb-2">
-        {game.name}
-      </h4>
-      {game.description && (
-        <p className="text-white text-xs text-center mb-2 opacity-80">{game.description}</p>
-      )}
-      <button
-        onClick={(e) => {
-          e.stopPropagation();
-          onEdit(game);
-        }}
-        className="w-full px-3 py-1 bg-white text-gray-700 rounded-lg font-medium hover:bg-gray-100 transition-colors text-sm opacity-0 group-hover:opacity-100"
-      >
-        Edit
-      </button>
     </div>
   );
 };
 
-export default Games;
+export default Play;
