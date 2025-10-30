@@ -5,23 +5,28 @@ import { z } from "zod";
 import Star from "../components/Star";
 import { apiClient } from "../components/api/apiClient";
 import { useNavigate } from "react-router-dom";
+import defaultAvatar from "../components/assets/user_default.jpeg";
 
 // Zod schema for validation
 const registerSchema = z.object({
-  username: z.string().min(3, "Username must be at least 3 characters"),
-  password: z.string().min(6, "Password must be at least 6 characters"),
+  email: z.string().email("Invalid email address"),
+  firstName: z.string().min(1, "First name is required"),
+  lastName: z.string().min(1, "Last name is required"),
 });
 
 function Register() {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [imagePreview, setImagePreview] = useState(
-    "./src/components/assets/default_avatar.png"
-  );
+  const [email, setEmail] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [imagePreview, setImagePreview] = useState(defaultAvatar);
   const [errors, setErrors] = useState({});
   const navigate = useNavigate();
 
-  const isFormValid = registerSchema.safeParse({ username, password }).success;
+  const isFormValid = registerSchema.safeParse({
+    email,
+    firstName,
+    lastName,
+  }).success;
 
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
@@ -36,7 +41,7 @@ function Register() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const result = registerSchema.safeParse({ username, password });
+    const result = registerSchema.safeParse({ email, firstName, lastName });
     if (!result.success) {
       const formErrors = {};
       result.error.errors.forEach((error) => {
@@ -47,17 +52,16 @@ function Register() {
     }
     setErrors({});
 
-    // Call your API client here
     try {
       await apiClient.post("/register", {
-        username,
-        password,
+        email,
+        firstName,
+        lastName,
         avatar: imagePreview,
       });
-      navigate("/"); // Redirect to homepage or login page after successful registration
+      navigate("/");
     } catch (error) {
       console.error("Registration error:", error);
-      // Handle error (e.g., show notification, set error state, etc.)
     }
   };
 
@@ -136,46 +140,67 @@ function Register() {
               <div className="flex flex-col gap-4 w-1/2">
                 <div className="flex flex-col">
                   <label
-                    htmlFor="username"
+                    htmlFor="email"
                     className="text-yellow-200 font-semibold mb-1 text-sm"
                   >
-                    USERNAME
+                    EMAIL
                   </label>
                   <input
-                    type="text"
-                    id="username"
-                    name="username"
-                    value={username}
-                    onChange={(e) => setUsername(e.target.value)}
+                    type="email"
+                    id="email"
+                    name="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
                     required
                     className="w-full rounded px-3 py-1 bg-white opacity-80 text-black border-2 border-pink-400 focus:outline-none focus:border-yellow-300 text-sm"
                   />
-                  {errors.username && (
+                  {errors.email && (
+                    <span className="text-red-500 text-xs">{errors.email}</span>
+                  )}
+                </div>
+
+                <div className="flex flex-col">
+                  <label
+                    htmlFor="firstName"
+                    className="text-yellow-200 font-semibold mb-1 text-sm"
+                  >
+                    FIRST NAME
+                  </label>
+                  <input
+                    type="text"
+                    id="firstName"
+                    name="firstName"
+                    value={firstName}
+                    onChange={(e) => setFirstName(e.target.value)}
+                    required
+                    className="w-full rounded px-3 py-1 bg-white opacity-80 text-black border-2 border-pink-400 focus:outline-none focus:border-yellow-300 text-sm"
+                  />
+                  {errors.firstName && (
                     <span className="text-red-500 text-xs">
-                      {errors.username}
+                      {errors.firstName}
                     </span>
                   )}
                 </div>
 
                 <div className="flex flex-col">
                   <label
-                    htmlFor="password"
+                    htmlFor="lastName"
                     className="text-yellow-200 font-semibold mb-1 text-sm"
                   >
-                    PASSWORD
+                    LAST NAME
                   </label>
                   <input
-                    type="password"
-                    id="password"
-                    name="password"
-                    value={password}
-                    onChange={(e) => setPassword(e.target.value)}
+                    type="text"
+                    id="lastName"
+                    name="lastName"
+                    value={lastName}
+                    onChange={(e) => setLastName(e.target.value)}
                     required
                     className="w-full rounded px-3 py-1 bg-white opacity-80 text-black border-2 border-pink-400 focus:outline-none focus:border-yellow-300 text-sm"
                   />
-                  {errors.password && (
+                  {errors.lastName && (
                     <span className="text-red-500 text-xs">
-                      {errors.password}
+                      {errors.lastName}
                     </span>
                   )}
                 </div>
@@ -185,17 +210,17 @@ function Register() {
               <div className="flex flex-col gap-4 w-1/2 rounded-lg ">
                 {/* 1st: Label */}
                 <label className="text-yellow-200 font-semibold text-sm">
-                  USER AVATAR
+                  PROFILE PICTURE
                 </label>
 
                 {/* 2nd: Image preview and upload prompt */}
                 <div
-                  className="flex flex-row gap-4 items-center border-2 border-dashed bg-pink-400 border-white rounded-lg p-3 cursor-pointer"
+                  className="flex flex-row gap-4 mb-6 items-center border-2 border-dashed bg-pink-400 border-white rounded-lg p-3 cursor-pointer"
                   onClick={() => document.getElementById("fileInput").click()}
                 >
                   <img
                     src={imagePreview}
-                    alt="User avatar"
+                    alt="Profile avatar"
                     className="w-16 h-16 rounded-full object-cover border-2 border-pink-400"
                   />
                   <div className="flex flex-col">

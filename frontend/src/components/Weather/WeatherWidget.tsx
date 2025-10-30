@@ -18,8 +18,6 @@ const WeatherWidget: React.FC<WeatherWidgetProps> = () => {
 
   useEffect(() => {
     const apiKey = import.meta.env.VITE_WEATHER_API_KEY || "";
-    console.log("Weather API Key:", import.meta.env.VITE_WEATHER_API_KEY); // Add this line
-
     setDate(
       new Date().toLocaleDateString("en-GB", {
         weekday: "long",
@@ -72,19 +70,21 @@ const WeatherWidget: React.FC<WeatherWidgetProps> = () => {
   }, []);
 
   return (
-    <div className="flex items-center gap-2 text-xs font-normal bg-black/20 rounded px-3 py-2 min-w-[140px] max-w-[200px] text-white">
-      <div className="font-bold">{date}</div>
+    <div className="grid grid-rows-2 grid-cols-1 justify-start items-start text-xs font-normal rounded px-3 py-2 min-w-[140px] max-w-[200px] text-white">
+      <div className="font-bold justify-self-start">{date}</div>
       {weather ? (
-        <div className="flex items-center gap-1">
+        <div className="flex items-start gap-1 justify-start">
           <img
             src={`https://openweathermap.org/img/wn/${weather.icon}.png`}
             alt={weather.description}
             className="w-5 h-5 filter invert brightness-200"
           />
-          <span className="ml-1">{weather.temp} °C</span>
+          <span className="text-base font-bold justify-self-start">
+            {weather.temp} °C
+          </span>
         </div>
       ) : (
-        <div className="flex items-center gap-1 opacity-60">
+        <div className="flex items-center gap-1 opacity-60 justify-start">
           <FiCloudRain className="w-5 h-5" />
           <span>-- °C</span>
         </div>

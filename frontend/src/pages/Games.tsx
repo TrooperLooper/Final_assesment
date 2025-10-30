@@ -1,9 +1,12 @@
+import Header from "../components/Navigation/Header";
+
 function Games() {
   const games = [
     {
       name: "Pac-Man",
       image: "./src/components/assets/pacman_gameicon.gif",
       color: "bg-yellow-400",
+      small: true,
     },
     {
       name: "Asteroids",
@@ -23,8 +26,9 @@ function Games() {
   ];
 
   return (
-    <div className="min-h-screen bg-black flex flex-col items-center py-12">
-      <h1 className="text-5xl font-extrabold text-white mb-10 retro-shadow text-center">
+    <div className="min-h-screen flex flex-col items-center py-12 bg-gradient-to-b from-purple-700 via-blue-800 to-blue-950">
+      <Header />
+      <h1 className="text-5xl font-['Pixelify_Sans'] mt-18 text-white mb-15 drop-shadow text-center">
         Choose a game to play
       </h1>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
@@ -35,16 +39,21 @@ function Games() {
             style={{ width: "180px" }}
           >
             <div
-              className="overflow-hidden rounded-lg border-4 border-white mb-3"
+              className="overflow-hidden rounded-lg border-4 border-white mb-3 bg-black flex items-center justify-center"
               style={{ width: "140px", height: "140px" }}
             >
               <img
                 src={game.image}
                 alt={`${game.name} game animation`}
-                className="object-cover w-full h-full"
+                className={
+                  game.small
+                    ? "object-cover w-4/5 h-4/5"
+                    : "object-cover w-full h-full"
+                }
+                style={game.small ? { width: "80px", height: "80px" } : {}}
               />
             </div>
-            <h4 className="text-lg font-bold text-white text-center drop-shadow retro-shadow">
+            <h4 className="text-lg font-['Winky_Sans'] font-bold text-white text-center drop-shadow tracking-widest uppercase">
               {game.name}
             </h4>
           </div>
