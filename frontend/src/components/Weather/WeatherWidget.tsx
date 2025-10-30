@@ -17,6 +17,9 @@ const WeatherWidget: React.FC<WeatherWidgetProps> = () => {
   const [date, setDate] = useState<string>("");
 
   useEffect(() => {
+    const apiKey = import.meta.env.VITE_WEATHER_API_KEY || "";
+    console.log("Weather API Key:", import.meta.env.VITE_WEATHER_API_KEY); // Add this line
+
     setDate(
       new Date().toLocaleDateString("en-GB", {
         weekday: "long",
@@ -26,7 +29,6 @@ const WeatherWidget: React.FC<WeatherWidgetProps> = () => {
       })
     );
 
-    const apiKey = import.meta.env.VITE_WEATHER_API_KEY || "";
     const fetchWeather = (city: string) => {
       fetch(
         `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric&lang=en`
