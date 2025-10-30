@@ -4,10 +4,9 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build",
-    "lint": "eslint .",
-    "preview": "vite preview",
+    "dev": "nodemon --watch src --exec tsx src/server.ts",
+    "seed": "tsx src/utils/seedDatabase.ts",
+    "build": "tsc",
     "start": "node dist/server.js"
   },
   "dependencies": {

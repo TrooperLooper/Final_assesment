@@ -1,8 +1,12 @@
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import { Game } from "../models/Game";
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
 
-dotenv.config(); // Load .env file
+dotenv.config();
+
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/retro-games';
 
 // Seed initial game data
 async function seedDatabase() {
@@ -30,15 +34,36 @@ async function seedDatabase() {
   ];
 
   try {
-    console.log("Clearing existing games...");
+    console.log("🔌 Connecting to MongoDB...");
+    await mongoose.connect(MONGODB_URI);
+    console.log("✅ Connected to MongoDB");
+    
+    console.log("🗑️  Clearing existing games...");
     await Game.deleteMany({});
     
-    console.log("Seeding games into the database...");
-    await Game.insertMany(games);
-    console.log("Database seeding completed successfully.");
+    console.log("🌱 Seeding games into the database...");
+    const createdGames = await Game.insertMany(games);
+    console.log(`✅ Successfully seeded ${createdGames.length} games:`);
+    createdGames.forEach(game => {
+      console.log(`  - ${game.name} (ID: ${game._id})`);
+    });
+    
   } catch (error) {
-    console.error("Error seeding the database:", error);
+    console.error("❌ Error seeding the database:", error);
+    process.exit(1);
+  } finally {
+    await mongoose.connection.close();
+    console.log("🔌 Database connection closed");
+    process.exit(0);
   }
+}
+
+// ES Module way to check if this is the main module
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+
+if (import.meta.url === `file://${process.argv[1]}`) {
+  seedDatabase();
 }
 
 export { seedDatabase };

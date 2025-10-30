@@ -1,18 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import CircularTimer from './CircularTimer';
+import RetroTimer from '../components/Timer/RetroTimer';
 
 const apiClient = axios.create({
   baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3000/api'
 });
 
-const TIMER_MULTIPLIER = parseInt(import.meta.env.VITE_TIMER_MULTIPLIER || '60');
 const MAX_MULTIPLIER_MINUTES = 30;
-const gameHourInMs = TIMER_MULTIPLIER * 1000;
 
 interface Game {
-  _id: string;
+  id: string;
+  _id?: string;
   name: string;
   description?: string;
   imageUrl?: string;
@@ -24,10 +23,29 @@ const Play: React.FC = () => {
   const navigate = useNavigate();
   const [game, setGame] = useState<Game | null>(null);
   const [loading, setLoading] = useState(true);
-  const [gameTime, setGameTime] = useState(0);
+  const [error, setError] = useState<string | null>(null);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
-  const [startTime] = useState(Date.now());
   const [timerStopped, setTimerStopped] = useState(false);
+  const [sessionId, setSessionId] = useState<number | null>(null);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Fetch game
+  const fetchGame = async (id: string) => {
+    try {
+      setLoading(true);
+      console.log('Fetching game:', id);
+      const response = await apiClient.get(`/games/${id}`);
+      console.log('Game fetched:', response.data);
+      setGame(response.data);
+      setError(null);
+    } catch (err) {
+      console.error('Error fetching game:', err);
+      setError('Failed to load game');
+    } finally {
+      setLoading(false);
+    }
+  };
+
 
   useEffect(() => {
     if (gameId) {
@@ -35,64 +53,103 @@ const Play: React.FC = () => {
     }
   }, [gameId]);
 
+  // Start session and timer when game loads
   useEffect(() => {
-    if (timerStopped) return;
+    if (!game) return;
 
-    const interval = setInterval(() => {
-      const elapsedMs = Date.now() - startTime;
-      const gameHours = elapsedMs / gameHourInMs;
-      const realSeconds = Math.floor(elapsedMs / 1000);
-      const maxSeconds = MAX_MULTIPLIER_MINUTES * 60;
-      
-      // Stop timer at 30 minutes (1800 seconds)
-      if (realSeconds >= maxSeconds) {
-        setElapsedSeconds(maxSeconds);
-        setTimerStopped(true);
-        clearInterval(interval);
-        return;
+    const startGameSession = async () => {
+      try {
+        const demoUserId = 1;
+        
+        console.log('Starting session for game:', game.id || game._id);
+        const response = await apiClient.post('/sessions/start', {
+          userId: demoUserId,
+          gameId: game.id || game._id
+        });
+        
+        console.log('Session started:', response.data);
+        setSessionId(response.data.sessionId);
+        
+      } catch (error) {
+        console.error('Failed to start session:', error);
       }
       
-      setGameTime(gameHours);
-      setElapsedSeconds(realSeconds);
-    }, 1000);
+      // Start timer
+      const startTime = Date.now();
+      intervalRef.current = setInterval(() => {
+        const elapsedMs = Date.now() - startTime;
+        const realSeconds = Math.floor(elapsedMs / 1000);
+        const maxSeconds = MAX_MULTIPLIER_MINUTES * 60;
+        
+        if (realSeconds >= maxSeconds) {
+          setElapsedSeconds(maxSeconds);
+          setTimerStopped(true);
+          if (intervalRef.current) {
+            clearInterval(intervalRef.current);
+          }
+          return;
+        }
+        
+        setElapsedSeconds(realSeconds);
+      }, 1000);
+    };
 
-    return () => clearInterval(interval);
-  }, [startTime, gameHourInMs, timerStopped]);
+    startGameSession();
 
-  const fetchGame = async (id: string) => {
-    try {
-      const response = await apiClient.get(`/games/${id}`);
-      setGame(response.data);
-    } catch (error) {
-      console.error('Error fetching game:', error);
-    } finally {
-      setLoading(false);
-    }
-  };
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current);
+      }
+    };
+  }, [game]);
 
   const handleEndGame = async () => {
-    const durationInSeconds = (Date.now() - startTime) / 1000;
-    
-    try {
-      await apiClient.post('/games/complete', {
-        gameId,
-        durationInSeconds
-      });
-      navigate('/games');
-    } catch (error) {
-      console.error('Error ending game:', error);
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
     }
+    
+    if (sessionId) {
+      try {
+        await apiClient.post('/sessions/stop', { sessionId });
+      } catch (error) {
+        console.error('Failed to stop session:', error);
+      }
+    }
+    
+    navigate('/games');
   };
 
   if (loading) {
-    return <div className="flex justify-center items-center min-h-screen text-white">Loading game...</div>;
+    return (
+      <div className="min-h-screen bg-black flex justify-center items-center">
+        <p className="text-white text-xl">Loading game...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-black flex justify-center items-center">
+        <div className="text-center">
+          <p className="text-red-500 text-xl mb-4">{error}</p>
+          <button 
+            onClick={() => navigate('/games')}
+            className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded"
+          >
+            Back to Games
+          </button>
+        </div>
+      </div>
+    );
   }
 
   if (!game) {
-    return <div className="flex justify-center items-center min-h-screen text-white">Game not found</div>;
+    return (
+      <div className="min-h-screen bg-black flex justify-center items-center">
+        <p className="text-white text-xl">Game not found</p>
+      </div>
+    );
   }
-
-  const elapsedMinutes = Math.floor(elapsedSeconds / 60);
 
   return (
     <div className="min-h-screen bg-black flex flex-col items-center justify-center py-12 px-4">
@@ -101,19 +158,17 @@ const Play: React.FC = () => {
           {game.name}
         </h1>
         
-        {/* Circular Timer */}
         <div className="flex justify-center mb-6">
-          <CircularTimer 
-            elapsedMinutes={elapsedMinutes}
-            maxMinutes={MAX_MULTIPLIER_MINUTES}
+          <RetroTimer 
+            elapsedSeconds={elapsedSeconds}
             isStopped={timerStopped}
           />
         </div>
         
-        {game.gifUrl && (
+        {(game.gifUrl || game.imageUrl) && (
           <div className="mb-6">
             <img 
-              src={game.gifUrl} 
+              src={game.gifUrl || game.imageUrl} 
               alt={game.name}
               className="w-full max-h-96 object-contain rounded-lg"
             />
@@ -124,22 +179,11 @@ const Play: React.FC = () => {
           <p className="text-gray-300 text-lg mb-6 text-center">{game.description}</p>
         )}
         
-        <div className="bg-gray-700 p-4 rounded-lg mb-6">
-          <p className="text-white text-xl text-center">
-            Game Time: <span className="font-bold">{gameTime.toFixed(2)} hours</span>
-          </p>
-        </div>
-
-        <div className="text-center text-gray-300 mb-6">
-          <p className="text-3xl mb-4">🎮</p>
-          <p>Game is running...</p>
-        </div>
-        
         <button
           onClick={handleEndGame}
-          className="w-full px-6 py-3 bg-red-600 text-white rounded-lg font-medium hover:bg-red-700 transition-colors"
+          className="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-3 px-6 rounded-lg transition-colors"
         >
-          End Game & Save
+          End Game
         </button>
       </div>
     </div>
