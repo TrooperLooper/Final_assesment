@@ -68,7 +68,9 @@ function Register() {
   return (
     <>
       <Header />
-      <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-t from-pink-400 via-pink-700 to-red-700">
+      {/* Gradient background as a -z layer */}
+      <div className="fixed inset-0 -z-10 w-full h-full bg-gradient-to-t from-pink-400 via-pink-700 to-red-700" />
+      <div className="min-h-screen flex flex-col items-center justify-center">
         <style>{`
           .star-animate {
             animation: twinkle 1s infinite ease-in-out, rotateStar 8s linear infinite;
@@ -84,8 +86,8 @@ function Register() {
         `}</style>
 
         {/* Headline on top, centered */}
-        <div className="w-full flex justify-center mt-8 mb-4">
-          <h1 className="text-8xl font-bold font-['Pixelify_Sans'] text-yellow-300 drop-shadow-lg mb-0 text-center">
+        <div className="w-full flex justify-center ">
+          <h1 className="text-8xl font-bold font-['Pixelify_Sans'] text-yellow-300 drop-shadow-lg text-center">
             GAME TIMER
           </h1>
         </div>

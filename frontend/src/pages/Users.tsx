@@ -48,12 +48,23 @@ function Users() {
                 <div className="w-48 h-48 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden mb-2">
                   <img
                     src={
-                      user.profilePicture?.startsWith("/uploads")
+                      user.profilePicture &&
+                      user.profilePicture.startsWith("/uploads")
                         ? `http://localhost:3000${user.profilePicture}`
-                        : user.profilePicture || defaultAvatar
+                        : user.profilePicture
+                        ? user.profilePicture
+                        : defaultAvatar
                     }
-                    alt={`${user.firstName} ${user.lastName}`}
+                    alt={
+                      user.firstName && user.lastName
+                        ? `${user.firstName} ${user.lastName}`
+                        : "User avatar"
+                    }
                     className="object-cover w-40 h-40"
+                    onError={(e) => {
+                      e.currentTarget.onerror = null;
+                      e.currentTarget.src = defaultAvatar;
+                    }}
                   />
                 </div>
                 <div className="text-lg font-['Winky_Sans'] text-white drop-shadow text-center">
