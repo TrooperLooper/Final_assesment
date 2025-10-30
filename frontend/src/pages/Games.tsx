@@ -26,7 +26,7 @@ function Games() {
   ];
 
   return (
-    <div className="min-h-screen flex flex-col items-center py-12 bg-gradient-to-b from-purple-700 via-blue-800 to-blue-950">
+    <div className="min-h-screen flex flex-col items-center py-12 bg-gradient-to-b from-blue-950 via-blue-800 to-purple-700">
       <Header />
       <h1 className="text-5xl font-['Pixelify_Sans'] mt-18 text-white mb-15 drop-shadow text-center">
         Choose a game to play

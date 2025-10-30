@@ -53,11 +53,11 @@ function Register() {
     setErrors({});
 
     try {
-      await apiClient.post("/register", {
+      await apiClient.post("/users", {
         email,
         firstName,
         lastName,
-        avatar: imagePreview,
+        profilePicture: imagePreview,
       });
       navigate("/");
     } catch (error) {
@@ -215,7 +215,7 @@ function Register() {
 
                 {/* 2nd: Image preview and upload prompt */}
                 <div
-                  className="flex flex-row gap-4 mb-6 items-center border-2 border-dashed bg-pink-400 border-white rounded-lg p-3 cursor-pointer"
+                  className="flex flex-row gap-4 mb-2 items-center border-2 border-dashed bg-pink-400 border-white rounded-lg p-3 cursor-pointer"
                   onClick={() => document.getElementById("fileInput").click()}
                 >
                   <img
@@ -244,7 +244,7 @@ function Register() {
                 <button
                   type="submit"
                   disabled={!isFormValid}
-                  className={`self-end py-1 px-4 rounded-lg font-bold text-base shadow-lg transition-all ${
+                  className={`z-10 self-end py-1 px-4 rounded-lg font-bold text-base shadow-lg transition-all ${
                     isFormValid
                       ? "bg-yellow-400 text-pink-900 hover:bg-yellow-300"
                       : "bg-gray-400 opacity-50 text-gray-700 cursor-not-allowed"

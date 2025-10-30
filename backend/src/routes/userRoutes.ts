@@ -1,8 +1,8 @@
 import express from "express";
 import { upload } from "../middleware/upload";
 import {
-  getAllUsers,
   createUser,
+  getAllUsers,
   getUserById,
   deleteUserById,
   updateUserById,
@@ -11,11 +11,11 @@ import {
 
 const router = express.Router();
 
-router.get("/", getAllUsers);              // Changed from /users
-router.get("/:id", getUserById);           // Changed from /users/:id
-router.post("/", createUser);              // Changed from /users
-router.put("/:id", updateUserById);        // Changed from /users/:id
-router.delete("/:id", deleteUserById);     // Changed from /users/:id
+router.get("/", getAllUsers);
+router.get("/:id", getUserById);
+router.post("/", upload.single("profilePicture"), createUser);
+router.put("/:id", updateUserById);
+router.delete("/:id", deleteUserById);
 router.post("/upload-avatar", upload.single("avatar"), uploadAvatar);
 
 export default router;
