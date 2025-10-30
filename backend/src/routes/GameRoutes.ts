@@ -1,28 +1,43 @@
-import express, { Request, Response } from "express";
+import express from "express";
+import { Game } from "../models/Game"; // Ensure the Game model is imported
+import logger from "../utils/logger"; // Ensure the logger utility is imported
 
-<<<<<<< Updated upstream
-const gamesRouter = Router();
-
-// GET /api/games
-gamesRouter.get("/", (req, res) => {
-=======
 const router = express.Router();
 
-// GET /api/games
-router.get("/", (req: Request, res: Response) => {
->>>>>>> Stashed changes
-  // Get all games
-  res.send("Get games endpoint");
+// Get all games
+router.get("/", async (req, res) => {
+  try {
+    const games = await Game.find();
+    logger.info(`Fetched ${games.length} games`);
+    res.json(games);
+  } catch (error) {
+    logger.error(`Error fetching games: ${error as Error}`);
+    res.status(500).json({ error: "Internal server error" });
+  }
 });
 
-// GET /api/games/:id
-<<<<<<< Updated upstream
-gamesRouter.get("/:id", (req, res) => {
-=======
-router.get("/:id", (req: Request, res: Response) => {
->>>>>>> Stashed changes
-  // Get game by ID
-  res.send("Get game by ID endpoint");
+// Get a game by ID
+router.get("/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Validate the ID
+    if (!id.match(/^[0-9a-fA-F]{24}$/)) {
+      return res.status(400).json({ error: "Invalid game ID" });
+    }
+
+    const game = await Game.findById(id);
+    if (!game) {
+      logger.warn(`Game not found with ID: ${id}`);
+      return res.status(404).json({ error: "Game not found" });
+    }
+
+    logger.info(`Fetched game with ID: ${id}`);
+    res.json(game);
+  } catch (error) {
+    logger.error(`Error fetching game by ID: ${(error as Error).message}`);
+    res.status(500).json({ error: "Internal server error" });
+  }
 });
 
-export default gamesRouter;
+export default router;

@@ -1,14 +1,11 @@
-<<<<<<< Updated upstream
-=======
 import { Request, Response } from "express";
 import { User } from "../models/User";
 import { z } from "zod";
 
 const userSchema = z.object({
-  firstName: z.string().min(1, "First name is required"),
-  lastName: z.string().min(1, "Last name is required"),
-  email: z.string().email("Valid email is required"),
-  profilePicture: z.string().optional(),
+  email: z.string().email(),
+  firstName: z.string().min(1),
+  profilePicture: z.string().optional(), // Use profilePicture for consistency
 });
 
 export const getAllUsers = async (req: Request, res: Response) => {
@@ -54,4 +51,3 @@ export const uploadAvatar = async (req: Request, res: Response) => {
 
   res.status(201).json({ profilePicture: avatarPath });
 };
->>>>>>> Stashed changes

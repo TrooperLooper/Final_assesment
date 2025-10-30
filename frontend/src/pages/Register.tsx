@@ -1,15 +1,25 @@
 // @ts-nocheck
 import { useState } from "react";
+import { z } from "zod";
 import Star from "../components/Star";
-import axios from "axios";
+import { apiClient } from "../components/api/apiClient";
+import { useNavigate } from "react-router-dom";
+
+// Zod schema for validation
+const registerSchema = z.object({
+  username: z.string().min(3, "Username must be at least 3 characters"),
+  password: z.string().min(6, "Password must be at least 6 characters"),
+});
 
 function Register() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [profileImage, setProfileImage] = useState(null);
   const [imagePreview, setImagePreview] = useState(
-    "/src/assets/user_default.jpeg"
-  ); // updated default image path
+    "/src/components/assets/user_default.jpeg"
+  );
+  const [errors, setErrors] = useState({});
+  const navigate = useNavigate();
 
   // Check if form is valid (username and password filled)
   const isFormValid = username.trim() !== "" && password.trim() !== "";
@@ -25,30 +35,56 @@ function Register() {
     }
   };
 
+  // Validate form on submit
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Prepare form data for user registration
-    const formData = new FormData();
-    formData.append("username", username);
-    formData.append("password", password);
-    if (profileImage) {
-      formData.append("profileImage", profileImage);
+    // Zod validation
+    const result = registerSchema.safeParse({ username, password });
+    if (!result.success) {
+      const fieldErrors = {};
+      result.error.errors.forEach((err) => {
+        fieldErrors[err.path[0]] = err.message;
+      });
+      setErrors(fieldErrors);
+      return;
+    } else {
+      setErrors({});
     }
 
     try {
-      const response = await axios.post("/api/users", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-
-      if (response.status === 201 || response.status === 200) {
-        alert("Registration successful!");
-        // Optionally, reset form or redirect
-      } else {
+      // 1. Register user (no image)
+      const userRes = await apiClient.post("/users", { username, password });
+      if (userRes.status !== 201 && userRes.status !== 200) {
         alert("Registration failed!");
+        return;
       }
+      const userId = userRes.data.id || userRes.data._id;
+      localStorage.setItem("currentUserId", userRes.data._id);
+
+      // 2. Upload avatar (if selected)
+      if (profileImage && userId) {
+        const formData = new FormData();
+        formData.append("avatar", profileImage);
+        formData.append("userId", userId);
+
+        const avatarRes = await apiClient.post(
+          "/users/upload-avatar",
+          formData,
+          {
+            headers: { "Content-Type": "multipart/form-data" },
+          }
+        );
+
+        if (avatarRes.status !== 201 && avatarRes.status !== 200) {
+          alert("Avatar upload failed!");
+          return;
+        }
+      }
+
+      alert("Registration successful!");
+      // Navigate to /users.tsx
+      navigate("/users");
     } catch (error) {
       alert("Error: " + (error.response?.data?.message || error.message));
     }
@@ -88,7 +124,7 @@ function Register() {
           {/* Mushroom (columns 3-6) */}
           <div className="col-span-4 flex items-center justify-center">
             <img
-              src="./src/assets/svamp_animation.gif"
+              src="./src/components/assets/svamp_animation.gif"
               alt="A cute mushroom animation"
               height={180}
               width={180}
@@ -135,6 +171,11 @@ function Register() {
                   required
                   className="w-full rounded px-3 py-1 bg-white opacity-80 text-black border-2 border-pink-400 focus:outline-none focus:border-yellow-300 text-sm"
                 />
+                {errors.username && (
+                  <span className="text-red-500 text-xs">
+                    {errors.username}
+                  </span>
+                )}
               </div>
 
               <div className="flex flex-col">
@@ -153,6 +194,11 @@ function Register() {
                   required
                   className="w-full rounded px-3 py-1 bg-white opacity-80 text-black border-2 border-pink-400 focus:outline-none focus:border-yellow-300 text-sm"
                 />
+                {errors.password && (
+                  <span className="text-red-500 text-xs">
+                    {errors.password}
+                  </span>
+                )}
               </div>
             </div>
 

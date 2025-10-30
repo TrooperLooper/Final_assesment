@@ -1,25 +1,34 @@
 import mongoose from "mongoose";
 import dotenv from "dotenv";
-import { connectDB } from "../config/database";
 import { Game } from "../models/Game";
-
 
 dotenv.config(); // Load .env file
 
-async function seedDatabase() {     // Seed initial game data
-    const games = [
-        { name: "Pac-man", imageUrl: "frontend/src/assets/pacman_gameicon.gif" },
-        { name: "Tetris", imageUrl: "frontend/src/assets/tetris_gameicon.gif" },
-        { name: "Space Invaders", imageUrl: "frontend/src/assets/space_gameicon.gif" },
-        { name: "Asteroids", imageUrl: "frontend/src/assets/asteroids_gameicon.gif" }
-    ];
+// Seed initial game data
+async function seedDatabase() {
+  const games = [
+    { name: "Pac-man", imageUrl: "frontend/src/assets/pacman_gameicon.gif" },
+    { name: "Tetris", imageUrl: "frontend/src/assets/tetris_gameicon.gif" },
+    { name: "Space Invaders", imageUrl: "frontend/src/assets/space_gameicon.gif" },
+    { name: "Asteroids", imageUrl: "frontend/src/assets/asteroids_gameicon.gif" },
+  ];
 
-    console.log("Seeding database finished");
+  try {
+    console.log("Checking for existing games...");
+    const existingGames = await Game.countDocuments();
+    if (existingGames > 0) {
+      console.log("Games already exist in the database. Skipping seeding.");
+      return;
+    }
+
+    console.log("Seeding games into the database...");
+    await Game.insertMany(games);
+    console.log("Database seeding completed successfully.");
+  } catch (error) {
+    console.error("Error seeding the database:", error);
+  }
 }
 
-connectDB().then(async () => {
-    await seedDatabase();
-    mongoose.connection.close(); // Use the imported mongoose instance
-});
+export { seedDatabase };
 
     

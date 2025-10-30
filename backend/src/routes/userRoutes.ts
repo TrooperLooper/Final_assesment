@@ -1,6 +1,3 @@
-<<<<<<< Updated upstream
-import { Router } from "express";
-=======
 import express from "express";
 import { upload } from "../middleware/upload";
 import {
@@ -10,21 +7,17 @@ import {
   deleteUserById,
   updateUserById,
   uploadAvatar,
-} from "../controllers/userController";
->>>>>>> Stashed changes
+} from "../controllers/userController.js";
 
-const router = Router();
+const router = express.Router();
 
-<<<<<<< Updated upstream
+router.get("/users", getAllUsers);
+router.get("/users/:id", getUserById);
+router.post("/users", createUser);
+router.put("/users/:id", updateUserById);
+router.delete("/users/:id", deleteUserById);
 
-export default router;
-=======
-router.get("/", getAllUsers);
-router.post("/", createUser);
-router.get("/:id", getUserById);
-router.put("/:id", updateUserById);
-router.delete("/:id", deleteUserById);
+// Avatar upload endpoint
 router.post("/upload-avatar", upload.single("avatar"), uploadAvatar);
 
 export default router;
->>>>>>> Stashed changes
