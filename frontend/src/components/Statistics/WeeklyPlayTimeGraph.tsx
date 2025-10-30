@@ -19,7 +19,7 @@ interface PlayTimeData {
 
 interface WeeklyPlayTimeGraphProps {
   data: PlayTimeData[];
-  games: { id: string; name: string }[]; // List of games for dropdown
+  games: { id: string; name: string }[];
 }
 
 const WeeklyPlayTimeGraph: React.FC<WeeklyPlayTimeGraphProps> = ({
@@ -116,5 +116,44 @@ const WeeklyPlayTimeGraph: React.FC<WeeklyPlayTimeGraphProps> = ({
     </div>
   );
 };
+
+export const mockPlayTimeData: PlayTimeData[] = [
+  {
+    userId: "u1",
+    userName: "Alice",
+    gameId: "1",
+    day: "2025-10-27",
+    minutesPlayed: 30,
+  },
+  {
+    userId: "u2",
+    userName: "Bob",
+    gameId: "1",
+    day: "2025-10-27",
+    minutesPlayed: 15,
+  },
+  {
+    userId: "u1",
+    userName: "Alice",
+    gameId: "1",
+    day: "2025-10-28",
+    minutesPlayed: 45,
+  },
+  {
+    userId: "u2",
+    userName: "Bob",
+    gameId: "1",
+    day: "2025-10-28",
+    minutesPlayed: 20,
+  },
+];
+
+export const mockGames = [
+  { id: "1", name: "Pac-man" },
+  { id: "2", name: "Tetris" },
+];
+
+// Usage example
+// <WeeklyPlayTimeGraph data={mockPlayTimeData} games={mockGames} />
 
 export default WeeklyPlayTimeGraph;
