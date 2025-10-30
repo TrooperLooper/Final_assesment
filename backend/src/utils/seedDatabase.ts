@@ -7,20 +7,32 @@ dotenv.config(); // Load .env file
 // Seed initial game data
 async function seedDatabase() {
   const games = [
-    { name: "Pac-man", imageUrl: "frontend/src/assets/pacman_gameicon.gif" },
-    { name: "Tetris", imageUrl: "frontend/src/assets/tetris_gameicon.gif" },
-    { name: "Space Invaders", imageUrl: "frontend/src/assets/space_gameicon.gif" },
-    { name: "Asteroids", imageUrl: "frontend/src/assets/asteroids_gameicon.gif" },
+    { 
+      name: "Pac-man", 
+      gifUrl: "/pacman_gameicon.gif",
+      description: "Classic arcade game"
+    },
+    { 
+      name: "Tetris", 
+      gifUrl: "/tetris_gameicon.gif",
+      description: "Puzzle block game"
+    },
+    { 
+      name: "Space Invaders", 
+      gifUrl: "/space_gameicon.gif",
+      description: "Retro space shooter"
+    },
+    { 
+      name: "Asteroids", 
+      gifUrl: "/asteroids_gameicon.gif",
+      description: "Classic space game"
+    },
   ];
 
   try {
-    console.log("Checking for existing games...");
-    const existingGames = await Game.countDocuments();
-    if (existingGames > 0) {
-      console.log("Games already exist in the database. Skipping seeding.");
-      return;
-    }
-
+    console.log("Clearing existing games...");
+    await Game.deleteMany({});
+    
     console.log("Seeding games into the database...");
     await Game.insertMany(games);
     console.log("Database seeding completed successfully.");
@@ -30,5 +42,3 @@ async function seedDatabase() {
 }
 
 export { seedDatabase };
-
-    

@@ -1,60 +1,15 @@
-function Games() {
-  const games = [
-    {
-      name: "Pac-Man",
-      image: "./src/components/assets/pacman_gameicon.gif",
-      color: "bg-yellow-400",
-    },
-    {
-      name: "Asteroids",
-      image: "./src/components/assets/asteroids_gameicon.gif",
-      color: "bg-blue-500",
-    },
-    {
-      name: "Tetris",
-      image: "./src/components/assets/tetris_gameicon.gif",
-      color: "bg-pink-500",
-    },
-    {
-      name: "Space Invaders",
-      image: "./src/components/assets/space_gameicon.gif",
-      color: "bg-green-500",
-    },
-  ];
+import React, { useState, useEffect } from 'react';
+import { apiClient } from '../components/api/apiClient';
 
-  return (
-    <div className="min-h-screen bg-black flex flex-col items-center py-12">
-      <h1 className="text-5xl font-extrabold text-white mb-10 retro-shadow text-center">
-        Choose a game to play
-      </h1>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
-        {games.map((game) => (
-          <div
-            key={game.name}
-            className={`flex flex-col items-center rounded-xl shadow-lg ${game.color} p-4 transition-transform hover:scale-105`}
-            style={{ width: "180px" }}
-          >
-            <div
-              className="overflow-hidden rounded-lg border-4 border-white mb-3"
-              style={{ width: "140px", height: "140px" }}
-            >
-              <img
-                src={game.image}
-                alt={`${game.name} game animation`}
-                className="object-cover w-full h-full"
-              />
-            </div>
-            <h4 className="text-lg font-bold text-white text-center drop-shadow retro-shadow">
-              {game.name}
-            </h4>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
+interface Game {
+  _id: string;
+  name: string;
+  description?: string;
+  imageUrl?: string;
+  gifUrl?: string;
 }
 
-export const Games: React.FC = () => {
+const Games: React.FC = () => {
   const [games, setGames] = useState<Game[]>([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
@@ -115,12 +70,14 @@ export const Games: React.FC = () => {
   };
 
   if (loading) {
-    return <div className="flex justify-center items-center min-h-screen">Loading...</div>;
+    return <div className="flex justify-center items-center min-h-screen text-white">Loading...</div>;
   }
 
   return (
-    <div className="p-8 max-w-7xl mx-auto">
-      <h1 className="text-5xl font-bold mb-8 text-gray-800">Choose a game to play</h1>
+    <div className="min-h-screen bg-black flex flex-col items-center py-12 px-4">
+      <h1 className="text-5xl font-extrabold text-white mb-10 retro-shadow text-center">
+        Choose a game to play
+      </h1>
       
       <button 
         onClick={() => setShowForm(!showForm)} 
@@ -130,8 +87,8 @@ export const Games: React.FC = () => {
       </button>
 
       {showForm && (
-        <form onSubmit={handleSubmit} className="bg-white p-8 rounded-xl shadow-md mb-8 space-y-4">
-          <h2 className="text-2xl font-semibold mb-4">
+        <form onSubmit={handleSubmit} className="bg-white p-8 rounded-xl shadow-md mb-8 space-y-4 max-w-lg w-full">
+          <h2 className="text-2xl font-semibold mb-4 text-gray-800">
             {editingGame ? 'Edit Game' : 'Create New Game'}
           </h2>
           <input
@@ -139,21 +96,21 @@ export const Games: React.FC = () => {
             placeholder="Game Name"
             value={formData.name}
             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-black"
             required
           />
           <textarea
             placeholder="Description (optional)"
             value={formData.description}
             onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent min-h-[100px] resize-y"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent min-h-[100px] resize-y text-black"
           />
           <input
-            type="url"
-            placeholder="GIF URL (optional)"
+            type="text"
+            placeholder="GIF URL (e.g., /pacman_gameicon.gif)"
             value={formData.gifUrl}
             onChange={(e) => setFormData({ ...formData, gifUrl: e.target.value })}
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-black"
           />
           {formData.gifUrl && (
             <div className="max-w-xs rounded-lg overflow-hidden">
@@ -178,7 +135,7 @@ export const Games: React.FC = () => {
         </form>
       )}
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 w-full max-w-6xl">
         {games.map((game) => (
           <GameCard 
             key={game._id} 
@@ -195,33 +152,36 @@ const GameCard: React.FC<{ game: Game; onEdit: (game: Game) => void }> = ({ game
   const [imageError, setImageError] = useState(false);
 
   return (
-    <div className="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-xl transition-all duration-200 group cursor-pointer">
-      <div className="relative">
+    <div className="flex flex-col items-center rounded-xl shadow-lg bg-gradient-to-br from-indigo-500 to-purple-600 p-4 transition-transform hover:scale-105 group cursor-pointer w-full max-w-[180px] mx-auto">
+      <div className="overflow-hidden rounded-lg border-4 border-white mb-3 w-[140px] h-[140px]">
         {game.gifUrl && !imageError ? (
           <img 
             src={game.gifUrl} 
             alt={`${game.name} game animation`}
-            className="w-full h-48 object-cover"
+            className="object-cover w-full h-full"
             onError={() => setImageError(true)}
           />
         ) : (
-          <div className="w-full h-48 flex items-center justify-center bg-gradient-to-br from-indigo-500 to-purple-600 text-white text-6xl font-bold">
+          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-purple-700 to-indigo-700 text-white text-6xl font-bold">
             {game.name.charAt(0).toUpperCase()}
           </div>
         )}
       </div>
-      <div className="p-5">
-        <h4 className="text-xl font-semibold text-gray-800 mb-2">{game.name}</h4>
-        {game.description && (
-          <p className="text-gray-600 text-sm leading-relaxed mb-3">{game.description}</p>
-        )}
-        <button
-          onClick={() => onEdit(game)}
-          className="w-full px-4 py-2 bg-gray-100 text-gray-700 rounded-lg font-medium hover:bg-gray-200 transition-colors opacity-0 group-hover:opacity-100"
-        >
-          Edit
-        </button>
-      </div>
+      <h4 className="text-lg font-bold text-white text-center drop-shadow mb-2">
+        {game.name}
+      </h4>
+      {game.description && (
+        <p className="text-white text-xs text-center mb-2 opacity-80">{game.description}</p>
+      )}
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          onEdit(game);
+        }}
+        className="w-full px-3 py-1 bg-white text-gray-700 rounded-lg font-medium hover:bg-gray-100 transition-colors text-sm opacity-0 group-hover:opacity-100"
+      >
+        Edit
+      </button>
     </div>
   );
 };

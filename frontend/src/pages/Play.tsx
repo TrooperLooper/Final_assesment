@@ -1,99 +1,199 @@
-import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import Timer from "../components/Timer/Timer";
-import { fetchGameById, startSession, stopSession } from "../components/api/apiClient";
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { apiClient } from '../components/api/apiClient';
 
 interface Game {
   _id: string;
   name: string;
-  imageUrl: string;
+  description?: string;
+  imageUrl?: string;
+  gifUrl?: string;
 }
 
-function Play() {
-  const { gameId } = useParams<{ gameId: string }>();
+const Games: React.FC = () => {
   const navigate = useNavigate();
-  const [game, setGame] = useState<Game | null>(null);
-  const [sessionId, setSessionId] = useState<string | null>(null);
-  const [isPlaying, setIsPlaying] = useState(false);
-  const userId = localStorage.getItem("currentUserId") || "";
+  const [games, setGames] = useState<Game[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [showForm, setShowForm] = useState(false);
+  const [editingGame, setEditingGame] = useState<Game | null>(null);
+  const [formData, setFormData] = useState({
+    name: '',
+    description: '',
+    gifUrl: ''
+  });
 
   useEffect(() => {
-    const loadGame = async () => {
-      if (gameId) {
-        try {
-          const gameData = await fetchGameById(gameId);
-          setGame(gameData);
-        } catch (error) {
-          console.error("Failed to load game:", error);
-        }
-      }
-    };
-    loadGame();
-  }, [gameId]);
+    fetchGames();
+  }, []);
 
-  const handleStart = async () => {
+  useEffect(() => {
+    if (editingGame) {
+      setFormData({
+        name: editingGame.name,
+        description: editingGame.description || '',
+        gifUrl: editingGame.gifUrl || ''
+      });
+      setShowForm(true);
+    }
+  }, [editingGame]);
+
+  const fetchGames = async () => {
     try {
-      const session = await startSession(userId, gameId!);
-      setSessionId(session._id);
-      setIsPlaying(true);
+      const response = await apiClient.get('/games');
+      setGames(response.data);
     } catch (error) {
-      console.error("Failed to start session:", error);
+      console.error('Error fetching games:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
-  const handleStop = async () => {
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
     try {
-      if (sessionId) {
-        await stopSession(sessionId);
-        setIsPlaying(false);
-        navigate(`/stats/${userId}`);
+      if (editingGame) {
+        await apiClient.put(`/games/${editingGame._id}`, formData);
+      } else {
+        await apiClient.post('/games', formData);
       }
+      setFormData({ name: '', description: '', gifUrl: '' });
+      setShowForm(false);
+      setEditingGame(null);
+      fetchGames();
     } catch (error) {
-      console.error("Failed to stop session:", error);
+      console.error('Error saving game:', error);
     }
   };
 
-  if (!game) return <div className="text-white">Loading...</div>;
+  const handleCancel = () => {
+    setShowForm(false);
+    setEditingGame(null);
+    setFormData({ name: '', description: '', gifUrl: '' });
+  };
+
+  if (loading) {
+    return <div className="flex justify-center items-center min-h-screen text-white">Loading...</div>;
+  }
 
   return (
-    <div className="min-h-screen bg-black text-white p-8">
-      <div className="max-w-2xl mx-auto">
-        <div className="icon_div mb-6 flex justify-center">
-          <img 
-            src={game.imageUrl} 
-            alt={game.name}
-            className="w-32 h-32"
-          />
-        </div>
-        
-        <h1 className="game_title text-4xl font-bold text-center mb-8">
-          {game.name}
-        </h1>
+    <div className="min-h-screen bg-black flex flex-col items-center py-12 px-4">
+      <h1 className="text-5xl font-extrabold text-white mb-10 retro-shadow text-center">
+        Choose a game to play
+      </h1>
+      
+      <button 
+        onClick={() => setShowForm(!showForm)} 
+        className="px-6 py-3 bg-indigo-600 text-white rounded-lg font-medium mb-8 hover:bg-indigo-700 transition-colors"
+      >
+        {showForm ? 'Cancel' : 'Add New Game'}
+      </button>
 
-        {isPlaying ? (
-          <div className="bg-gray-800 rounded-lg p-6">
-            <Timer 
-              duration={3600}
-              autoStart={true}
-            />
+      {showForm && (
+        <form onSubmit={handleSubmit} className="bg-white p-8 rounded-xl shadow-md mb-8 space-y-4 max-w-lg w-full">
+          <h2 className="text-2xl font-semibold mb-4 text-gray-800">
+            {editingGame ? 'Edit Game' : 'Create New Game'}
+          </h2>
+          <input
+            type="text"
+            placeholder="Game Name"
+            value={formData.name}
+            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-black"
+            required
+          />
+          <textarea
+            placeholder="Description (optional)"
+            value={formData.description}
+            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent min-h-[100px] resize-y text-black"
+          />
+          <input
+            type="text"
+            placeholder="GIF URL (e.g., /pacman_gameicon.gif)"
+            value={formData.gifUrl}
+            onChange={(e) => setFormData({ ...formData, gifUrl: e.target.value })}
+            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent text-black"
+          />
+          {formData.gifUrl && (
+            <div className="max-w-xs rounded-lg overflow-hidden">
+              <img src={formData.gifUrl} alt="Preview" className="w-full h-auto" />
+            </div>
+          )}
+          <div className="flex gap-3">
             <button 
-              onClick={handleStop}
-              className="play_stop_button rounded-2xl bg-red-700 hover:bg-red-800 text-white px-8 py-3 mt-6 w-full font-bold"
+              type="submit"
+              className="flex-1 px-4 py-3 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-colors"
             >
-              Stop Playing
+              {editingGame ? 'Update Game' : 'Create Game'}
+            </button>
+            <button 
+              type="button"
+              onClick={handleCancel}
+              className="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg font-medium hover:bg-gray-300 transition-colors"
+            >
+              Cancel
             </button>
           </div>
-        ) : (
-          <button 
-            onClick={handleStart}
-            className="play_stop_button rounded-2xl bg-blue-700 hover:bg-blue-800 text-white px-8 py-3 w-full font-bold"
-          >
-            Start Playing
-          </button>
-        )}
+        </form>
+      )}
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 w-full max-w-6xl">
+        {games.map((game) => (
+          <GameCard 
+            key={game._id} 
+            game={game} 
+            onEdit={setEditingGame}
+            onPlay={() => navigate(`/play/${game._id}`)}
+          />
+        ))}
       </div>
     </div>
   );
-}
+};
 
-export default Play;
+const GameCard: React.FC<{ 
+  game: Game; 
+  onEdit: (game: Game) => void;
+  onPlay: () => void;
+}> = ({ game, onEdit, onPlay }) => {
+  const [imageError, setImageError] = useState(false);
+
+  return (
+    <div 
+      onClick={onPlay}
+      className="flex flex-col items-center rounded-xl shadow-lg bg-gradient-to-br from-indigo-500 to-purple-600 p-4 transition-transform hover:scale-105 group cursor-pointer w-full max-w-[180px] mx-auto"
+    >
+      <div className="overflow-hidden rounded-lg border-4 border-white mb-3 w-[140px] h-[140px]">
+        {game.gifUrl && !imageError ? (
+          <img 
+            src={game.gifUrl} 
+            alt={`${game.name} game animation`}
+            className="object-cover w-full h-full"
+            onError={() => setImageError(true)}
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-purple-700 to-indigo-700 text-white text-6xl font-bold">
+            {game.name.charAt(0).toUpperCase()}
+          </div>
+        )}
+      </div>
+      <h4 className="text-lg font-bold text-white text-center drop-shadow mb-2">
+        {game.name}
+      </h4>
+      {game.description && (
+        <p className="text-white text-xs text-center mb-2 opacity-80">{game.description}</p>
+      )}
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          onEdit(game);
+        }}
+        className="w-full px-3 py-1 bg-white text-gray-700 rounded-lg font-medium hover:bg-gray-100 transition-colors text-sm opacity-0 group-hover:opacity-100"
+      >
+        Edit
+      </button>
+    </div>
+  );
+};
+
+export default Games;
