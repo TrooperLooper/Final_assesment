@@ -1,22 +1,24 @@
-import Star from "./Star"; // Adjust the import path as necessary
-
-const YourComponent = ({ gameStats }) => (
-  <div className="grid grid-cols-2 gap-4">
-    {gameStats.map((game) => (
-      <div
-        key={game.gameName}
-        className="flex flex-col items-center bg-white/10 rounded-xl p-4 shadow"
-      >
-        <img
-          src={game.iconUrl || defaultAvatar}
-          alt={game.gameName}
-          className="w-12 h-12 mb-2"
-        />
-        <span className="text-white font-bold mb-2">{game.gameName}</span>
-        <PieChart data={[game]} />
-      </div>
-    ))}
-  </div>
+const Star = ({ size = 40, color = "white", delay = "0s" }) => (
+  <svg
+    className="star-animate"
+    width={size}
+    height={size}
+    viewBox="0 0 100 100"
+    fill={color}
+    style={{ animationDelay: delay }}
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="
+        M50,0
+        Q57,32 100,50
+        Q57,68 50,100
+        Q43,68 0,50
+        Q43,32 50,0
+        Z
+      "
+    />
+  </svg>
 );
 
-export default YourComponent;
+export default Star;

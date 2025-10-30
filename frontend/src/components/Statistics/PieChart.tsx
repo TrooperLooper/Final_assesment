@@ -1,5 +1,7 @@
 import { Pie } from "react-chartjs-2";
 import { Chart, ArcElement } from "chart.js";
+import { useEffect, useState } from "react";
+import axios from "axios";
 
 Chart.register(ArcElement);
 
@@ -52,6 +54,33 @@ const PieChart: React.FC<SingleGamePieChartProps> = ({
       <span className="text-white mt-2 text-sm font-bold">
         {percent.toFixed(0)}%
       </span>
+    </div>
+  );
+};
+
+interface TotalTimePlayedProps {
+  userId: string;
+}
+
+const TotalTimePlayed = ({ userId }: TotalTimePlayedProps) => {
+  const [totalMinutes, setTotalMinutes] = useState<number | null>(null);
+
+  useEffect(() => {
+    const fetchTotalTime = async () => {
+      try {
+        const res = await axios.get(`/api/statistics/user/${userId}`);
+        setTotalMinutes(res.data.totalMinutes);
+      } catch (error) {
+        setTotalMinutes(0);
+      }
+    };
+    fetchTotalTime();
+  }, [userId]);
+
+  return (
+    <div>
+      Total time played:{" "}
+      {totalMinutes !== null ? `${totalMinutes} minutes` : "Loading..."}
     </div>
   );
 };
