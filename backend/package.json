@@ -4,8 +4,14 @@
   "main": "src/server.ts",
   "type": "module",
   "scripts": {
+<<<<<<< Updated upstream
     "dev": "ts-node src/server.ts",
     "start": "node dist/server.js"
+=======
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "dev": "tsx watch src/server.ts"
+>>>>>>> Stashed changes
   },
   "dependencies": {
     "express": "^4.21.2",
@@ -20,6 +26,11 @@
     "@types/multer": "^2.0.0",
     "@types/node": "^20.9.0",
     "ts-node": "^10.9.2",
+<<<<<<< Updated upstream
     "typescript": "^5.2.2"
+=======
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3"
+>>>>>>> Stashed changes
   }
 }
