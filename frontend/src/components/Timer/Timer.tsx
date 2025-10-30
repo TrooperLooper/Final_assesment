@@ -1,18 +1,17 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 
 interface TimerProps {
-  duration: number; // in seconds
+  duration: number;
   onTimeUp?: () => void;
   autoStart?: boolean;
 }
 
-const Timer: React.FC<TimerProps> = ({ duration, onTimeUp, autoStart = true }) => {
+const MAX_MULTIPLIER_MINUTES = 30;
+
+export default function Timer({ duration, onTimeUp, autoStart = false }: TimerProps) {
   const [timeLeft, setTimeLeft] = useState(duration);
   const [isRunning, setIsRunning] = useState(autoStart);
-
-  useEffect(() => {
-    setTimeLeft(duration);
-  }, [duration]);
+  const [elapsedTime, setElapsedTime] = useState(0);
 
   useEffect(() => {
     if (!isRunning || timeLeft <= 0) return;
@@ -20,8 +19,7 @@ const Timer: React.FC<TimerProps> = ({ duration, onTimeUp, autoStart = true }) =
     const timer = setInterval(() => {
       setTimeLeft((prev) => {
         if (prev <= 1) {
-          setIsRunning(false);
-          if (onTimeUp) onTimeUp();
+          onTimeUp?.();
           return 0;
         }
         return prev - 1;
@@ -30,6 +28,24 @@ const Timer: React.FC<TimerProps> = ({ duration, onTimeUp, autoStart = true }) =
 
     return () => clearInterval(timer);
   }, [isRunning, timeLeft, onTimeUp]);
+
+  useEffect(() => {
+    if (!isRunning) return;
+
+    const interval = setInterval(() => {
+      setElapsedTime(prev => {
+        const newTime = prev + 1;
+        // Stoppa på 30 minuter (1800 sekunder)
+        if (newTime >= MAX_MULTIPLIER_MINUTES * 60) {
+          clearInterval(interval);
+          return MAX_MULTIPLIER_MINUTES * 60;
+        }
+        return newTime;
+      });
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [isRunning]);
 
   const formatTime = (seconds: number): string => {
     const mins = Math.floor(seconds / 60);
@@ -43,8 +59,14 @@ const Timer: React.FC<TimerProps> = ({ duration, onTimeUp, autoStart = true }) =
 
   const resetTimer = () => {
     setTimeLeft(duration);
+    setElapsedTime(0);
     setIsRunning(autoStart);
   };
+
+  const multiplier = Math.min(
+    Math.floor(elapsedTime / 60) + 1,
+    MAX_MULTIPLIER_MINUTES
+  );
 
   return (
     <div className="flex flex-col items-center gap-4 p-4">
@@ -53,6 +75,14 @@ const Timer: React.FC<TimerProps> = ({ duration, onTimeUp, autoStart = true }) =
       }`}>
         {formatTime(timeLeft)}
       </div>
+      
+      <div className="text-2xl font-semibold text-blue-600">
+        Multiplier: {multiplier}x
+        {elapsedTime >= MAX_MULTIPLIER_MINUTES * 60 && (
+          <span className="text-sm text-gray-500 ml-2">(max)</span>
+        )}
+      </div>
+
       <div className="flex gap-2">
         <button 
           onClick={toggleTimer}
@@ -69,6 +99,4 @@ const Timer: React.FC<TimerProps> = ({ duration, onTimeUp, autoStart = true }) =
       </div>
     </div>
   );
-};
-
-export default Timer;
+}

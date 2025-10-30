@@ -1,51 +1,46 @@
+import React from "react";
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Pie } from "react-chartjs-2";
 
-interface GameStat {
-  gameName: string;
-  minutesPlayed: number;
-  iconUrl: string;
-}
+ChartJS.register(ArcElement, Tooltip, Legend);
 
 interface PieChartProps {
-  data: GameStat[];
+  data: { gameName: string; minutesPlayed: number }[];
 }
 
-const PieChart = ({ data }: PieChartProps) => {
-  const totalTime = data.reduce((sum, item) => sum + item.minutesPlayed, 0);
-
+const PieChart: React.FC<PieChartProps> = ({ data }) => {
   const chartData = {
-    labels: data.map((item) => item.gameName),
+    labels: data.map((game) => game.gameName),
     datasets: [
       {
-        data: data.map((item) => (item.minutesPlayed / totalTime) * 100),
-        backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56", "#4BC0C0"],
+        label: "Minutes Played",
+        data: data.map((game) => game.minutesPlayed),
+        backgroundColor: [
+          "rgba(255, 99, 132, 0.6)",
+          "rgba(54, 162, 235, 0.6)",
+          "rgba(255, 206, 86, 0.6)",
+          "rgba(75, 192, 192, 0.6)",
+          "rgba(153, 102, 255, 0.6)",
+        ],
       },
     ],
   };
 
-  return (
-    <div>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-around",
-          marginBottom: "20px",
-        }}
-      >
-        {data.map((game) => (
-          <div key={game.gameName} style={{ textAlign: "center" }}>
-            <img
-              src={game.iconUrl}
-              alt={game.gameName}
-              style={{ width: "50px" }}
-            />
-            <span>{game.gameName}</span>
-          </div>
-        ))}
-      </div>
-      <Pie data={chartData} />
-    </div>
-  );
+  const options = {
+    responsive: true,
+    plugins: {
+      legend: {
+        display: true,
+      },
+      tooltip: {
+        callbacks: {
+          label: (context: any) => `${context.label}: ${context.parsed} minutes`
+        }
+      }
+    }
+  };
+
+  return <Pie data={chartData} options={options} />;
 };
 
 export default PieChart;

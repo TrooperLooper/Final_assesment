@@ -18,8 +18,13 @@ export const stopSession = async (req: Request, res: Response) => {
   if (!session) return res.status(404).json({ message: "Session not found" });
 
   session.endTime = new Date();
-  session.playedSeconds =
-    (session.endTime.getTime() - session.startTime.getTime()) / 1000;
+  
+  // Calculate actual duration in seconds
+  const actualPlayedSeconds = (session.endTime.getTime() - session.startTime.getTime()) / 1000;
+  
+  // Cap at 30 minutes (1800 seconds)
+  session.playedSeconds = Math.min(actualPlayedSeconds, 1800);
+  
   await session.save();
   res.json(session);
 };

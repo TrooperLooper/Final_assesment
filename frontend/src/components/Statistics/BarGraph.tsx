@@ -24,7 +24,6 @@ interface BarGraphProps {
   data: {
     gameName: string;
     minutesPlayed: number;
-    iconUrl: string;
   }[];
 }
 
@@ -44,38 +43,26 @@ const BarGraph: React.FC<BarGraphProps> = ({ data }) => {
     responsive: true,
     plugins: {
       legend: {
-        position: "top" as const,
-      },
-      title: {
         display: true,
-        text: "Minutes Played Per Game",
       },
+      tooltip: {
+        callbacks: {
+          label: (context: any) => `${context.parsed.y} minutes`
+        }
+      }
     },
+    scales: {
+      y: {
+        beginAtZero: true,
+        title: {
+          display: true,
+          text: 'Minutes'
+        }
+      }
+    }
   };
 
-  return (
-    <div>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-around",
-          marginBottom: "20px",
-        }}
-      >
-        {data.map((game) => (
-          <div key={game.gameName} style={{ textAlign: "center" }}>
-            <img
-              src={game.iconUrl}
-              alt={game.gameName}
-              style={{ width: "50px" }}
-            />
-            <span>{game.gameName}</span>
-          </div>
-        ))}
-      </div>
-      <Bar data={chartData} options={options} />
-    </div>
-  );
+  return <Bar data={chartData} options={options} />;
 };
 
 export default BarGraph;
