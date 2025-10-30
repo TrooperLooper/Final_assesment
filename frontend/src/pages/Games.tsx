@@ -1,5 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { apiClient } from '../components/api/apiClient';
+import axios from 'axios';
+
+const apiClient = axios.create({
+  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3000/api'
+});
 
 interface Game {
   _id: string;
@@ -19,6 +23,7 @@ const Games: React.FC = () => {
     description: '',
     gifUrl: ''
   });
+  const [imageError, setImageError] = useState<{[key: string]: boolean}>({});
 
   useEffect(() => {
     fetchGames();
@@ -137,51 +142,32 @@ const Games: React.FC = () => {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8 w-full max-w-6xl">
         {games.map((game) => (
-          <GameCard 
-            key={game._id} 
-            game={game} 
-            onEdit={setEditingGame}
-          />
+          <div key={game._id} className="bg-gray-800 p-6 rounded-lg shadow-lg hover:shadow-xl transition-shadow">
+            {game.gifUrl && !imageError[game._id] ? (
+              <img 
+                src={game.gifUrl} 
+                alt={game.name}
+                className="w-full h-48 object-cover rounded-md mb-4"
+                onError={() => setImageError({...imageError, [game._id]: true})}
+              />
+            ) : (
+              <div className="w-full h-48 bg-gray-700 rounded-md mb-4 flex items-center justify-center">
+                <span className="text-gray-400">No image</span>
+              </div>
+            )}
+            <h3 className="text-xl font-bold text-white mb-2">{game.name}</h3>
+            {game.description && (
+              <p className="text-gray-300 text-sm mb-4">{game.description}</p>
+            )}
+            <button
+              onClick={() => setEditingGame(game)}
+              className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              Edit
+            </button>
+          </div>
         ))}
       </div>
-    </div>
-  );
-};
-
-const GameCard: React.FC<{ game: Game; onEdit: (game: Game) => void }> = ({ game, onEdit }) => {
-  const [imageError, setImageError] = useState(false);
-
-  return (
-    <div className="flex flex-col items-center rounded-xl shadow-lg bg-gradient-to-br from-indigo-500 to-purple-600 p-4 transition-transform hover:scale-105 group cursor-pointer w-full max-w-[180px] mx-auto">
-      <div className="overflow-hidden rounded-lg border-4 border-white mb-3 w-[140px] h-[140px]">
-        {game.gifUrl && !imageError ? (
-          <img 
-            src={game.gifUrl} 
-            alt={`${game.name} game animation`}
-            className="object-cover w-full h-full"
-            onError={() => setImageError(true)}
-          />
-        ) : (
-          <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-purple-700 to-indigo-700 text-white text-6xl font-bold">
-            {game.name.charAt(0).toUpperCase()}
-          </div>
-        )}
-      </div>
-      <h4 className="text-lg font-bold text-white text-center drop-shadow mb-2">
-        {game.name}
-      </h4>
-      {game.description && (
-        <p className="text-white text-xs text-center mb-2 opacity-80">{game.description}</p>
-      )}
-      <button
-        onClick={(e) => {
-          e.stopPropagation();
-          onEdit(game);
-        }}
-        className="w-full px-3 py-1 bg-white text-gray-700 rounded-lg font-medium hover:bg-gray-100 transition-colors text-sm opacity-0 group-hover:opacity-100"
-      >
-        Edit
-      </button>
     </div>
   );
 };

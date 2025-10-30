@@ -1,4 +1,3 @@
-```markdown
 # API Contract
 
 ✅ What’s Included:
@@ -43,10 +42,28 @@
 - `GET /api/statistics/global` — Get global leaderboard data (integrated into Stats page)
 - `GET /api/statistics/charts/:gameId` — Get chart data for specific game
 
+## Demo Mode
+
+Demo mode allows you to speed up game timers for testing and demonstration purposes.
+
+### Configuration
+
+Set the `TIMER_MULTIPLIER` environment variable in your `.env` file:
+
+- `TIMER_MULTIPLIER=1` - Normal speed (production)
+- `TIMER_MULTIPLIER=10` - 10x faster (demo mode)
+- `TIMER_MULTIPLIER=100` - 100x faster (quick testing)
+
+### Usage
+
+```bash
+# In backend/.env
+TIMER_MULTIPLIER=10
+```
+
 ---
 
 **Note:**
 
 - User registration is required, but login/authentication is **not** part of the assignment.
 - Users can be created, selected, and used for tracking/play—no need for login/logout.
-```

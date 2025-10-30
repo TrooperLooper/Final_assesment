@@ -1,8 +1,9 @@
-import express from "express";
-import { Game } from "../models/Game"; // Ensure the Game model is imported
-import logger from "../utils/logger"; // Ensure the logger utility is imported
+import { Router } from "express";
+import { getGames, createGame, completeGame } from "../controllers/gameController";
+import { Game } from "../models/Game";
+import logger from '../utils/logger';
 
-const router = express.Router();
+const router = Router();
 
 // Get all games
 router.get("/", async (req, res) => {
@@ -39,5 +40,7 @@ router.get("/:id", async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 });
+
+router.post('/complete', completeGame);
 
 export default router;
