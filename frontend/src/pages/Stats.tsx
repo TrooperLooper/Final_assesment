@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { fetchGameById } from "../components/api/apiClient";
 import BarGraph from "../components/Statistics/BarGraph";
 import PieChart from "../components/Statistics/PieChart";
 import TotalTimePlayed from "../components/Statistics/TotalTimePlayed";
@@ -7,6 +6,8 @@ import SessionsGraph from "../components/Statistics/SessionsGraph";
 import WeeklyPlayTimeGraph from "../components/Statistics/WeeklyPlayTimeGraph";
 import LeaderboardTable from "../components/Statistics/LeaderboardTable";
 import AllUsersBarGraph from "../components/Statistics/AllUsersBarGraph";
+import defaultAvatar from "../components/assets/user_default.jpeg";
+import axios from "axios";
 
 interface PlayTimeData {
   userId: string;
@@ -31,115 +32,140 @@ function Stats() {
   const [games, setGames] = useState<{ id: string; name: string }[]>([]);
 
   useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        // Fetch games from backend
-        const gamesRes = await fetch("/api/games");
-        const gamesData = await gamesRes.json();
-        setGames(gamesData.map((g: any) => ({ id: g._id, name: g.name })));
+    // Mock data for testing
+    const mockGames = [
+      { id: "1", name: "Pac-Man" },
+      { id: "2", name: "Tetris" },
+      { id: "3", name: "Asteroids" },
+      { id: "4", name: "Space Invaders" },
+    ];
 
-        const gameIds = ["1", "2", "3", "4"];
-        const stats = await Promise.all(
-          gameIds.map(async (gameId) => {
-            const game = await fetchGameById(gameId);
-            return {
-              gameName: game.name,
-              iconUrl: game.imageUrl,
-              minutesPlayed: Math.floor(Math.random() * 60),
-            };
-          })
-        );
-        setGameStats(stats);
+    const mockGameStats = [
+      { gameName: "Pac-Man", iconUrl: "", minutesPlayed: 120 },
+      { gameName: "Tetris", iconUrl: "", minutesPlayed: 90 },
+      { gameName: "Asteroids", iconUrl: "", minutesPlayed: 60 },
+      { gameName: "Space Invaders", iconUrl: "", minutesPlayed: 30 },
+    ];
 
-        const mockSessionsData = gameIds.map((id) => ({
-          gameId: id,
-          sessions: Math.floor(Math.random() * 100),
-        }));
-        setSessionsData(mockSessionsData);
+    const mockSessionsData = [
+      { gameId: "1", sessions: 10 },
+      { gameId: "2", sessions: 8 },
+      { gameId: "3", sessions: 5 },
+      { gameId: "4", sessions: 3 },
+    ];
 
-        const mockWeeklyStats = gameIds.map((id) => ({
-          gameId: id,
-          minutesPlayed: Math.floor(Math.random() * 420),
-        }));
-        setWeeklyStats(mockWeeklyStats);
+    const mockWeeklyStats = [
+      { gameId: "1", minutesPlayed: 40 },
+      { gameId: "2", minutesPlayed: 30 },
+      { gameId: "3", minutesPlayed: 20 },
+      { gameId: "4", minutesPlayed: 10 },
+    ];
 
-        // Example mock playTimeData for one week, two users, one game
-        const mockPlayTimeData: PlayTimeData[] = [
-          {
-            userId: "u1",
-            userName: "Alice",
-            gameId: "1",
-            day: "2025-10-27",
-            minutesPlayed: 30,
-          },
-          {
-            userId: "u2",
-            userName: "Bob",
-            gameId: "1",
-            day: "2025-10-27",
-            minutesPlayed: 15,
-          },
-          {
-            userId: "u1",
-            userName: "Alice",
-            gameId: "1",
-            day: "2025-10-28",
-            minutesPlayed: 45,
-          },
-          {
-            userId: "u2",
-            userName: "Bob",
-            gameId: "1",
-            day: "2025-10-28",
-            minutesPlayed: 20,
-          },
-          // ...more days/users/games
-        ];
-        setPlayTimeData(mockPlayTimeData);
+    const mockPlayTimeData = [
+      {
+        userId: "u1",
+        userName: "Alice",
+        gameId: "1",
+        day: "2025-10-28",
+        minutesPlayed: 20,
+      },
+      {
+        userId: "u2",
+        userName: "Bob",
+        gameId: "2",
+        day: "2025-10-28",
+        minutesPlayed: 15,
+      },
+      // ...more mock data
+    ];
 
-        setLoading(false);
-      } catch (error) {
-        console.error("Failed to fetch stats:", error);
-      }
-    };
-
-    fetchStats();
+    setGames(mockGames);
+    setGameStats(mockGameStats);
+    setSessionsData(mockSessionsData);
+    setWeeklyStats(mockWeeklyStats);
+    setPlayTimeData(mockPlayTimeData);
+    setLoading(false);
   }, []);
+
+  // For demo, use mock user info
+  const user = {
+    firstName: "Testy",
+    lastName: "McTestface",
+    profilePicture: defaultAvatar,
+  };
 
   if (loading) return <p>Loading...</p>;
 
+  const totalTimePlayed = gameStats.reduce(
+    (total, game) => total + game.minutesPlayed,
+    0
+  );
+
   return (
-    <div>
-      <h1>User Statistics</h1>
-      <div>
-        <h2>Minutes Played Per Game (personal stats)</h2>
-        <BarGraph data={gameStats} />
+    <div className="min-h-screen bg-gradient-to-b from-blue-950 via-blue-800 to-purple-700 p-8 flex flex-col gap-8">
+      {/* Row 1: Profile + BarGraph */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="flex flex-col items-center bg-white/10 rounded-xl p-6 shadow">
+          <img
+            src={user.profilePicture}
+            alt="Profile"
+            className="w-32 h-32 rounded-lg mb-4 object-cover"
+          />
+          <div className="text-2xl font-bold text-white text-center">
+            {user.firstName} {user.lastName}
+          </div>
+        </div>
+        <div className="bg-white/10 rounded-xl p-6 shadow flex items-center justify-center">
+          <BarGraph data={gameStats} />
+        </div>
       </div>
-      <div>
-        <h2>Percent of Total Time Per Game (personal stats)</h2>
-        <PieChart data={gameStats} />
+
+      {/* Row 2: PieChart + TotalTimePlayed + Buttons */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="bg-white/10 rounded-xl p-6 shadow flex items-center justify-center">
+          {gameStats.map((game) => (
+            <PieChart
+              key={game.gameName}
+              gameName={game.gameName}
+              minutesPlayed={game.minutesPlayed}
+              iconUrl={game.iconUrl}
+              totalMinutes={totalTimePlayed}
+            />
+          ))}
+        </div>
+        <div className="flex flex-col gap-4">
+          <div className="bg-white/10 rounded-xl p-6 shadow flex items-center justify-center mb-2">
+            <TotalTimePlayed data={gameStats} />
+          </div>
+          <div className="flex gap-4 justify-center">
+            <button className="bg-gray-900 text-white px-6 py-2 rounded-lg font-bold shadow hover:bg-gray-700 transition">
+              Choose new player
+            </button>
+            <button className="bg-gray-900 text-white px-6 py-2 rounded-lg font-bold shadow hover:bg-gray-700 transition">
+              Play new game
+            </button>
+          </div>
+        </div>
       </div>
-      <div>
-        <h2>Total Time Played (personal stats)</h2>
-        <TotalTimePlayed data={gameStats} />
+
+      {/* Row 3: Dotgraph + Linegraph */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="bg-white/10 rounded-xl p-6 shadow flex items-center justify-center">
+          <SessionsGraph data={sessionsData} />
+        </div>
+        <div className="bg-white/10 rounded-xl p-6 shadow flex items-center justify-center">
+          <WeeklyPlayTimeGraph data={playTimeData} games={games} />
+        </div>
       </div>
-      <div>
-        <h2>Dotgraph: Time Played Per Day Per User (all users stats)</h2>
-        <SessionsGraph data={sessionsData} />
-      </div>
-      <div>
-        <h2>Line graph: Weekly Play Time (all users stats)</h2>
-        <WeeklyPlayTimeGraph data={playTimeData} games={games} />
-      </div>
-      <div>
-        <h2>
-          Bargraph All: Total time per game across all users. (all users stats)
-        </h2>
-        <AllUsersBarGraph data={gameStats} />
-      </div>
-      <div>
-        <h2>Leaderboard Table (all users stats)</h2>
-        <LeaderboardTable data={gameStats} />
+
+      {/* Row 4: AllUsersBar + Leaderboard */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="bg-white/10 rounded-xl p-6 shadow flex items-center justify-center">
+          <AllUsersBarGraph data={gameStats} />
+        </div>
+        <div className="bg-white/10 rounded-xl p-6 shadow flex items-center justify-center">
+          <LeaderboardTable data={gameStats} />
+        </div>
       </div>
     </div>
   );

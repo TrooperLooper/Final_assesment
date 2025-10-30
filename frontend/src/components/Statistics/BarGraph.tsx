@@ -41,6 +41,7 @@ const BarGraph: React.FC<BarGraphProps> = ({ data }) => {
   };
 
   const options = {
+    indexAxis: "y", // makes bars horizontal
     responsive: true,
     plugins: {
       legend: {
