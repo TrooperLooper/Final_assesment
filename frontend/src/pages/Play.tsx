@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import CircularTimer from './CircularTimer';
 
 const apiClient = axios.create({
   baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3000/api'
 });
 
 const TIMER_MULTIPLIER = parseInt(import.meta.env.VITE_TIMER_MULTIPLIER || '60');
-const gameHourInMs = TIMER_MULTIPLIER * 1000; // 60 seconds = 1 game hour
+const MAX_MULTIPLIER_MINUTES = 30;
+const gameHourInMs = TIMER_MULTIPLIER * 1000;
 
 interface Game {
   _id: string;
@@ -22,8 +24,10 @@ const Play: React.FC = () => {
   const navigate = useNavigate();
   const [game, setGame] = useState<Game | null>(null);
   const [loading, setLoading] = useState(true);
-  const [gameTime, setGameTime] = useState(0); // Time in game hours
+  const [gameTime, setGameTime] = useState(0);
+  const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [startTime] = useState(Date.now());
+  const [timerStopped, setTimerStopped] = useState(false);
 
   useEffect(() => {
     if (gameId) {
@@ -32,15 +36,28 @@ const Play: React.FC = () => {
   }, [gameId]);
 
   useEffect(() => {
-    // Update game time using gameHourInMs
+    if (timerStopped) return;
+
     const interval = setInterval(() => {
       const elapsedMs = Date.now() - startTime;
-      const gameHours = elapsedMs / gameHourInMs; // Now it's being used
+      const gameHours = elapsedMs / gameHourInMs;
+      const realSeconds = Math.floor(elapsedMs / 1000);
+      const maxSeconds = MAX_MULTIPLIER_MINUTES * 60;
+      
+      // Stop timer at 30 minutes (1800 seconds)
+      if (realSeconds >= maxSeconds) {
+        setElapsedSeconds(maxSeconds);
+        setTimerStopped(true);
+        clearInterval(interval);
+        return;
+      }
+      
       setGameTime(gameHours);
+      setElapsedSeconds(realSeconds);
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [startTime, gameHourInMs]);
+  }, [startTime, gameHourInMs, timerStopped]);
 
   const fetchGame = async (id: string) => {
     try {
@@ -75,12 +92,23 @@ const Play: React.FC = () => {
     return <div className="flex justify-center items-center min-h-screen text-white">Game not found</div>;
   }
 
+  const elapsedMinutes = Math.floor(elapsedSeconds / 60);
+
   return (
     <div className="min-h-screen bg-black flex flex-col items-center justify-center py-12 px-4">
       <div className="bg-gray-800 p-8 rounded-xl shadow-lg max-w-2xl w-full">
-        <h1 className="text-4xl font-bold text-white mb-4 text-center">
+        <h1 className="text-4xl font-bold text-white mb-6 text-center">
           {game.name}
         </h1>
+        
+        {/* Circular Timer */}
+        <div className="flex justify-center mb-6">
+          <CircularTimer 
+            elapsedMinutes={elapsedMinutes}
+            maxMinutes={MAX_MULTIPLIER_MINUTES}
+            isStopped={timerStopped}
+          />
+        </div>
         
         {game.gifUrl && (
           <div className="mb-6">
@@ -100,15 +128,11 @@ const Play: React.FC = () => {
           <p className="text-white text-xl text-center">
             Game Time: <span className="font-bold">{gameTime.toFixed(2)} hours</span>
           </p>
-          <p className="text-gray-400 text-sm text-center mt-2">
-            (Timer Multiplier: {TIMER_MULTIPLIER}x - {TIMER_MULTIPLIER} real seconds = 1 game hour)
-          </p>
         </div>
 
         <div className="text-center text-gray-300 mb-6">
           <p className="text-3xl mb-4">🎮</p>
           <p>Game is running...</p>
-          <p className="text-sm text-gray-400 mt-2">This is a demo. Actual game logic would go here.</p>
         </div>
         
         <button
