@@ -5,6 +5,8 @@ import dotenv from "dotenv";
 import userRouter from "./routes/userRoutes";
 import gamesRouter from "./routes/gameRoutes";
 import sessionRouter from "./routes/sessionRoutes";
+import statisticsRoutes from './routes/statisticsRoutes';
+import searchRoutes from './routes/searchRoutes';
 import { seedDatabase } from "./utils/seedDatabase";
 
 dotenv.config();
@@ -17,6 +19,8 @@ app.use("/uploads", express.static("uploads")); //Profile pictures (static folde
 app.use("/api/users", userRouter); //User routes
 app.use("/api/games", gamesRouter); //Games routes
 app.use("/api/sessions", sessionRouter); //Sessions routes
+app.use('/api/statistics', statisticsRoutes);
+app.use('/api/search', searchRoutes);
 
 const PORT = process.env.PORT || 3000;
 const MONGO =
