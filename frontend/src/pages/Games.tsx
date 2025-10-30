@@ -79,8 +79,9 @@ const Games: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-black flex flex-col items-center py-12 px-4">
-      <h1 className="text-5xl font-extrabold text-white mb-10 retro-shadow text-center">
+    <div className="min-h-screen flex flex-col items-center py-12 bg-gradient-to-b from-blue-950 via-blue-800 to-purple-700">
+      <Header />
+      <h1 className="text-5xl font-['Pixelify_Sans'] mt-18 text-white mb-15 drop-shadow text-center">
         Choose a game to play
       </h1>
       

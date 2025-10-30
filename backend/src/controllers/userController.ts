@@ -5,6 +5,7 @@ import { z } from "zod";
 const userSchema = z.object({
   email: z.string().email(),
   firstName: z.string().min(1),
+  lastName: z.string().min(1), // Add lastName to the schema
   profilePicture: z.string().optional(), // Use profilePicture for consistency
 });
 
@@ -21,7 +22,13 @@ export const getUserById = async (req: Request, res: Response) => {
 
 export const createUser = async (req: Request, res: Response) => {
   try {
-    const validated = userSchema.parse(req.body);
+    const avatarPath = req.file
+      ? `/uploads/${req.file.filename}`
+      : req.body.profilePicture;
+    const validated = userSchema.parse({
+      ...req.body,
+      profilePicture: avatarPath,
+    });
     const newUser = await User.create(validated);
     res.status(201).json(newUser);
   } catch (err) {
@@ -50,4 +57,19 @@ export const uploadAvatar = async (req: Request, res: Response) => {
   await User.findByIdAndUpdate(userId, { profilePicture: avatarPath });
 
   res.status(201).json({ profilePicture: avatarPath });
+};
+
+// Middleware to check required fields
+export const checkRequiredFields = (
+  req: Request,
+  res: Response,
+  next: () => void
+) => {
+  const { email, firstName, lastName } = req.body;
+  if (!email || !firstName || !lastName) {
+    return res
+      .status(400)
+      .json({ error: "Email, firstName, and lastName are required." });
+  }
+  next();
 };
