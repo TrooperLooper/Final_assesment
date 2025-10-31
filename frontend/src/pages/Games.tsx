@@ -42,7 +42,7 @@ function Games() {
       <div className="min-h-screen flex flex-col items-center justify-start pt-5 px-2 sm:px-8">
         {/* Headline on top, centered */}
         <div className="w-full flex justify-center mt-2 mb-8">
-          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-bold font-['Pixelify_Sans'] text-white drop-shadow-lg text-center ml-20">
+          <h1 className="text-4xl lg:mb-4 sm:text-6xl lg:text-7xl font-bold font-['Pixelify_Sans'] text-white drop-shadow-lg text-center ml-20">
             Choose a game to play
           </h1>
         </div>

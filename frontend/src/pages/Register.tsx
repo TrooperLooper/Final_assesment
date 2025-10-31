@@ -31,6 +31,11 @@ function Register() {
   const handleImageUpload = (e) => {
     const file = e.target.files[0];
     if (file) {
+      if (file.size > 5 * 1024 * 1024) {
+        // 5MB
+        alert("File is too large! Max 5MB allowed.");
+        return;
+      }
       const reader = new FileReader();
       reader.onloadend = () => {
         setImagePreview(reader.result);
@@ -230,11 +235,13 @@ function Register() {
                 <button
                   type="submit"
                   disabled={!isFormValid}
-                  className={`z-10 self-end py-1 px-4 rounded-lg font-bold text-base shadow-lg transition-all ${
-                    isFormValid
-                      ? "bg-yellow-400 text-pink-900 hover:bg-yellow-300"
-                      : "bg-gray-400 opacity-50 text-gray-700 cursor-not-allowed"
-                  }`}
+                  className={`z-10 self-end py-1 px-4 rounded-lg font-bold text-base shadow-lg transition-all
+                    active:scale-95 active:shadow-inner
+                    ${
+                      isFormValid
+                        ? "bg-yellow-400 text-pink-900 hover:bg-yellow-300"
+                        : "bg-gray-400 opacity-50 text-gray-700 cursor-not-allowed"
+                    }`}
                 >
                   REGISTER
                 </button>
