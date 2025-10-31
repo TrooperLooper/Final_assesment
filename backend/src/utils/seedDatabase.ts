@@ -1,12 +1,10 @@
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import { Game } from "../models/Game";
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
 
 dotenv.config();
 
-const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/retro-games';
+const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/finalAssesment_mongodb';
 
 // Seed initial game data
 async function seedDatabase() {
@@ -34,36 +32,28 @@ async function seedDatabase() {
   ];
 
   try {
-    console.log("🔌 Connecting to MongoDB...");
+    // Connect to MongoDB
     await mongoose.connect(MONGODB_URI);
-    console.log("✅ Connected to MongoDB");
-    
-    console.log("🗑️  Clearing existing games...");
+    console.log('✅ Connected to MongoDB for seeding');
+
+    // Clear existing games
     await Game.deleteMany({});
+    console.log('🗑️  Cleared existing games');
+
+    // Insert new games
+    const result = await Game.insertMany(games);
+    console.log(`✅ Seeded ${result.length} games successfully`);
     
-    console.log("🌱 Seeding games into the database...");
-    const createdGames = await Game.insertMany(games);
-    console.log(`✅ Successfully seeded ${createdGames.length} games:`);
-    createdGames.forEach(game => {
-      console.log(`  - ${game.name} (ID: ${game._id})`);
-    });
-    
+    // List the games
+    console.log('Games in database:', result.map(g => g.name));
+
   } catch (error) {
-    console.error("❌ Error seeding the database:", error);
-    process.exit(1);
+    console.error('❌ Error seeding database:', error);
   } finally {
     await mongoose.connection.close();
-    console.log("🔌 Database connection closed");
-    process.exit(0);
+    console.log('🔌 Database connection closed');
   }
 }
 
-// ES Module way to check if this is the main module
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
-if (import.meta.url === `file://${process.argv[1]}`) {
-  seedDatabase();
-}
-
-export { seedDatabase };
+// Run the seed function
+seedDatabase();

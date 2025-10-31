@@ -53,6 +53,7 @@ export default function Timer({ duration, onTimeUp, autoStart = false }: TimerPr
     return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
   };
 
+  /*
   const startTimer = () => {
     if (!isRunning) {
       setIsRunning(true);
@@ -71,7 +72,7 @@ export default function Timer({ duration, onTimeUp, autoStart = false }: TimerPr
     setTimeLeft(duration);
     setElapsedTime(0);
     setIsRunning(autoStart);
-  };
+  }; */
 
   const multiplier = Math.min(
     Math.floor(elapsedTime / 60) + 1,
@@ -94,26 +95,27 @@ export default function Timer({ duration, onTimeUp, autoStart = false }: TimerPr
       </div>
 
       <div className="flex gap-2">
-        <button 
-          onClick={toggleTimer}
-          className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors"
-        >
-          Start
-        </button>
-        <button
-          onClick={stopTimer}
-          disabled={!isRunning}
-          className="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg font-bold text-lg transition"
-        >
-          Pause
-        </button>
-        <button
-          onClick={resetTimer}
-          className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-bold text-lg transition"
-        >
-          Reset
-        </button>
-      </div>
+  <button 
+   // onClick={startTimer}
+    disabled={isRunning}
+    className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+  >
+    {isRunning ? 'Running' : 'Start'}
+  </button>
+  <button
+  ///  onClick={stopTimer}
+    disabled={!isRunning}
+    className="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded-lg font-bold text-lg transition disabled:opacity-50 disabled:cursor-not-allowed"
+  >
+    Pause
+  </button>
+  <button
+   // onClick={resetTimer}
+    className="bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-lg font-bold text-lg transition"
+  >
+    Reset
+  </button>
+</div>
     </div>
   );
 }

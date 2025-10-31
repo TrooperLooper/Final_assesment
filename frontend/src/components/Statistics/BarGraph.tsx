@@ -40,7 +40,7 @@ const BarGraph: React.FC<BarGraphProps> = ({ data }) => {
   };
 
   const options = {
-    indexAxis: "y", // makes bars horizontal
+    indexAxis: "y" as const, // makes bars horizontal
     responsive: true,
     plugins: {
       legend: {
@@ -67,6 +67,9 @@ const BarGraph: React.FC<BarGraphProps> = ({ data }) => {
 };
 
 export default BarGraph;
+
+
+/*
 // Example mock data for BarGraph
 const mockBarData = [
   {
@@ -89,4 +92,4 @@ const mockBarData = [
 // Usage example (in parent component or for testing)
 // <BarGraph data={mockBarData} />
 
-export default BarGraph;
+export default BarGraph;*/

@@ -41,20 +41,30 @@ export const getGameById = async (req: Request, res: Response) => {
   }
 };
 
+export const getGames = async (req: Request, res: Response) => {
+  try {
+    const games = await Game.find({});
+    res.json(games);
+  } catch (error) {
+    console.error('Error fetching games:', error);
+    res.status(500).json({ error: 'Failed to fetch games' });
+  }
+};
+
 export const createGame = async (req: Request, res: Response) => {
   try {
-    const data = gameSchema.parse(req.body);
-    const newGame = await Game.create(data);
-
-    logger.info('Game started', {
-      gameId: newGame._id,
-      startTime: new Date().toISOString(),
-      timerMultiplier: config.timerMultiplier
+    const { name, gifUrl, description } = req.body;
+    
+    const newGame = await Game.create({
+      name,
+      gifUrl,
+      description,
     });
-
+    
     res.status(201).json(newGame);
-  } catch (err) {
-    res.status(400).json(err);
+  } catch (error) {
+    console.error('Error creating game:', error);
+    res.status(500).json({ error: 'Failed to create game' });
   }
 };
 

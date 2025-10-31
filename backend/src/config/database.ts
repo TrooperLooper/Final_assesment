@@ -1,10 +1,16 @@
 import mongoose from "mongoose";
 
 export async function connectDB() {
-  const uri = process.env.MONGODB_URI!;
+  const uri = process.env.MONGODB_URI || "mongodb://localhost:27017/finalAssesment_mongodb";
+  
+  if (!uri) {
+    console.error('MONGODB_URI is not defined in environment variables');
+    process.exit(1);
+  }
+  
   try {
     await mongoose.connect(uri);
-    console.log('Connected to MongoDB');
+    console.log('Connected to MongoDB:', uri);
   } catch (err) {
     console.error('MongoDB connection error', err);
     process.exit(1);
@@ -12,8 +18,6 @@ export async function connectDB() {
 }
 
 export const config = {
-  timerMultiplier: parseInt(process.env.TIMER_MULTIPLIER || '60', 10),
-  // How many real seconds = 1 game hour
-  // 60 = demo mode (1 minute = 1 game hour)
-  // 3600 = real-time (1 hour = 1 game hour)
+  timerMultiplier: 2,
+  mongoUri: process.env.MONGODB_URI || "mongodb://localhost:27017/finalAssesment_mongodb",
 };

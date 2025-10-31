@@ -1,50 +1,65 @@
-import express from "express";
-import mongoose from "mongoose";
-import cors from "cors";
 import dotenv from "dotenv";
+import express from "express";
+import cors from "cors";
 import userRouter from "./routes/userRoutes";
-import gameRoutes from "./routes/gameRoutes";
+import gameRoutes from "./routes/GameRoutes"; 
 import sessionRouter from "./routes/sessionRoutes";
 import statisticsRoutes from './routes/statisticsRoutes';
 import searchRoutes from './routes/searchRoutes';
 import leaderboardRoutes from './routes/leaderboardRoutes';
-import { seedDatabase } from "./utils/seedDatabase";
+import { connectDB } from './config/database';
 
 dotenv.config();
-
 const app = express();
 const PORT = process.env.PORT || 3000;
-const MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost:27017/retro-games";
 
 // Middleware
 app.use(cors({
-  origin: 'http://localhost:5173',
+  origin: (origin, callback) => {
+    // Allow requests with no origin (like mobile apps or curl)
+    if (!origin) return callback(null, true);
+    
+    // Allow localhost on any port
+    if (origin.startsWith('http://localhost:')) {
+      return callback(null, true);
+    }
+    
+    callback(new Error('Not allowed by CORS'));
+  },
   credentials: true
 }));
 app.use(express.json());
 
 // Routes
-app.use("/uploads", express.static("uploads")); //Profile pictures (static folder)
-app.use("/api/users", userRouter); //User routes
-app.use("/api/games", gameRoutes); //Games routes
-app.use("/api/sessions", sessionRouter); //Sessions routes
+app.use("/uploads", express.static("uploads"));
+app.use("/api/users", userRouter);
+app.use("/api/games", gameRoutes);
+app.use("/api/sessions", sessionRouter);
 app.use('/api/statistics', statisticsRoutes);
 app.use('/api/search', searchRoutes);
 app.use('/api/leaderboard', leaderboardRoutes);
 
-// MongoDB Connection
-mongoose.connect(MONGODB_URI)
-  .then(() => {
-    console.log('✅ Connected to MongoDB');
-    console.log('📍 Database:', MONGODB_URI);
+// Health check
+app.get('/health', (req, res) => {
+  res.json({ status: 'ok' });
+});
+
+// Connect to database and start server
+async function startServer() {
+  try {
+    await connectDB();
+    console.log('Database connected successfully');
     
-    // Start server only after DB connection
+    // Optional: seed database if needed
+    // await seedDatabase();
+    
     app.listen(PORT, () => {
-      console.log(`🚀 Server running on http://localhost:${PORT}`);
-      console.log(`📡 API available at http://localhost:${PORT}/api`);
+      console.log(`Server is running on http://localhost:${PORT}`);
     });
-  })
-  .catch((error) => {
-    console.error('❌ MongoDB connection error:', error);
+  } catch (error) {
+    console.error('Failed to start server:', error);
     process.exit(1);
-  });
+  }
+}
+
+startServer();

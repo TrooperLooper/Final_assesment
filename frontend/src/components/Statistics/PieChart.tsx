@@ -1,35 +1,14 @@
 import React from "react";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Pie } from "react-chartjs-2";
-import { Chart, ArcElement } from "chart.js";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
-
-interface PieChartProps {
-  data: { gameName: string; minutesPlayed: number }[];
-}
-
-const PieChart: React.FC<PieChartProps> = ({ data }) => {
-  const chartData = {
-    labels: data.map((game) => game.gameName),
-    datasets: [
-      {
-        label: "Minutes Played",
-        data: data.map((game) => game.minutesPlayed),
-        backgroundColor: [
-          "rgba(255, 99, 132, 0.6)",
-          "rgba(54, 162, 235, 0.6)",
-          "rgba(255, 206, 86, 0.6)",
-          "rgba(75, 192, 192, 0.6)",
-          "rgba(153, 102, 255, 0.6)",
-        ],
-Chart.register(ArcElement);
 
 interface SingleGamePieChartProps {
   gameName: string;
   minutesPlayed: number;
   iconUrl?: string;
-  totalMinutes: number; // total time played across all games
+  totalMinutes: number;
 }
 
 const PieChart: React.FC<SingleGamePieChartProps> = ({
@@ -45,7 +24,7 @@ const PieChart: React.FC<SingleGamePieChartProps> = ({
     datasets: [
       {
         data: [percent, 100 - percent],
-        backgroundColor: ["#FF6384", "#e5e7eb"], // main color + light gray
+        backgroundColor: ["#FF6384", "#e5e7eb"],
         borderWidth: 0,
       },
     ],
@@ -55,7 +34,7 @@ const PieChart: React.FC<SingleGamePieChartProps> = ({
     responsive: true,
     plugins: {
       legend: {
-        display: true,
+        display: false,
       },
       tooltip: {
         callbacks: {
@@ -65,7 +44,6 @@ const PieChart: React.FC<SingleGamePieChartProps> = ({
     }
   };
 
-  return <Pie data={chartData} options={options} />;
   return (
     <div className="flex flex-col items-center">
       {iconUrl && (
@@ -81,10 +59,7 @@ const PieChart: React.FC<SingleGamePieChartProps> = ({
       )}
       <span className="text-white font-bold mb-2">{gameName}</span>
       <div className="w-20 h-20">
-        <Pie
-          data={chartData}
-          options={{ plugins: { legend: { display: false } } }}
-        />
+        <Pie data={chartData} options={options} />
       </div>
       <span className="text-white mt-2 text-sm font-bold">
         {percent.toFixed(0)}%
@@ -94,3 +69,18 @@ const PieChart: React.FC<SingleGamePieChartProps> = ({
 };
 
 export default PieChart;
+
+
+ /* const chartData = {
+    labels: data.map((game) => game.gameName),
+    datasets: [
+      {
+        label: "Minutes Played",
+        data: data.map((game) => game.minutesPlayed),
+        backgroundColor: [
+          "rgba(255, 99, 132, 0.6)",
+          "rgba(54, 162, 235, 0.6)",
+          "rgba(255, 206, 86, 0.6)",
+          "rgba(75, 192, 192, 0.6)",
+          "rgba(153, 102, 255, 0.6)",
+        ],*/

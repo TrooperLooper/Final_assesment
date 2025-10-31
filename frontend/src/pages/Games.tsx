@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
 interface Game {
   _id: string;
-  id?: string;
   name: string;
-  gifUrl?: string;
   description?: string;
+  gifUrl?: string;
 }
 
 function Games() {
@@ -18,23 +18,17 @@ function Games() {
   useEffect(() => {
     const fetchGames = async () => {
       try {
-        console.log('🎮 Fetching games from API...');
-        const response = await fetch('http://localhost:3000/api/games');
+        const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+        console.log('Fetching games from:', `${API_URL}/games`);
         
-        console.log('📡 Response status:', response.status);
+        const response = await axios.get(`${API_URL}/games`);
+        console.log('Games received:', response.data);
         
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        const data = await response.json();
-        console.log('✅ Games received:', data);
-        setGames(data);
-        setError(null);
+        setGames(response.data);
+        setLoading(false);
       } catch (err) {
-        console.error('❌ Error fetching games:', err);
-        setError(err instanceof Error ? err.message : 'Failed to fetch games');
-      } finally {
+        console.error('Error fetching games:', err);
+        setError('Failed to load games. Make sure backend is running on port 3000.');
         setLoading(false);
       }
     };
@@ -54,10 +48,10 @@ function Games() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 flex items-center justify-center">
         <div className="text-center">
-          <p className="text-red-400 text-xl mb-4">Error: {error}</p>
+          <p className="text-red-400 text-2xl mb-4">{error}</p>
           <button 
             onClick={() => window.location.reload()}
-            className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded"
+            className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg"
           >
             Retry
           </button>
@@ -70,46 +64,36 @@ function Games() {
     return (
       <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 flex items-center justify-center">
         <div className="text-center">
-          <p className="text-white text-xl mb-4">No games found</p>
-          <p className="text-gray-400">Please run: npm run seed</p>
+          <p className="text-white text-2xl mb-4">No games available</p>
+          <p className="text-gray-300">Run 'npm run seed' in backend to add games</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 py-12">
-      <div className="max-w-6xl mx-auto px-4">
-        <h1 className="text-5xl font-bold text-white text-center mb-12">
-          Choose Your Game
-        </h1>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 justify-items-center">
+    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 p-8">
+      <div className="max-w-7xl mx-auto">
+        <h1 className="text-4xl font-bold text-white mb-8 text-center">Choose Your Game</h1>
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {games.map((game) => (
             <div
               key={game._id}
               onClick={() => navigate(`/play/${game._id}`)}
-              className="flex flex-col items-center rounded-xl shadow-lg bg-yellow-400 p-4 transition-transform hover:scale-105 cursor-pointer"
-              style={{ width: "180px" }}
+              className="bg-white/10 backdrop-blur-sm rounded-xl p-6 hover:bg-white/20 transition cursor-pointer shadow-lg transform hover:scale-105"
             >
-              <div
-                className="overflow-hidden rounded-lg border-4 border-white mb-3 bg-black flex items-center justify-center"
-                style={{ width: "140px", height: "140px" }}
-              >
-                {game.gifUrl ? (
-                  <img
-                    src={game.gifUrl}
-                    alt={`${game.name} game animation`}
-                    className="object-cover w-full h-full"
-                  />
-                ) : (
-                  <div className="text-white text-6xl font-bold">
-                    {game.name.charAt(0)}
-                  </div>
-                )}
-              </div>
-              <h4 className="text-lg font-bold text-white text-center drop-shadow tracking-widest uppercase">
-                {game.name}
-              </h4>
+              {game.gifUrl && (
+                <img
+                  src={game.gifUrl}
+                  alt={game.name}
+                  className="w-full h-48 object-cover rounded-lg mb-4"
+                />
+              )}
+              <h2 className="text-2xl font-bold text-white mb-2">{game.name}</h2>
+              {game.description && (
+                <p className="text-gray-300">{game.description}</p>
+              )}
             </div>
           ))}
         </div>

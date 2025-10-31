@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import Header from '../components/Navigation/Header'; // Adjust the path if the Header component is in a subfolder
 
 const apiClient = axios.create({
   baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3000/api'
@@ -114,8 +115,9 @@ const Register: React.FC = () => {
           </button>
         </div>
       </div>
-    </div>
+    </>
   );
+  
 };
 
 export default Register;
