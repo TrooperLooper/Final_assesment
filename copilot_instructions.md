@@ -1714,3 +1714,122 @@ const retroSlideVariants = {
 ```
 
 ```
+
+The actual assignments and goals:
+
+Game Time Tracker
+
+Goal: Build a React app where users choose games, start/stop a timer,
+and view clear statistics of played time.
+What you must deliver
+
+1. A working React frontend (TypeScript).
+2. A backend + database (MongoDB).
+3. Use Prisma for DB access.
+4. Use Zod for request / form validation.
+5. Use ESLint or SonarQube for code quality.
+6. Add an ERD (diagram) of your database tables.
+7. Short README with run instructions and where to find ERD.
+   Pages
+
+All Pages (visible on every page):
+• Sidebar (navigation).
+• Header with:
+◦ Weather widget (small).
+◦ Search bar (search users).
+
+Registration Page
+• Form fields:
+◦ Email (required)
+◦ First Name (required)
+◦ Profile picture (optional)
+• Clear validation messages (use Zod).
+All Users Page
+• Grid/gallery of users with photo + name.
+• Button to add new user.
+• (Optional) a carousel of users above the gallery.
+User Statistics Page (for a single user)
+• Profile picture with first + last name.
+• Bar graph: minutes played per game.
+• Pie (or donut) chart: percent of total time per game.
+• Component showing total time played.
+• Graph: number of sessions per game + average session length (select a game from
+dropdown).
+• Graph: for a chosen game (dropdown), a line for each user showing play time across the
+week.
+• Bar graph: total time per game across all users.
+• Leaderboard table (top players per game) with columns: Name | Game | Time played.
+
+Choose Game Page
+• Show 4 games (cards). Click a game to go to timer page.
+
+Game Timer Page
+• Show game image and name.
+• Timer (counts — every second = 1 minute for testing; explain in README).
+• Start / Stop button.
+• Exit button (saves session).
+• Show current user photo + name.
+
+Minimum technical requirements
+• Use TypeScript.
+• Use one DB (Postgres OR MongoDB).
+• Use Sequelize OR Prisma.
+• Use Zod for validation.
+• Use ESLint OR SonarQube.
+• Provide an ERD.
+• Use a seperate folders for the frontend and backend
+
+Extra instructions for students with ADHD
+• Work in small steps: build one page fully before starting the next.
+• Use the checklist below and tick off items as you finish them.
+• Keep components small and named clearly (e.g., TimerCard, Leaderboard).
+• Show labels, placeholders, and short examples in forms (helps non-native speakers).
+• Add visual feedback: loading spinners, success toasts, validation text.
+• Use clear color contrast and large clickable targets.
+• Break work into 30–45 minute blocks and save code often.
+Simple submission checklist (give this to students to hand in)
+• Repo link (Git) and README with run instructions.
+• Frontend in TypeScript (React).
+• Backend & DB connection (Postgres or MongoDB).
+• Prisma or Sequelize setup files.
+• Zod validation for at least registration and session endpoints.
+• ESLint or SonarQube config file present.
+• ERD (image or PDF) included in repo.
+• All required pages implemented and navigable.
+• Evidence of data saving (timers create sessions in DB).
+• Short video (optional) or screenshots showing key pages.
+Suggested simple ERD (text you can give students)
+Entities:
+• User (id, email, firstName, lastName, profilePictureUrl, createdAt)
+• Game (id, name, imageUrl, createdAt)
+• Session (id, userId → User, gameId → Game, startTime, endTime, playedSeconds)
+Note: store playedSeconds as integer (seconds) and convert to minutes in UI.
+• (Optional) LeaderboardView — can be derived via queries; no separate table needed.
+Relationships:
+• “User” one to Many “Session”
+• “Game! One to many “Session”
+
+Grades: VG | G | IG
+
+Checklist
+• Functionality
+◦ VG: All pages & timers work; sessions saved; charts update.
+◦ G: Core features work; minor bugs.
+• Data & Backend
+◦ VG: DB + Prisma/Sequelize used correctly; ERD matches.
+◦ G: DB present, some schema issues.
+• Validation & Types
+◦ VG: Zod for validation; strong TypeScript types.
+◦ G: Partial Zod/types.
+• Code Quality & Tooling
+◦ VG: ESLint or SonarQube, clean commits.
+◦ G: Linter present but issues.
+• UI/UX & Accessibility
+◦ VG: Clear labels, visual feedback, keyboard accessible.
+◦ G: Mostly clear.
+• Statistics & Charts
+◦ VG: All required charts accurate and present.
+◦ G: Most charts present.
+• Docs & Presentation
+◦ VG: Good README, ERD, demo steps/screenshots.
+◦ G: Minimal README.

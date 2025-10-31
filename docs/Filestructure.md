@@ -9,16 +9,25 @@ final_assesment/
 │ │ │ ├── Play.tsx
 │ │ │ └── Stats.tsx
 │ │ ├── components/ # Reusable UI components
-│ │ │ ├── WeatherWidget.tsx
-│ │ │ ├── GlobalSearch.tsx
-│ │ │ ├── NavigationBar.tsx
-│ │ │ ├── UserCard.tsx
-│ │ │ ├── RetroGameCard.tsx
-│ │ │ ├── Timer.tsx
-│ │ │ ├── StatisticsChart.tsx
-│ │ │ ├── LeaderboardTable.tsx
-│ │ │ ├── UserCarousel.tsx # Scrollable user selector
-│ │ │ └── ... (other UI components)
+│ │ │ ├── Statistics/
+│ │ │ │ ├── BarGraph.tsx # Minutes played per game (personal stats)
+│ │ │ │ ├── PieChart.tsx # Percent of total time per game (personal stats)
+│ │ │ │ ├── TotalTimePlayed.tsx # Total time played (personal stats)
+│ │ │ │ ├── SessionsGraph.tsx # Number of sessions per game + avg session length (dropdown)
+│ │ │ │ ├── WeeklyPlayTimeGraph.tsx # Play time across the week (dropdown)
+│ │ │ │ ├── AllUsersBarGraph.tsx # Total time per game across all users
+│ │ │ │ ├── LeaderboardTable.tsx # Top players per game
+│ │ │ ├── Navigation/
+│ │ │ │ ├── NavigationBar.tsx
+│ │ │ │ ├── GlobalSearch.tsx
+│ │ │ ├── User/
+│ │ │ │ ├── UserCard.tsx # Profile picture + first/last name
+│ │ │ │ ├── RetroGameCard.tsx # Game card for user stats
+│ │ │ ├── Timer/
+│ │ │ │ ├── Timer.tsx
+│ │ │ ├── Weather/
+│ │ │ │ ├── WeatherWidget.tsx
+│ │ │ └── Star.tsx
 │ │ ├── hooks/ # Custom React hooks
 │ │ │ └── useUsers.ts
 │ │ ├── api/ # API client utilities
@@ -65,6 +74,7 @@ final_assesment/
 │ │ └── server.ts # Express app entry point
 │ ├── package.json
 │ └── tsconfig.json
+│ └── index.js
 │
 ├── shared/ # Shared types/interfaces (imported by both)
 │ └── types.ts
