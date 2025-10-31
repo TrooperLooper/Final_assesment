@@ -1,6 +1,39 @@
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import Header from "../components/Navigation/Header";
+import axios from "axios";
+import { ApiClient } from "../components/api/apiClient";
+
+interface GameAsset {
+  image: string;
+  color: string;
+  small?: boolean; // Optional property
+}
+
+// Local asset/color mapping
+const gameAssets: Record<string, GameAsset> = {
+  "Pac-Man": {
+    image: "./src/components/assets/pacman_gameicon.gif",
+    color: "bg-yellow-400",
+    small: true,
+  },
+  Asteroids: {
+    image: "./src/components/assets/asteroids_gameicon.gif",
+    color: "bg-blue-500",
+  },
+  Tetris: {
+    image: "./src/components/assets/tetris_gameicon.gif",
+    color: "bg-pink-500",
+  },
+  "Space Invaders": {
+    image: "./src/components/assets/space_gameicon.gif",
+    color: "bg-green-500",
+  },
+};
+
+const apiClient = axios.create({
+  baseURL: import.meta.env.VITE_API_URL || "http://localhost:3000/api",
+});
 
 interface Game {
   _id: string;
@@ -10,93 +43,71 @@ interface Game {
 }
 
 function Games() {
+  const navigate = useNavigate();
   const [games, setGames] = useState<Game[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchGames = async () => {
+    const loadGames = async () => {
       try {
-        const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
-        console.log('Fetching games from:', `${API_URL}/games`);
-        
-        const response = await axios.get(`${API_URL}/games`);
-        console.log('Games received:', response.data);
-        
-        setGames(response.data);
-        setLoading(false);
-      } catch (err) {
-        console.error('Error fetching games:', err);
-        setError('Failed to load games. Make sure backend is running on port 3000.');
+        const gamesData = await fetchGames();
+        setGames(gamesData);
+      } catch (error) {
+        console.error("Failed to fetch games:", error);
+      } finally {
         setLoading(false);
       }
     };
-
-    fetchGames();
+    loadGames();
   }, []);
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 flex items-center justify-center">
-        <p className="text-white text-2xl">Loading games...</p>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-red-400 text-2xl mb-4">{error}</p>
-          <button 
-            onClick={() => window.location.reload()}
-            className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg"
-          >
-            Retry
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  if (games.length === 0) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-white text-2xl mb-4">No games available</p>
-          <p className="text-gray-300">Run 'npm run seed' in backend to add games</p>
-        </div>
+      <div className="flex justify-center items-center min-h-screen text-white">
+        Loading...
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 p-8">
-      <div className="max-w-7xl mx-auto">
-        <h1 className="text-4xl font-bold text-white mb-8 text-center">Choose Your Game</h1>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {games.map((game) => (
+    <div className="min-h-screen flex flex-col items-center py-12 bg-gradient-to-b from-blue-950 via-blue-800 to-purple-700">
+      <Header />
+      <h1 className="text-5xl font-['Pixelify_Sans'] mt-18 text-white mb-15 drop-shadow text-center">
+        Choose a game to play
+      </h1>
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-8">
+        {games.map((game) => {
+          const asset = gameAssets[game.name as keyof typeof gameAssets] || {};
+          return (
             <div
               key={game._id}
               onClick={() => navigate(`/play/${game._id}`)}
-              className="bg-white/10 backdrop-blur-sm rounded-xl p-6 hover:bg-white/20 transition cursor-pointer shadow-lg transform hover:scale-105"
+              className={`flex flex-col items-center rounded-xl shadow-lg ${
+                asset.color ?? "bg-yellow-400"
+              } p-4 transition-transform hover:scale-105 cursor-pointer`}
+              style={{ width: "180px" }}
             >
-              {game.gifUrl && (
+              <div
+                className="overflow-hidden rounded-lg border-4 border-white mb-3 bg-black flex items-center justify-center"
+                style={{ width: "140px", height: "140px" }}
+              >
                 <img
-                  src={game.gifUrl}
-                  alt={game.name}
-                  className="w-full h-48 object-cover rounded-lg mb-4"
+                  src={asset.image || game.gifUrl}
+                  alt={`${game.name} game animation`}
+                  className={
+                    asset.small
+                      ? "object-cover w-4/5 h-4/5"
+                      : "object-cover w-full h-full"
+                  }
+                  style={asset.small ? { width: "80px", height: "80px" } : {}}
                 />
-              )}
-              <h2 className="text-2xl font-bold text-white mb-2">{game.name}</h2>
-              {game.description && (
-                <p className="text-gray-300">{game.description}</p>
-              )}
+              </div>
+              <h4 className="text-lg font-['Winky_Sans'] font-bold text-white text-center drop-shadow tracking-widest uppercase">
+                {game.name}
+              </h4>
             </div>
-          ))}
-        </div>
+          );
+        })}
       </div>
     </div>
   );

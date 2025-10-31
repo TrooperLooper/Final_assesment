@@ -14,6 +14,7 @@
     "express": "^4.21.2",
     "mongoose": "^7.8.7",
     "multer": "^2.0.2",
+    "react-router-dom": "^7.9.5",
     "sequelize": "^6.37.7",
     "winston": "^3.18.3",
     "zod": "^4.1.12"

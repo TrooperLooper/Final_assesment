@@ -6,38 +6,67 @@ import { apiClient } from "../components/api/apiClient";
 import { useNavigate } from "react-router-dom";
 import defaultAvatar from "../components/assets/user_default.jpeg";
 import Layout from "../components/Navigation/Layout";
+import axios from "axios";
 
-const apiClient = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3000/api'
+// Zod schema for validation
+const registerSchema = z.object({
+  email: z.string().email("Invalid email address"),
+  firstName: z.string().min(1, "First name is required"),
+  lastName: z.string().min(1, "Last name is required"),
 });
 
-const Register: React.FC = () => {
+function Register() {
+  const [email, setEmail] = useState("");
+  const [firstName, setFirstName] = useState("");
+  const [lastName, setLastName] = useState("");
+  const [imagePreview, setImagePreview] = useState(defaultAvatar);
+  const [profilePicture, setProfilePicture] = useState(null);
+  const [errors, setErrors] = useState({});
   const navigate = useNavigate();
-  const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+
+  const isFormValid = registerSchema.safeParse({
+    email,
+    firstName,
+    lastName,
+  }).success;
+
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagePreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+      setProfilePicture(file);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
-    setLoading(true);
+
+    const formData = new FormData();
+    formData.append("username", firstName + " " + lastName);
+    formData.append("email", email);
+    formData.append("password", ""); // Assuming password is not part of the form
+    if (profilePicture) {
+      formData.append("profilePicture", profilePicture); // Ensure this matches the backend field name
+    }
 
     try {
-      const response = await apiClient.post('/users/register', {
-        username,
-        email
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/users`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
       });
-
-      console.log('Registration successful:', response.data);
-      
-      // Navigate to games page after successful registration
-      navigate('/games');
-    } catch (err: any) {
-      console.error('Registration error:', err);
-      setError(err.response?.data?.error || 'Registration failed. Please try again.');
-    } finally {
-      setLoading(false);
+      console.log("Registration successful:", response.data);
+      navigate("/");
+    } catch (error) {
+      if (axios.isAxiosError(error)) {
+        console.error("Registration error:", error.response?.data || error.message);
+      } else {
+        console.error("Unexpected error:", error);
+      }
     }
   };
 
@@ -59,14 +88,27 @@ const Register: React.FC = () => {
             className="grid grid-cols-8 w-full mb-2"
             style={{ maxWidth: 600 }}
           >
-            {loading ? 'Registering...' : 'Register'}
-          </button>
-        </form>
-
-        <div className="mt-4 text-center">
-          <button
-            onClick={() => navigate('/games')}
-            className="text-indigo-600 hover:text-indigo-800 text-sm"
+            {/* Left star (columns 1-2) */}
+            <div className="col-span-2 flex items-center justify-center">
+              <Star size={20} delay="0s" />
+            </div>
+            {/* Mushroom (columns 3-6) */}
+            <div className="col-span-4 flex items-center justify-center">
+              <img
+                src="./src/components/assets/svamp_animation.gif"
+                alt="A cute mushroom animation"
+                height={180}
+                width={180}
+                className="mb-2"
+              />
+            </div>
+            {/* Empty right cell (columns 7-8) */}
+            <div className="col-span-2" />
+          </div>
+          {/* Grid row for headline and right star */}
+          <div
+            className="grid grid-cols-8 w-full mb-6"
+            style={{ maxWidth: 600 }}
           >
             {/* Empty left cell (columns 1-2) */}
             <div className="col-span-2" />
@@ -208,7 +250,6 @@ const Register: React.FC = () => {
       </div>
     </Layout>
   );
-  
-};
+}
 
 export default Register;

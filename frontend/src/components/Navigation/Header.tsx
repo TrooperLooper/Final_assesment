@@ -1,6 +1,6 @@
 import React from "react";
 import WeatherWidget from "../Weather/WeatherWidget";
-import GlobalSearch from "../Navigation/GlobalSearch";
+import GlobalSearch from '../GlobalSearch';
 
 const Header: React.FC = () => (
   <header className="w-full flex flex-col sm:flex-row justify-between items-center px-2 sm:px-8 py-1 bg-transparent">

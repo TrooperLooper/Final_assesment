@@ -1,48 +1,58 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import Layout from "../components/Navigation/Layout";
-import Header from "../components/Navigation/Header";
-import { apiClient } from "../components/api/apiClient";
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { FiPlus } from 'react-icons/fi';
 import defaultAvatar from "../components/assets/user_default.jpeg";
-import { FiPlus } from "react-icons/fi";
+import Layout from '../components/Navigation/Layout';
+import Header from '../components/Navigation/Header';
 
-function Users() {
-  const [users, setUsers] = useState([]);
+interface User {
+  _id: string;
+  firstName: string;
+  lastName: string;
+  profilePicture?: string;
+}
+
+const Users: React.FC = () => {
+  const [users, setUsers] = useState<User[]>([]);
   const navigate = useNavigate();
 
   useEffect(() => {
-    apiClient.get("/users").then((res) => setUsers(res.data));
+    // Fetch users from API
+    const fetchUsers = async () => {
+      try {
+        const response = await fetch('http://localhost:3000/api/users');
+        const data = await response.json();
+        setUsers(data);
+      } catch (error) {
+        console.error('Failed to fetch users:', error);
+      }
+    };
+
+    fetchUsers();
   }, []);
 
   return (
     <Layout>
       <div className="min-h-screen bg-gradient-to-b from-blue-950 via-blue-800 to-purple-700 flex flex-col">
-        {/* Header (search bar should be inside Header component only) */}
         <Header />
-        {/* Main content */}
         <div className="flex-1 flex flex-col pt-8">
-          {/* Title and Add User button in 3 columns */}
           <div className="grid grid-cols-3 items-center px-12 pb-2">
-            {/* First column: empty */}
             <div></div>
-            {/* Second column: headline centered */}
             <div className="flex justify-center">
               <h1 className="text-4xl font-['Pixelify_Sans'] text-white drop-shadow">
                 USERS
               </h1>
             </div>
-            {/* Third column: Add User button right aligned */}
             <div className="flex justify-end">
               <button
                 className="flex items-center gap-2 bg-white/80 text-blue-900 font-bold px-4 py-2 rounded-full shadow hover:bg-white transition"
-                onClick={() => navigate("/register")}
+                onClick={() => navigate('/register')}
               >
                 Add User <FiPlus className="w-5 h-5" />
               </button>
             </div>
           </div>
           <div className="filler h-10"></div>
-          {/* User grid */}
           <div className="px-12 pb-12">
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-10">
               {users.map((user) => (
@@ -50,17 +60,14 @@ function Users() {
                   <div className="w-48 h-48 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden mb-2">
                     <img
                       src={
-                        user.profilePicture &&
-                        user.profilePicture.startsWith("/uploads")
+                        user.profilePicture?.startsWith('/uploads')
                           ? `http://localhost:3000${user.profilePicture}`
-                          : user.profilePicture
-                          ? user.profilePicture
-                          : defaultAvatar
+                          : user.profilePicture || defaultAvatar
                       }
                       alt={
                         user.firstName && user.lastName
                           ? `${user.firstName} ${user.lastName}`
-                          : "User avatar"
+                          : 'User avatar'
                       }
                       className="object-cover w-40 h-40"
                       onError={(e) => {
@@ -80,6 +87,6 @@ function Users() {
       </div>
     </Layout>
   );
-}
+};
 
 export default Users;

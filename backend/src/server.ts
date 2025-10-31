@@ -1,38 +1,32 @@
 import dotenv from "dotenv";
 import express from "express";
 import cors from "cors";
-import userRouter from "./routes/userRoutes";
+import userRoutes from "./routes/userRoutes";
 import gameRoutes from "./routes/GameRoutes"; 
 import sessionRouter from "./routes/sessionRoutes";
 import statisticsRoutes from './routes/statisticsRoutes';
 import searchRoutes from './routes/searchRoutes';
 import leaderboardRoutes from './routes/leaderboardRoutes';
 import { connectDB } from './config/database';
+import { errorHandler } from "./middleware/errorHandler";
 
 dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Middleware
-app.use(cors({
-  origin: (origin, callback) => {
-    // Allow requests with no origin (like mobile apps or curl)
-    if (!origin) return callback(null, true);
-    
-    // Allow localhost on any port
-    if (origin.startsWith('http://localhost:')) {
-      return callback(null, true);
-    }
-    
-    callback(new Error('Not allowed by CORS'));
-  },
-  credentials: true
-}));
+const corsOptions = {
+  origin: "http://localhost:5173", 
+  methods: ["GET", "POST", "PUT", "DELETE"],
+  credentials: true,
+};
+
+app.use(cors(corsOptions)); // Allow requests from the frontend
 app.use(express.json());
 
 // Routes
 app.use("/uploads", express.static("uploads"));
-app.use("/api/users", userRouter);
+app.use("/api/users", userRoutes); // Ensure this route is registered
 app.use("/api/games", gameRoutes);
 app.use("/api/sessions", sessionRouter);
 app.use('/api/statistics', statisticsRoutes);
@@ -43,6 +37,9 @@ app.use('/api/leaderboard', leaderboardRoutes);
 app.get('/health', (req, res) => {
   res.json({ status: 'ok' });
 });
+
+// Error handling middleware (must be the last middleware)
+app.use(errorHandler);
 
 // Connect to database and start server
 async function startServer() {

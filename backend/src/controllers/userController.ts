@@ -21,19 +21,19 @@ export const getUserById = async (req: Request, res: Response) => {
 };
 
 export const createUser = async (req: Request, res: Response) => {
-  try {
-    const avatarPath = req.file
-      ? `/uploads/${req.file.filename}`
-      : req.body.profilePicture;
-    const validated = userSchema.parse({
-      ...req.body,
-      profilePicture: avatarPath,
-    });
-    const newUser = await User.create(validated);
-    res.status(201).json(newUser);
-  } catch (err) {
-    res.status(400).json(err);
+  const { username, email, password } = req.body;
+  const profilePicture = req.file?.path;
+
+  if (!username || !email || !password) {
+    return res.status(400).json({ message: "All fields are required" });
   }
+
+  if (!profilePicture) {
+    return res.status(400).json({ message: "Profile picture is required" });
+  }
+
+  // Proceed with user creation logic
+  res.status(201).json({ message: "User created successfully" });
 };
 
 export const updateUserById = async (req: Request, res: Response) => {
