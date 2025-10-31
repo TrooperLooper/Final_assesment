@@ -1,23 +1,57 @@
+import { useEffect, useState } from "react";
+import axios from "axios";
+
 interface LeaderboardTableProps {
-  data: {
-    userId: string;
-    userName: string;
-    totalMinutes: number;
-    rank: number;
-  }[];
+  // No need to pass data, will fetch from backend
 }
 
-const LeaderboardTable: React.FC<LeaderboardTableProps> = ({ data }) => {
-  return <div>Leaderboard Table placeholder</div>;
+interface LeaderboardEntry {
+  userId: string;
+  userName: string;
+  totalMinutes: number;
+  rank: number;
+}
+
+const LeaderboardTable: React.FC<LeaderboardTableProps> = () => {
+  const [data, setData] = useState<LeaderboardEntry[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchLeaderboard = async () => {
+      try {
+        const res = await axios.get("/api/statistics/leaderboard");
+        setData(res.data);
+      } catch (error) {
+        setData([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchLeaderboard();
+  }, []);
+
+  if (loading) return <div>Loading leaderboard...</div>;
+
+  return (
+    <table className="min-w-full text-xs">
+      <thead>
+        <tr>
+          <th className="text-left px-2 py-1">Rank</th>
+          <th className="text-left px-2 py-1">Name</th>
+          <th className="text-left px-2 py-1">Total Minutes</th>
+        </tr>
+      </thead>
+      <tbody>
+        {data.map((entry) => (
+          <tr key={entry.userId}>
+            <td className="px-2 py-1">{entry.rank}</td>
+            <td className="px-2 py-1">{entry.userName}</td>
+            <td className="px-2 py-1">{entry.totalMinutes}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  );
 };
-
-export const mockLeaderboardData = [
-  { userId: "u1", userName: "Alice", totalMinutes: 120, rank: 1 },
-  { userId: "u2", userName: "Bob", totalMinutes: 90, rank: 2 },
-  { userId: "u3", userName: "Charlie", totalMinutes: 60, rank: 3 },
-];
-
-// Usage example
-// <LeaderboardTable data={mockLeaderboardData} />
 
 export default LeaderboardTable;
