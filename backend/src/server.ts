@@ -21,7 +21,7 @@ const corsOptions = {
   credentials: true,
 };
 
-app.use(cors(corsOptions)); // Allow requests from the frontend
+app.use(cors({ origin: 'http://localhost:5173' })); 
 app.use(express.json());
 
 // Routes

@@ -21,10 +21,10 @@ export const getUserById = async (req: Request, res: Response) => {
 };
 
 export const createUser = async (req: Request, res: Response) => {
-  const { username, email, password } = req.body;
+  const { firstName, lastName, email, password } = req.body;
   const profilePicture = req.file?.path;
 
-  if (!username || !email || !password) {
+  if (!firstName || !lastName || !email || !password) {
     return res.status(400).json({ message: "All fields are required" });
   }
 

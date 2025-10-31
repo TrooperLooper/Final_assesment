@@ -45,28 +45,19 @@ function Register() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const formData = new FormData();
-    formData.append("username", firstName + " " + lastName);
-    formData.append("email", email);
-    formData.append("password", ""); // Assuming password is not part of the form
-    if (profilePicture) {
-      formData.append("profilePicture", profilePicture); // Ensure this matches the backend field name
-    }
+    const userData = {
+      email,
+      firstName,
+      lastName,
+      password: "", // Assuming password is not part of the form
+    };
 
     try {
-      const response = await axios.post(`${import.meta.env.VITE_API_URL}/users`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      const response = await apiClient.post("/api/users", userData);
       console.log("Registration successful:", response.data);
       navigate("/");
-    } catch (error) {
-      if (axios.isAxiosError(error)) {
-        console.error("Registration error:", error.response?.data || error.message);
-      } else {
-        console.error("Unexpected error:", error);
-      }
+    } catch (error: any) {
+      console.error("Registration error:", error.response.data);
     }
   };
 
