@@ -32,7 +32,7 @@ const PieChart: React.FC<SingleGamePieChartProps> = ({
   };
 
   return (
-    <div className="flex flex-col items-center">
+    <div className="flex flex-col items-center ">
       {iconUrl && (
         <img
           src={iconUrl}
@@ -51,7 +51,7 @@ const PieChart: React.FC<SingleGamePieChartProps> = ({
           options={{ plugins: { legend: { display: false } } }}
         />
       </div>
-      <span className="text-white mt-2 text-sm font-bold">
+      <span className="text-white mt-2 text-sm font-bold ">
         {percent.toFixed(0)}%
       </span>
     </div>

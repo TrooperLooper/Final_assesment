@@ -2,18 +2,18 @@ import React, { useEffect, useRef } from "react";
 
 interface TimerProps {
   isPlaying: boolean;
-  onStop: (elapsedSeconds: number) => void;
+  onStop: (elapsedMinutes: number) => void;
 }
 
 const Timer: React.FC<TimerProps> = ({ isPlaying, onStop }) => {
-  const [seconds, setSeconds] = React.useState(0);
+  const [minutes, setMinutes] = React.useState(0);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     if (isPlaying) {
       intervalRef.current = setInterval(() => {
-        setSeconds((prev) => prev + 1);
-      }, 1000);
+        setMinutes((prev) => prev + 1);
+      }, 1000); // 1 second = 1 minute
     } else if (intervalRef.current) {
       clearInterval(intervalRef.current);
       intervalRef.current = null;
@@ -23,22 +23,19 @@ const Timer: React.FC<TimerProps> = ({ isPlaying, onStop }) => {
     };
   }, [isPlaying]);
 
-  // Call onStop when timer is stopped
   useEffect(() => {
-    if (!isPlaying && seconds > 0) {
-      onStop(seconds);
+    if (!isPlaying && minutes > 0) {
+      onStop(minutes);
     }
     // eslint-disable-next-line
   }, [isPlaying]);
 
-  const formatTime = (secs: number) => {
-    const mins = Math.floor(secs / 60);
-    const hours = Math.floor(secs / 3600);
+  const formatTime = (mins: number) => {
+    const hours = Math.floor(mins / 60);
     const displayMins = mins % 60;
-    const displaySecs = secs % 60;
     return `${hours.toString().padStart(2, "0")}:${displayMins
       .toString()
-      .padStart(2, "0")}:${displaySecs.toString().padStart(2, "0")}`;
+      .padStart(2, "0")}:00`;
   };
 
   return (
@@ -47,7 +44,7 @@ const Timer: React.FC<TimerProps> = ({ isPlaying, onStop }) => {
         TIME PLAYING:
       </span>
       <span className="text-black text-5xl font-mono tracking-widest drop-shadow">
-        {formatTime(seconds)}
+        {formatTime(minutes)}
       </span>
     </div>
   );

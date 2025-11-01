@@ -56,24 +56,6 @@ const BarGraph: React.FC<BarGraphProps> = ({ data }) => {
 
   return (
     <div>
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "space-around",
-          marginBottom: "20px",
-        }}
-      >
-        {data.map((game) => (
-          <div key={game.gameName} style={{ textAlign: "center" }}>
-            <img
-              src={game.iconUrl}
-              alt={game.gameName}
-              style={{ width: "50px" }}
-            />
-            <span>{game.gameName}</span>
-          </div>
-        ))}
-      </div>
       <Bar data={chartData} options={options} />
     </div>
   );

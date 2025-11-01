@@ -9,30 +9,54 @@ export const apiClient = axios.create({
   },
 });
 
-// Usage example:
-// apiClient.get("/users").then(res => ...)
-// apiClient.post("/users", userData)
-// apiClient.post("/users/upload-avatar", formData, {
-//   headers: { "Content-Type": "multipart/form-data" },
-// });
-
+// Fetch a game by its ID
 export const fetchGameById = async (gameId: string) => {
   try {
     const response = await apiClient.get(`/games/${gameId}`);
-    return response.data; // Game data
+    return response.data;
   } catch (error) {
     console.error("Failed to fetch game:", error);
     throw error;
   }
 };
 
-// ADD THESE SESSION METHODS
+// Fetch a user by their ID
+export const fetchUserById = async (userId: string) => {
+  try {
+    const response = await apiClient.get(`/users/${userId}`);
+    return response.data;
+  } catch (error) {
+    console.error("Failed to fetch user:", error);
+    throw error;
+  }
+};
+
+// Start a session
 export const startSession = async (userId: string, gameId: string) => {
   const response = await apiClient.post("/sessions/start", { userId, gameId });
   return response.data;
 };
 
+// Stop a session
 export const stopSession = async (sessionId: string) => {
   const response = await apiClient.post(`/sessions/stop/${sessionId}`);
+  return response.data;
+};
+
+// Log a session (alternative to stopSession)
+export const logSession = async ({
+  userId,
+  gameId,
+  minutesPlayed,
+}: {
+  userId: string;
+  gameId: string;
+  minutesPlayed: number;
+}) => {
+  const response = await apiClient.post("/sessions", {
+    userId,
+    gameId,
+    minutesPlayed,
+  });
   return response.data;
 };

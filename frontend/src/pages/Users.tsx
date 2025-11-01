@@ -24,21 +24,29 @@ function Users() {
           <div className="grid grid-cols-3 items-center px-12 pb-2 mt-2">
             <div></div>
             <div className="flex justify-center">
-              <h1 className="text-4xl md:text-6xl lg:text-7xl font-['Pixelify_Sans'] mb-5 text-white drop-shadow">
-                USERS
+              <h1 className="text-4xl md:text-6xl lg:text-7xl  text-center font-['Pixelify_Sans'] mb-5 text-white drop-shadow">
+                ALL USERS
               </h1>
             </div>
             <div></div>
           </div>
+
           {/* Second row: Add User button in third column */}
           <div className="grid grid-cols-3 items-center px-12 pb-2">
             <div></div>
-            <div></div>
+            <div>
+              {" "}
+              <div className="text-center">
+                <p className="text-white text-sm text-center">
+                  Pick a user to see statistics and record a new time
+                </p>
+              </div>
+            </div>
             <div className="flex justify-end">
               <button
                 className="flex items-center gap-2 text-white "
                 style={{ fontSize: "0.9rem" }}
-                onClick={() => navigate("/register")}
+                onClick={() => navigate("/")}
               >
                 Add User
                 <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-white ml-1">
@@ -49,13 +57,16 @@ function Users() {
           </div>
           <div className="filler h-6"></div>
           {/* User grid */}
-          <div className="px-4 pb-12 w-full max-w-7xl mx-auto">
-            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+          <div className="px-4 pb-12 w-full mx-auto">
+            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2">
               {users.map((user) => (
                 <div
                   key={user._id}
                   className="flex flex-col items-center cursor-pointer transition-transform hover:scale-105 active:scale-95"
-                  onClick={() => navigate(`/stats/${user._id}`)} // <-- Change to stats page
+                  onClick={() => {
+                    localStorage.setItem("currentUser", JSON.stringify(user));
+                    navigate(`/stats/${user._id}`);
+                  }}
                   tabIndex={0}
                   role="button"
                   aria-label={`Go to stats page for ${user.firstName} ${user.lastName}`}

@@ -68,7 +68,9 @@ function Register() {
 
       // Only redirect if registration is successful
       if (response.status === 201) {
-        navigate("/users");
+        const newUser = response.data; // assuming the new user data is in response.data
+        localStorage.setItem("currentUser", JSON.stringify(newUser));
+        navigate(`/stats/${newUser._id}`); // or navigate("/games") if you want to go to games page
       }
     } catch (error) {
       // Show error to user

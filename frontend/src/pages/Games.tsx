@@ -39,6 +39,8 @@ const staticGames = [
 function Games() {
   const navigate = useNavigate();
 
+  const currentUser = JSON.parse(localStorage.getItem("currentUser") || "null");
+
   return (
     <Layout>
       {/* Gradient background as a -z layer */}

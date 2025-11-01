@@ -20,7 +20,7 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = () => {
     const fetchLeaderboard = async () => {
       try {
         const res = await axios.get("/api/statistics/leaderboard");
-        setData(res.data);
+        setData(Array.isArray(res.data) ? res.data : []);
       } catch (error) {
         setData([]);
       } finally {
