@@ -1,6 +1,6 @@
-const Star = ({ size = 40, color = "white", delay = "0s" }) => (
+const Star = ({ size = 40, color = "white", delay = "0s", className = "" }) => (
   <svg
-    className="star-animate"
+    className={`star-animate ${className}`}
     width={size}
     height={size}
     viewBox="0 0 100 100"

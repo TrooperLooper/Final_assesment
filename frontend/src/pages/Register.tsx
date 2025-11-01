@@ -44,8 +44,8 @@ function Register() {
     }
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async (event) => {
+    event.preventDefault();
     const result = registerSchema.safeParse({ email, firstName, lastName });
     if (!result.success) {
       const formErrors = {};
@@ -58,15 +58,22 @@ function Register() {
     setErrors({});
 
     try {
-      await apiClient.post("/users", {
+      // Your registration API call
+      const response = await apiClient.post("/users", {
         email,
         firstName,
         lastName,
-        profilePicture: imagePreview,
+        profilePicture: imagePreview, // or file upload logic
       });
-      navigate("/");
+
+      // Only redirect if registration is successful
+      if (response.status === 201) {
+        navigate("/users");
+      }
     } catch (error) {
-      console.error("Registration error:", error);
+      // Show error to user
+      console.error("Registration error:", error.response?.data || error);
+      // Optionally display error message in the UI
     }
   };
 
