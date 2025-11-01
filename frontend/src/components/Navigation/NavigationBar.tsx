@@ -4,7 +4,6 @@ import {
   FiUser,
   FiUsers,
   FiBarChart2,
-  FiPlayCircle,
   FiGrid,
   FiMenu,
   FiX,
@@ -13,7 +12,6 @@ import {
 const navItems = [
   { name: "Register", path: "/", icon: <FiUser /> },
   { name: "Games", path: "/games", icon: <FiGrid /> },
-  { name: "Play", path: "/play/1", icon: <FiPlayCircle /> },
   { name: "Stats", path: "/stats/1", icon: <FiBarChart2 /> },
   { name: "Users", path: "/users", icon: <FiUsers /> },
 ];

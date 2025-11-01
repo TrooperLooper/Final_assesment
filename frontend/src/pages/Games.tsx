@@ -8,6 +8,7 @@ const staticGames = [
     image: "./src/components/assets/pacman_gameicon.gif",
     color: "bg-yellow-400",
     small: true,
+    objectId: "69053c8af23a2d756f728f21", // <-- MongoDB ObjectId for Pac-Man
   },
   {
     _id: "asteroids_id",
@@ -15,6 +16,7 @@ const staticGames = [
     image: "./src/components/assets/asteroids_gameicon.gif",
     color: "bg-blue-500",
     small: false,
+    objectId: "69053c8af23a2d756f728f25", // <-- MongoDB ObjectId for Asteroids
   },
   {
     _id: "tetris_id",
@@ -22,6 +24,7 @@ const staticGames = [
     image: "./src/components/assets/tetris_gameicon.gif",
     color: "bg-pink-500",
     small: false,
+    objectId: "69053c8af23a2d756f728f27", // <-- MongoDB ObjectId for Tetris
   },
   {
     _id: "spaceinvaders_id",
@@ -29,6 +32,7 @@ const staticGames = [
     image: "./src/components/assets/space_gameicon.gif",
     color: "bg-green-500",
     small: false,
+    objectId: "69053c8af23a2d756f728f29", // <-- MongoDB ObjectId for Space Invaders
   },
 ];
 
@@ -41,9 +45,9 @@ function Games() {
       <div className="fixed inset-0 -z-10 w-full h-full bg-gradient-to-b from-blue-950 via-blue-800 to-purple-700" />
       <div className="min-h-screen flex flex-col items-center justify-start pt-5 px-2 sm:px-8">
         {/* Headline on top, centered */}
-        <div className="w-full flex justify-center mt-2 mb-8">
-          <h1 className="text-4xl lg:mb-4 sm:text-6xl lg:text-7xl font-bold font-['Pixelify_Sans'] text-white drop-shadow-lg text-center ml-20">
-            Choose a game to play
+        <div className="w-full flex justify-center items-center px-2 sm:px-12 pb-2 mt-2">
+          <h1 className="text-3xl md:text-6xl lg:text-7xl font-['Pixelify_Sans'] text-white drop-shadow text-center">
+            CHOOSE A GAME TO PLAY
           </h1>
         </div>
         {/* Main content below headline */}
@@ -52,10 +56,10 @@ function Games() {
             <div
               className="
                 grid
-                grid-cols-2
-                lg:grid-cols-4
-                gap-1
-                lg:gap-8
+                grid-cols-1
+                sm:grid-cols-2
+                md:grid-cols-4
+                gap-8
                 justify-center
                 overflow-hidden
                 max-w-md sm:max-w-2xl lg:max-w-4xl
@@ -64,19 +68,10 @@ function Games() {
               {staticGames.map((game) => (
                 <div
                   key={game._id}
-                  onClick={() => navigate(`/play/${game._id}`)}
-                  className={`
-                    flex flex-col items-center rounded-xl shadow-lg ${game.color}
-                    p-3 transition-transform hover:scale-100 cursor-pointer
-                    w-[180px] h-[240px]
-                    scale-75 lg:scale-90 lg:hover:scale-95
-                  `}
-                  style={{
-                    minWidth: "120px",
-                    minHeight: "160px",
-                    transition: "transform 0.15s cubic-bezier(0.4,0,0.2,1)",
-                  }}
+                  className="game-card cursor-pointer hover:scale-105 active:scale-95 transition"
+                  onClick={() => navigate(`/play/${game.objectId}`)}
                 >
+                  {/* Game card content */}
                   <div
                     className="overflow-hidden rounded-lg border-4 border-white mb-3 bg-black flex items-center justify-center"
                     style={{ width: "140px", height: "140px" }}

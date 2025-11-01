@@ -52,7 +52,14 @@ function Users() {
           <div className="px-4 pb-12 w-full max-w-7xl mx-auto">
             <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
               {users.map((user) => (
-                <div key={user._id} className="flex flex-col items-center">
+                <div
+                  key={user._id}
+                  className="flex flex-col items-center cursor-pointer transition-transform hover:scale-105 active:scale-95"
+                  onClick={() => navigate(`/stats/${user._id}`)} // <-- Change to stats page
+                  tabIndex={0}
+                  role="button"
+                  aria-label={`Go to stats page for ${user.firstName} ${user.lastName}`}
+                >
                   <div className="w-32 h-32 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden mb-2">
                     <img
                       src={
