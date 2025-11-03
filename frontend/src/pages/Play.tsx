@@ -1,7 +1,7 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Layout from "../components/Navigation/Layout";
-import Timer from "../components/Timer/Timer";
+import RetroTimer from "../components/Timer/RetroTimer";
 import {
   fetchGameById,
   logSession,
@@ -14,31 +14,73 @@ function Play() {
   const { gameId, userId } = useParams<{ gameId: string; userId: string }>();
   const navigate = useNavigate();
   const [game, setGame] = useState(null);
-  const [user, setUser] = useState(null);
   const [isPlaying, setIsPlaying] = useState(true); // Start immediately
   const [sessionLogged, setSessionLogged] = useState(false);
-  const [elapsedMinutes, setElapsedMinutes] = useState(0);
+  const [elapsedSeconds, setElapsedSeconds] = useState(0);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (gameId) fetchGameById(gameId).then(setGame);
-    if (userId) fetchUserById(userId).then(setUser);
-  }, [gameId, userId]);
+    if (gameId) {
+      fetchGameById(gameId)
+        .then(setGame)
+        .catch((err) => {
+          setError("Game not found. Please select a valid game.");
+          console.error("Failed to fetch game:", err);
+        });
+    }
+  }, [gameId]);
+
+  useEffect(() => {
+    if (isPlaying) {
+      intervalRef.current = setInterval(() => {
+        setElapsedSeconds((prev) => prev + 1);
+      }, 1000);
+    } else if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
+  }, [isPlaying]);
 
   const currentUser = JSON.parse(localStorage.getItem("currentUser") || "null");
 
-  const handleStop = (minutes: number) => {
-    setIsPlaying(false);
-    setElapsedMinutes(minutes);
-    logSession({ userId: currentUser._id, gameId, minutesPlayed: minutes });
-    setSessionLogged(true);
-  };
+  // When stopped, log session (every second = 1 minute for demo)
+  useEffect(() => {
+    if (!isPlaying && elapsedSeconds > 0 && !sessionLogged) {
+      logSession({
+        userId: currentUser._id,
+        gameId,
+        minutesPlayed: elapsedSeconds, // 1 second = 1 minute
+      });
+      setSessionLogged(true);
+    }
+  }, [isPlaying, elapsedSeconds, sessionLogged, currentUser, gameId]);
 
-  const handleExit = () => {
-    navigate(`/stats/${currentUser._id}`);
+  const handleStop = () => setIsPlaying(false);
+  const handleStart = () => {
+    setIsPlaying(true);
+    setSessionLogged(false);
+    setElapsedSeconds(0);
   };
+  const handleExit = () => navigate(`/stats/${currentUser._id}`);
+
+  if (error) {
+    return (
+      <Layout>
+        <div className="text-red-500 text-center mt-24">{error}</div>
+      </Layout>
+    );
+  }
 
   if (!game || !currentUser)
-    return <div className="text-white">Loading...</div>;
+    return (
+      <Layout>
+        <div className="text-white text-center mt-24">Loading...</div>
+      </Layout>
+    );
 
   return (
     <Layout>
@@ -47,12 +89,12 @@ function Play() {
         <div className="flex flex-col items-center">
           <img src={game.image} alt={game.name} className="w-32 h-32 mb-4" />
           <h1 className="text-3xl font-bold mb-8">{game.name}</h1>
-          <Timer isPlaying={isPlaying} onStop={handleStop} />
+          <RetroTimer elapsedSeconds={elapsedSeconds} isStopped={!isPlaying} />
           <div className="flex gap-4 mt-8">
             <button
-              onClick={() => setIsPlaying((prev) => !prev)}
+              onClick={isPlaying ? handleStop : handleStart}
               className="border-2 border-black px-8 py-3 rounded-lg text-xl font-bold"
-              disabled={sessionLogged}
+              disabled={sessionLogged && !isPlaying}
             >
               {isPlaying ? "STOP" : "START"}
             </button>

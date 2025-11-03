@@ -93,8 +93,10 @@ function Stats() {
     setLoading(false);
   }, []);
 
-  // For demo, use mock user info
-  const user = {
+  // Get current user from localStorage (fallback to default if not found)
+  const currentUser = JSON.parse(
+    localStorage.getItem("currentUser") || "null"
+  ) || {
     firstName: "Testy",
     lastName: "McTestface",
     profilePicture: defaultAvatar,
@@ -133,39 +135,64 @@ function Stats() {
   return (
     <Layout>
       <div className="fixed inset-0 -z-10 w-full h-full bg-gradient-to-b from-blue-950 via-blue-800 to-purple-700" />
-      <div className="min-h-screen flex flex-col gap-8 pt-8 px-2 sm:px-8 ml-0 md:ml-40">
-        {/* Row 1: Profile + BarGraph */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <div className="flex flex-col items-center p-6">
+      <div className="min-h-screen flex flex-col gap-8 pt-8 px-2 sm:px-8 ml-0 md:ml-20">
+        {/* Profile + Info Section */}
+        <div className="grid grid-cols-1 md:grid-cols-[auto_3fr] bg-red-500 p-4 rounded-lg gap-8 w-full max-w-3xl mx-auto">
+          {/* Profile Pic */}
+          <div className="flex items-start justify-center">
             <img
-              src={user.profilePicture}
+              src={
+                currentUser.profilePicture && currentUser.profilePicture.trim()
+                  ? currentUser.profilePicture
+                  : defaultAvatar
+              }
               alt="Profile"
-              className="w-32 h-32 rounded-lg mb-4 object-cover"
+              className="w-32 h-32 rounded-lg border-2 border-white object-cover"
             />
-            <div className="text-normal font-bold text-white text-center">
-              {user.firstName} {user.lastName}
-              <div className="flex gap-4 justify-center mt-4">
-                <button className="bg-gray-900 text-white px-3 py-1 rounded-lg font-bold shadow hover:bg-gray-700 transition">
-                  Choose new player
-                </button>
-                <button className="bg-gray-900 text-white px-3 py-1 rounded-lg font-bold shadow hover:bg-gray-700 transition">
-                  Play new game
-                </button>
-              </div>
-            </div>
           </div>
-          <div className="bg-white/10 rounded-xl p-6 shadow flex items-center justify-center">
-            <BarGraph data={gameStats} />
+          {/* Info Card */}
+          <div className="bg-green-500 rounded-xl shadow-lg p-8 flex flex-col gap-4 justify-center max-w-md w-full">
+            <div className="text-white font-bold text-2xl text-start">
+              {currentUser.firstName} {currentUser.lastName}
+            </div>
+            <div className="text-white text-start mb-2">Total time played</div>
+
+            <div className="text-white font-bold text-4xl text-start ">
+              {totalTimePlayed} min
+            </div>
+            <div className="flex flex-col gap-4 items-start w-full">
+              <button
+                type="button"
+                className="py-2 px-6 rounded-lg font-bold text-xs shadow-lg transition-all
+          active:scale-95 active:shadow-inner
+          bg-yellow-400 text-pink-900 hover:bg-yellow-300 w-auto"
+                onClick={() => {
+                  /* handle choose new player */
+                }}
+              >
+                CHOOSE NEW PLAYER
+              </button>
+              <button
+                type="button"
+                className="py-2 px-6 rounded-lg font-bold text-xs shadow-lg transition-all
+          active:scale-95 active:shadow-inner
+          bg-yellow-400 text-pink-900 hover:bg-yellow-300 w-auto"
+                onClick={() => {
+                  /* handle play new game */
+                }}
+              >
+                PLAY NEW GAME
+              </button>
+            </div>
           </div>
         </div>
 
-        {/* Row 2: PieChart + TotalTimePlayed + Buttons */}
+        {/* Row 2: PieChart + BarGraph + Buttons */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {/* Replace old piechart grid with new GameStatsRow */}
           <GameStatsRow games={gamesData} />
           <div className="flex flex-col gap-4">
             <div className="bg-white/10 rounded-xl p-6 shadow flex items-center justify-center mb-2">
-              <TotalTimePlayed data={gameStats} />
+              <BarGraph data={gameStats} />
             </div>
           </div>
         </div>

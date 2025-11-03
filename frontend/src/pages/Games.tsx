@@ -94,6 +94,15 @@ function Games() {
                   <h4 className="text-lg font-bold font-['Winky_Sans'] text-white text-center drop-shadow tracking-widest uppercase">
                     {game.name}
                   </h4>
+                  <button
+                    type="button"
+                    className={`z-10 self-end py-1 px-4 rounded-lg font-bold text-base shadow-lg transition-all
+                      active:scale-95 active:shadow-inner
+                      bg-yellow-400 text-pink-900 hover:bg-yellow-300`}
+                    onClick={() => navigate(`/play/${game.objectId}`)}
+                  >
+                    PLAY
+                  </button>
                 </div>
               ))}
             </div>

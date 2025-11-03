@@ -1,34 +1,27 @@
-import { useEffect, useState } from "react";
-import axios from "axios";
+import React from "react";
 
 interface TotalTimePlayedProps {
-  userId: string;
+  userId?: string;
+  mockMinutes?: number;
 }
 
-const TotalTimePlayed = ({ userId }: TotalTimePlayedProps) => {
-  const [totalMinutes, setTotalMinutes] = useState<number | null>(null);
-
-  useEffect(() => {
-    const fetchTotalTime = async () => {
-      try {
-        const res = await axios.get(`/api/statistics/user/${userId}`);
-        setTotalMinutes(res.data.totalMinutes);
-      } catch (error) {
-        setTotalMinutes(0);
-      }
-    };
-    fetchTotalTime();
-  }, [userId]);
+const TotalTimePlayed = ({ userId, mockMinutes }: TotalTimePlayedProps) => {
+  // Use mock data if provided, otherwise fallback to 0
+  const totalMinutes = mockMinutes ?? 164;
 
   return (
-    <div>
-      Total time played:{" "}
-      {totalMinutes !== null ? `${totalMinutes} minutes` : "Loading..."}
+    <div className="px-8 py-6 flex flex-col items-center justify-center">
+      <span className="text-4xl font-bold text-white mb-1">
+        {totalMinutes} min
+      </span>
+      <span className="text-base text-white font-normal">
+        Total time played
+      </span>
     </div>
   );
 };
 
 // Example usage with mock data
-// <TotalTimePlayed userId="12345" />
+// <TotalTimePlayed mockMinutes={164} />
 
 export default TotalTimePlayed;
