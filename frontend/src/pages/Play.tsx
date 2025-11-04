@@ -9,7 +9,7 @@ const defaultAvatar = "/src/assets/user_default.jpeg";
 interface Game {
   _id: string;
   name: string;
-  image: string;
+  imageUrl: string;
 }
 
 interface User {
@@ -23,7 +23,9 @@ function Play() {
   const { gameId } = useParams<{ gameId: string }>();
   const navigate = useNavigate();
   const [game, setGame] = useState<Game | null>(null);
-  const [isPlaying, setIsPlaying] = useState(true);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [hasStarted, setHasStarted] = useState(false);
+  const [hasStopped, setHasStopped] = useState(false); // Track if session was stopped
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -66,8 +68,16 @@ function Play() {
     };
   }, [isPlaying]);
 
+  const handleStart = () => {
+    setHasStarted(true);
+    setHasStopped(false);
+    setElapsedSeconds(0);
+    setIsPlaying(true);
+  };
+
   const handleStop = async () => {
     setIsPlaying(false);
+    setHasStopped(true);
 
     // Log session immediately when stopping
     if (elapsedSeconds > 0 && currentUser && gameId) {
@@ -84,11 +94,6 @@ function Play() {
     }
   };
 
-  const handleStart = () => {
-    setElapsedSeconds(0);
-    setIsPlaying(true);
-  };
-
   const handleExit = () => {
     if (currentUser) {
       navigate(`/stats/${currentUser._id}`);
@@ -96,6 +101,34 @@ function Play() {
       navigate("/users");
     }
   };
+
+  // Determine button state
+  const getButtonConfig = () => {
+    if (!hasStarted || (hasStopped && elapsedSeconds === 0)) {
+      // State 1: START (initial or after exit)
+      return {
+        text: "START",
+        onClick: handleStart,
+        className: "bg-green-500 text-white hover:bg-green-400",
+      };
+    } else if (isPlaying) {
+      // State 2: STOP (while playing)
+      return {
+        text: "STOP",
+        onClick: handleStop,
+        className: "bg-red-500 text-white hover:bg-red-400",
+      };
+    } else {
+      // State 3: EXIT (after stopping)
+      return {
+        text: "EXIT",
+        onClick: handleExit,
+        className: "bg-blue-500 text-white hover:bg-blue-400",
+      };
+    }
+  };
+
+  const buttonConfig = getButtonConfig();
 
   if (error) {
     return (
@@ -118,26 +151,36 @@ function Play() {
       <div className="fixed inset-0 -z-10 w-full h-full bg-gradient-to-b from-blue-950 via-blue-800 to-purple-700" />
       <div className="min-h-screen flex flex-col items-center pt-24 px-2 sm:px-8 ml-0 md:ml-40">
         <div className="flex flex-col items-center">
-          <img src={game.image} alt={game.name} className="w-32 h-32 mb-4" />
-          <h1 className="text-3xl font-bold mb-8 text-white">{game.name}</h1>
+          {/* Game GIF */}
+          <img
+            src={game.imageUrl}
+            alt={game.name}
+            className="w-48 h-48 mb-4 rounded-lg border-4 border-white shadow-lg"
+          />
 
+          {/* Game Name */}
+          <h1 className="text-4xl font-bold mb-8 text-white font-['Pixelify_Sans'] drop-shadow-lg">
+            {game.name}
+          </h1>
+
+          {/* Timer */}
           <RetroTimer elapsedSeconds={elapsedSeconds} isStopped={!isPlaying} />
 
+          {/* Button (START → STOP → EXIT) */}
           <div className="flex gap-4 mt-8">
             <button
-              onClick={isPlaying ? handleStop : handleStart}
-              className="bg-yellow-400 text-pink-900 border-2 border-black px-8 py-3 rounded-lg text-xl font-bold hover:bg-yellow-300 active:scale-95"
+              onClick={buttonConfig.onClick}
+              className={`
+                px-8 py-3 rounded-lg text-xl font-bold border-2 border-black
+                transition-all active:scale-95
+                ${buttonConfig.className}
+              `}
             >
-              {isPlaying ? "STOP" : "START"}
-            </button>
-            <button
-              onClick={handleExit}
-              className="bg-pink-500 text-white border-2 border-black px-8 py-3 rounded-lg text-xl font-bold hover:bg-pink-400 active:scale-95"
-            >
-              EXIT
+              {buttonConfig.text}
             </button>
           </div>
 
+          {/* User Info */}
           <div className="mt-8 flex flex-col items-center">
             <img
               src={
@@ -152,6 +195,13 @@ function Play() {
               {currentUser.firstName} {currentUser.lastName}
             </span>
           </div>
+
+          {/* Session Saved Message */}
+          {hasStopped && elapsedSeconds > 0 && (
+            <div className="mt-6 bg-green-500 text-white px-6 py-3 rounded-lg font-bold">
+              ✓ Session saved! Click EXIT to view stats.
+            </div>
+          )}
         </div>
       </div>
     </Layout>
