@@ -1,5 +1,7 @@
 import Layout from "../components/Navigation/Layout";
 import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { fetchAllGames } from "../components/api/apiClient";
 
 const staticGames = [
   {
@@ -8,7 +10,7 @@ const staticGames = [
     image: "./src/components/assets/pacman_gameicon.gif",
     color: "bg-yellow-400",
     small: true,
-    objectId: "69053c8af23a2d756f728f21", // <-- MongoDB ObjectId for Pac-Man
+    objectId: "690537bcf23a2d756f728f17", // ✅ Correct MongoDB ID
   },
   {
     _id: "asteroids_id",
@@ -16,7 +18,7 @@ const staticGames = [
     image: "./src/components/assets/asteroids_gameicon.gif",
     color: "bg-blue-500",
     small: false,
-    objectId: "69053c8af23a2d756f728f25", // <-- MongoDB ObjectId for Asteroids
+    objectId: "690537bcf23a2d756f728f1a", // ✅ Correct MongoDB ID
   },
   {
     _id: "tetris_id",
@@ -24,7 +26,7 @@ const staticGames = [
     image: "./src/components/assets/tetris_gameicon.gif",
     color: "bg-pink-500",
     small: false,
-    objectId: "69053c8af23a2d756f728f27", // <-- MongoDB ObjectId for Tetris
+    objectId: "690537bcf23a2d756f728f18", // ✅ Correct MongoDB ID
   },
   {
     _id: "spaceinvaders_id",
@@ -32,14 +34,17 @@ const staticGames = [
     image: "./src/components/assets/space_gameicon.gif",
     color: "bg-green-500",
     small: false,
-    objectId: "69053c8af23a2d756f728f29", // <-- MongoDB ObjectId for Space Invaders
+    objectId: "690537bcf23a2d756f728f19", // ✅ Correct MongoDB ID
   },
 ];
 
 function Games() {
+  const [games, setGames] = useState([]);
   const navigate = useNavigate();
 
-  const currentUser = JSON.parse(localStorage.getItem("currentUser") || "null");
+  useEffect(() => {
+    fetchAllGames().then(setGames).catch(console.error);
+  }, []);
 
   return (
     <Layout>
@@ -67,11 +72,11 @@ function Games() {
                 max-w-md sm:max-w-2xl lg:max-w-4xl
               "
             >
-              {staticGames.map((game) => (
+              {games.map((game) => (
                 <div
                   key={game._id}
                   className="game-card cursor-pointer hover:scale-105 active:scale-95 transition"
-                  onClick={() => navigate(`/play/${game.objectId}`)}
+                  onClick={() => navigate(`/play/${game._id}`)}
                 >
                   {/* Game card content */}
                   <div
@@ -94,15 +99,6 @@ function Games() {
                   <h4 className="text-lg font-bold font-['Winky_Sans'] text-white text-center drop-shadow tracking-widest uppercase">
                     {game.name}
                   </h4>
-                  <button
-                    type="button"
-                    className={`z-10 self-end py-1 px-4 rounded-lg font-bold text-base shadow-lg transition-all
-                      active:scale-95 active:shadow-inner
-                      bg-yellow-400 text-pink-900 hover:bg-yellow-300`}
-                    onClick={() => navigate(`/play/${game.objectId}`)}
-                  >
-                    PLAY
-                  </button>
                 </div>
               ))}
             </div>

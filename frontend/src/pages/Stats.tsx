@@ -134,10 +134,11 @@ function Stats() {
 
   return (
     <Layout>
-      <div className="fixed inset-0 -z-10 w-full h-full bg-gradient-to-b from-blue-950 via-blue-800 to-purple-700" />
+      //* GRADIENT BACKGROUND
+      <div className="GRADIENT fixed inset-0 -z-10 w-full h-full bg-gradient-to-b from-blue-950 via-blue-800 to-purple-700" />
       <div className="min-h-screen flex flex-col gap-8 pt-8 px-2 sm:px-8 ml-0 md:ml-20">
         {/* Profile + Info Section */}
-        <div className="grid grid-cols-1 md:grid-cols-[auto_3fr] bg-red-500 p-4 rounded-lg gap-8 w-full max-w-3xl mx-auto">
+        <div className="PROFILE GRID grid grid-cols-1 md:grid-cols-[auto_3fr] bg-red-500 p-4 rounded-lg gap-8 w-full max-w-3xl mx-auto">
           {/* Profile Pic */}
           <div className="flex items-start justify-center">
             <img

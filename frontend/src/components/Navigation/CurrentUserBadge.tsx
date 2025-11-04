@@ -18,7 +18,7 @@ export const CurrentUserBadge: React.FC = () => {
         alt="Profile"
         className="w-10 h-10 rounded-full object-cover border border-gray-300"
       />
-      <span className="text-xs mt-1 text-gray-300 font-semibold text-center">
+      <span className="text-xs mt-1 text-white/70 font-semibold text-center">
         {user.firstName} {user.lastName}
       </span>
     </div>

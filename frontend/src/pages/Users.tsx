@@ -44,10 +44,8 @@ function Users() {
             </div>
             <div className="flex justify-end">
               <button
-                type="button"
-                className={`z-10 self-end py-1 px-4 rounded-lg font-bold text-base shadow-lg transition-all
-                  active:scale-95 active:shadow-inner
-                  bg-yellow-400 text-pink-900 hover:bg-yellow-300`}
+                className="flex items-center gap-2 text-white "
+                style={{ fontSize: "0.9rem" }}
                 onClick={() => navigate("/")}
               >
                 Add User

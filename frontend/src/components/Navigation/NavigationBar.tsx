@@ -37,8 +37,8 @@ const NavigationBar = () => {
             key={item.name}
             to={item.path}
             className={({ isActive }) =>
-              `flex flex-col items-center gap-1 text-xs text-black/80 hover:text-blue-700 transition ${
-                isActive ? "font-bold text-blue-900" : ""
+              `flex flex-col items-center gap-1 text-xs text-white/40 hover:text-white/70 transition ${
+                isActive ? "font-bold text-white" : ""
               }`
             }
             end
