@@ -40,6 +40,7 @@ const BarGraph: React.FC<BarGraphProps> = ({ data }) => {
   };
 
   const options = {
+    indexAxis: "y", // makes bars horizontal
     responsive: true,
     plugins: {
       legend: {
@@ -62,7 +63,33 @@ const BarGraph: React.FC<BarGraphProps> = ({ data }) => {
     }
   };
 
-  return <Bar data={chartData} options={options} />;
+  return (
+    <div>
+      <Bar data={chartData} options={options} />
+    </div>
+  );
 };
+
+// Example mock data for BarGraph
+const mockBarData = [
+  {
+    gameName: "Pac-man",
+    minutesPlayed: 120,
+    iconUrl: "/assets/pacman_gameicon.gif",
+  },
+  {
+    gameName: "Tetris",
+    minutesPlayed: 90,
+    iconUrl: "/assets/tetris_gameicon.gif",
+  },
+  {
+    gameName: "Space Invaders",
+    minutesPlayed: 60,
+    iconUrl: "/assets/space_gameicon.gif",
+  },
+];
+
+// Usage example (in parent component or for testing)
+// <BarGraph data={mockBarData} />
 
 export default BarGraph;

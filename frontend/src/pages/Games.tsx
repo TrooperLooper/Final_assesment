@@ -1,120 +1,111 @@
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import Layout from "../components/Navigation/Layout";
+import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { fetchAllGames } from "../components/api/apiClient";
 
-interface Game {
-  _id: string;
-  id?: string;
-  name: string;
-  gifUrl?: string;
-  description?: string;
-}
+const staticGames = [
+  {
+    _id: "pacman_id",
+    name: "Pac-Man",
+    image: "./src/components/assets/pacman_gameicon.gif",
+    color: "bg-yellow-400",
+    small: true,
+    objectId: "690537bcf23a2d756f728f17", // ✅ Correct MongoDB ID
+  },
+  {
+    _id: "asteroids_id",
+    name: "Asteroids",
+    image: "./src/components/assets/asteroids_gameicon.gif",
+    color: "bg-blue-500",
+    small: false,
+    objectId: "690537bcf23a2d756f728f1a", // ✅ Correct MongoDB ID
+  },
+  {
+    _id: "tetris_id",
+    name: "Tetris",
+    image: "./src/components/assets/tetris_gameicon.gif",
+    color: "bg-pink-500",
+    small: false,
+    objectId: "690537bcf23a2d756f728f18", // ✅ Correct MongoDB ID
+  },
+  {
+    _id: "spaceinvaders_id",
+    name: "Space Invaders",
+    image: "./src/components/assets/space_gameicon.gif",
+    color: "bg-green-500",
+    small: false,
+    objectId: "690537bcf23a2d756f728f19", // ✅ Correct MongoDB ID
+  },
+];
 
 function Games() {
-  const [games, setGames] = useState<Game[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [games, setGames] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchGames = async () => {
-      try {
-        console.log('🎮 Fetching games from API...');
-        const response = await fetch('http://localhost:3000/api/games');
-        
-        console.log('📡 Response status:', response.status);
-        
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        
-        const data = await response.json();
-        console.log('✅ Games received:', data);
-        setGames(data);
-        setError(null);
-      } catch (err) {
-        console.error('❌ Error fetching games:', err);
-        setError(err instanceof Error ? err.message : 'Failed to fetch games');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchGames();
+    fetchAllGames().then(setGames).catch(console.error);
   }, []);
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 flex items-center justify-center">
-        <p className="text-white text-2xl">Loading games...</p>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-red-400 text-xl mb-4">Error: {error}</p>
-          <button 
-            onClick={() => window.location.reload()}
-            className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded"
-          >
-            Retry
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  if (games.length === 0) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-white text-xl mb-4">No games found</p>
-          <p className="text-gray-400">Please run: npm run seed</p>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 py-12">
-      <div className="max-w-6xl mx-auto px-4">
-        <h1 className="text-5xl font-bold text-white text-center mb-12">
-          Choose Your Game
-        </h1>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-6 justify-items-center">
-          {games.map((game) => (
+    <Layout>
+      {/* Gradient background as a -z layer */}
+      <div className="fixed inset-0 -z-10 w-full h-full bg-gradient-to-b from-blue-950 via-blue-800 to-purple-700" />
+      <div className="min-h-screen flex flex-col items-center justify-start pt-5 px-2 sm:px-8">
+        {/* Headline on top, centered */}
+        <div className="w-full flex justify-center items-center px-2 sm:px-12 pb-2 mt-2">
+          <h1 className="text-3xl md:text-6xl lg:text-7xl font-['Pixelify_Sans'] text-white drop-shadow text-center">
+            CHOOSE A GAME TO PLAY
+          </h1>
+        </div>
+        {/* Main content below headline */}
+        <div className="flex flex-col items-center w-full">
+          <div className="w-full max-w-4xl flex flex-col items-center gap-8">
             <div
-              key={game._id}
-              onClick={() => navigate(`/play/${game._id}`)}
-              className="flex flex-col items-center rounded-xl shadow-lg bg-yellow-400 p-4 transition-transform hover:scale-105 cursor-pointer"
-              style={{ width: "180px" }}
+              className="
+                grid
+                grid-cols-1
+                sm:grid-cols-2
+                md:grid-cols-4
+                gap-8
+                justify-center
+                overflow-hidden
+                max-w-md sm:max-w-2xl lg:max-w-4xl
+              "
             >
-              <div
-                className="overflow-hidden rounded-lg border-4 border-white mb-3 bg-black flex items-center justify-center"
-                style={{ width: "140px", height: "140px" }}
-              >
-                {game.gifUrl ? (
-                  <img
-                    src={game.gifUrl}
-                    alt={`${game.name} game animation`}
-                    className="object-cover w-full h-full"
-                  />
-                ) : (
-                  <div className="text-white text-6xl font-bold">
-                    {game.name.charAt(0)}
+              {games.map((game) => (
+                <div
+                  key={game._id}
+                  className="game-card cursor-pointer hover:scale-105 active:scale-95 transition"
+                  onClick={() => navigate(`/play/${game._id}`)}
+                >
+                  {/* Game card content */}
+                  <div
+                    className="overflow-hidden rounded-lg border-4 border-white mb-3 bg-black flex items-center justify-center"
+                    style={{ width: "140px", height: "140px" }}
+                  >
+                    <img
+                      src={game.image}
+                      alt={`${game.name} game animation`}
+                      className={
+                        game.small
+                          ? "object-cover w-4/5 h-4/5"
+                          : "object-cover w-full h-full"
+                      }
+                      style={
+                        game.small ? { width: "80px", height: "80px" } : {}
+                      }
+                    />
                   </div>
-                )}
-              </div>
-              <h4 className="text-lg font-bold text-white text-center drop-shadow tracking-widest uppercase">
-                {game.name}
-              </h4>
+                  <h4 className="text-lg font-bold font-['Winky_Sans'] text-white text-center drop-shadow tracking-widest uppercase">
+                    {game.name}
+                  </h4>
+                </div>
+              ))}
             </div>
-          ))}
+          </div>
         </div>
       </div>
-    </div>
+    </Layout>
   );
 }
 

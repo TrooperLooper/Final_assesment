@@ -70,14 +70,14 @@ const WeatherWidget: React.FC<WeatherWidgetProps> = () => {
   }, []);
 
   return (
-    <div className="grid grid-rows-2 grid-cols-1 justify-start items-start text-xs font-normal rounded px-3 py-2 min-w-[140px] max-w-[200px] text-white">
+    <div className="grid grid-rows-2 grid-cols-1 justify-start items-start mt-2 text-xs font-normal rounded px-3 py-2 min-w-[140px] max-w-[300px] text-white">
       <div className="font-bold justify-self-start">{date}</div>
       {weather ? (
-        <div className="flex items-start gap-1 justify-start">
+        <div className="flex items-start justify-end">
           <img
             src={`https://openweathermap.org/img/wn/${weather.icon}.png`}
             alt={weather.description}
-            className="w-5 h-5 filter invert brightness-200"
+            className="w-6 h-6 filter brightness-400"
           />
           <span className="text-base font-bold justify-self-start">
             {weather.temp} °C

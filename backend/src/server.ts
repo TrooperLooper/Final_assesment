@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 import cors from "cors";
 import dotenv from "dotenv";
 import userRouter from "./routes/userRoutes";
-import gameRoutes from "./routes/gameRoutes";
+import gameRoutes from "./routes/GameRoutes";
 import sessionRouter from "./routes/sessionRoutes";
 import statisticsRoutes from './routes/statisticsRoutes';
 import searchRoutes from './routes/searchRoutes';
@@ -22,6 +22,8 @@ app.use(cors({
   credentials: true
 }));
 app.use(express.json());
+app.use(cors());
+app.use(express.json({ limit: "5mb" }));
 
 // Routes
 app.use("/uploads", express.static("uploads")); //Profile pictures (static folder)

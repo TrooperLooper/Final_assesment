@@ -1,66 +1,41 @@
-import { useState, useEffect } from 'react';
+import React, { useEffect, useRef } from "react";
 
 interface TimerProps {
-  duration: number;
-  onTimeUp?: () => void;
-  autoStart?: boolean;
+  isPlaying: boolean;
+  onStop: (elapsedMinutes: number) => void;
 }
 
-const MAX_MULTIPLIER_MINUTES = 30;
-
-export default function Timer({ duration, onTimeUp, autoStart = false }: TimerProps) {
-  const [timeLeft, setTimeLeft] = useState(duration);
-  const [isRunning, setIsRunning] = useState(autoStart);
-  const [elapsedTime, setElapsedTime] = useState(0);
+const Timer: React.FC<TimerProps> = ({ isPlaying, onStop }) => {
+  const [minutes, setMinutes] = React.useState(0);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    if (!isRunning || timeLeft <= 0) return;
-
-    const timer = setInterval(() => {
-      setTimeLeft((prev) => {
-        if (prev <= 1) {
-          onTimeUp?.();
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, [isRunning, timeLeft, onTimeUp]);
+    if (isPlaying) {
+      intervalRef.current = setInterval(() => {
+        setMinutes((prev) => prev + 1);
+      }, 1000); // 1 second = 1 minute
+    } else if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
+    }
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current);
+    };
+  }, [isPlaying]);
 
   useEffect(() => {
-    if (!isRunning) return;
+    if (!isPlaying && minutes > 0) {
+      onStop(minutes);
+    }
+    // eslint-disable-next-line
+  }, [isPlaying]);
 
-    const interval = setInterval(() => {
-      setElapsedTime(prev => {
-        const newTime = prev + 1;
-        // Stoppa på 30 minuter (1800 sekunder)
-        if (newTime >= MAX_MULTIPLIER_MINUTES * 60) {
-          clearInterval(interval);
-          return MAX_MULTIPLIER_MINUTES * 60;
-        }
-        return newTime;
-      });
-    }, 1000);
-
-    return () => clearInterval(interval);
-  }, [isRunning]);
-
-  const formatTime = (seconds: number): string => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-  };
-
-  const toggleTimer = () => {
-    setIsRunning(!isRunning);
-  };
-
-  const resetTimer = () => {
-    setTimeLeft(duration);
-    setElapsedTime(0);
-    setIsRunning(autoStart);
+  const formatTime = (mins: number) => {
+    const hours = Math.floor(mins / 60);
+    const displayMins = mins % 60;
+    return `${hours.toString().padStart(2, "0")}:${displayMins
+      .toString()
+      .padStart(2, "0")}:00`;
   };
 
   const multiplier = Math.min(
@@ -69,34 +44,15 @@ export default function Timer({ duration, onTimeUp, autoStart = false }: TimerPr
   );
 
   return (
-    <div className="flex flex-col items-center gap-4 p-4">
-      <div className={`text-5xl font-bold font-mono ${
-        timeLeft <= 10 ? 'text-red-600 animate-pulse' : 'text-gray-800'
-      }`}>
-        {formatTime(timeLeft)}
-      </div>
-      
-      <div className="text-2xl font-semibold text-blue-600">
-        Multiplier: {multiplier}x
-        {elapsedTime >= MAX_MULTIPLIER_MINUTES * 60 && (
-          <span className="text-sm text-gray-500 ml-2">(max)</span>
-        )}
-      </div>
-
-      <div className="flex gap-2">
-        <button 
-          onClick={toggleTimer}
-          className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg transition-colors"
-        >
-          {isRunning ? 'Pause' : 'Resume'}
-        </button>
-        <button 
-          onClick={resetTimer}
-          className="px-4 py-2 bg-gray-500 hover:bg-gray-600 text-white rounded-lg transition-colors"
-        >
-          Reset
-        </button>
-      </div>
+    <div className="bg-gray-100 rounded-2xl flex items-center px-8 py-4 gap-8 shadow-lg w-fit font-['Pixelify_Sans']">
+      <span className="bg-gray-400 text-black px-4 py-2 rounded-xl text-xl font-bold tracking-wide mr-4">
+        TIME PLAYING:
+      </span>
+      <span className="text-black text-5xl font-mono tracking-widest drop-shadow">
+        {formatTime(minutes)}
+      </span>
     </div>
   );
-}
+};
+
+export default Timer;

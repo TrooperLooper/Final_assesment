@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Header from "../components/Navigation/Header";
+import Layout from "../components/Navigation/Layout";
 import { apiClient } from "../components/api/apiClient";
 import defaultAvatar from "../components/assets/user_default.jpeg";
 import { FiPlus } from "react-icons/fi";
@@ -14,57 +14,95 @@ function Users() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-950 via-blue-800 to-purple-700 flex flex-col">
-      {/* Header (search bar should be inside Header component only) */}
-      <Header />
-      {/* Main content */}
-      <div className="flex-1 flex flex-col pt-8">
-        {/* Title and Add User button in 3 columns */}
-        <div className="grid grid-cols-3 items-center px-12 pb-2">
-          {/* First column: empty */}
-          <div></div>
-          {/* Second column: headline centered */}
-          <div className="flex justify-center">
-            <h1 className="text-4xl font-['Pixelify_Sans'] text-white drop-shadow">
-              USERS
-            </h1>
+    <Layout>
+      <div className="fixed inset-0 -z-10 w-full h-full bg-gradient-to-b from-blue-950 via-blue-800 to-purple-700" />
+      <div className="min-h-screen flex flex-col items-center justify-start pt-2 px-2 sm:px-8">
+        {/* Header and main content */}
+
+        <div className="flex-1 flex flex-col">
+          {/* Headline row */}
+          <div className="grid grid-cols-3 items-center px-12 pb-2 mt-2">
+            <div></div>
+            <div className="flex justify-center">
+              <h1 className="text-4xl md:text-6xl lg:text-7xl  text-center font-['Pixelify_Sans'] mb-5 text-white drop-shadow">
+                ALL USERS
+              </h1>
+            </div>
+            <div></div>
           </div>
-          {/* Third column: Add User button right aligned */}
-          <div className="flex justify-end">
-            <button
-              className="flex items-center gap-2 bg-white/80 text-blue-900 font-bold px-4 py-2 rounded-full shadow hover:bg-white transition"
-              onClick={() => navigate("/register")}
-            >
-              Add User <FiPlus className="w-5 h-5" />
-            </button>
-          </div>
-        </div>
-        <div className="filler h-10"></div>
-        {/* User grid */}
-        <div className="px-12 pb-12">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-10">
-            {users.map((user) => (
-              <div key={user._id} className="flex flex-col items-center">
-                <div className="w-48 h-48 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden mb-2">
-                  <img
-                    src={
-                      user.profilePicture?.startsWith("/uploads")
-                        ? `http://localhost:3000${user.profilePicture}`
-                        : user.profilePicture || defaultAvatar
-                    }
-                    alt={`${user.firstName} ${user.lastName}`}
-                    className="object-cover w-40 h-40"
-                  />
-                </div>
-                <div className="text-lg font-['Winky_Sans'] text-white drop-shadow text-center">
-                  {user.firstName} {user.lastName}
-                </div>
+
+          {/* Second row: Add User button in third column */}
+          <div className="grid grid-cols-3 items-center px-12 pb-2">
+            <div></div>
+            <div>
+              {" "}
+              <div className="text-center">
+                <p className="text-white text-sm text-center">
+                  Pick a user to see statistics and record a new time
+                </p>
               </div>
-            ))}
+            </div>
+            <div className="flex justify-end">
+              <button
+                className="flex items-center gap-2 text-white "
+                style={{ fontSize: "0.9rem" }}
+                onClick={() => navigate("/")}
+              >
+                Add User
+                <span className="inline-flex items-center justify-center w-5 h-5 rounded-full bg-white ml-1">
+                  <FiPlus className="text-blue-900 w-4 h-4" />
+                </span>
+              </button>
+            </div>
+          </div>
+          <div className="filler h-6"></div>
+          {/* User grid */}
+          <div className="px-4 pb-12 w-full mx-auto">
+            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2">
+              {users.map((user) => (
+                <div
+                  key={user._id}
+                  className="flex flex-col items-center cursor-pointer transition-transform hover:scale-105 active:scale-95"
+                  onClick={() => {
+                    localStorage.setItem("currentUser", JSON.stringify(user));
+                    navigate(`/stats/${user._id}`);
+                  }}
+                  tabIndex={0}
+                  role="button"
+                  aria-label={`Go to stats page for ${user.firstName} ${user.lastName}`}
+                >
+                  <div className="w-32 h-32 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden mb-2">
+                    <img
+                      src={
+                        user.profilePicture &&
+                        user.profilePicture.startsWith("/uploads")
+                          ? `http://localhost:3000${user.profilePicture}`
+                          : user.profilePicture
+                          ? user.profilePicture
+                          : defaultAvatar
+                      }
+                      alt={
+                        user.firstName && user.lastName
+                          ? `${user.firstName} ${user.lastName}`
+                          : "User avatar"
+                      }
+                      className="object-cover w-28 h-28"
+                      onError={(e) => {
+                        e.currentTarget.onerror = null;
+                        e.currentTarget.src = defaultAvatar;
+                      }}
+                    />
+                  </div>
+                  <div className="text-base font-['Winky_Sans'] text-white drop-shadow text-center">
+                    {user.firstName} {user.lastName}
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </div>
-    </div>
+    </Layout>
   );
 }
 
