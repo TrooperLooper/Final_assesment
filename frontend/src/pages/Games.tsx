@@ -2,39 +2,39 @@ import Layout from "../components/Navigation/Layout";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { fetchGames } from "../components/api/apiClient";
+import pacmanGif from "../components/assets/pacman_gameicon.gif";
+import asteroidsGif from "../components/assets/asteroids_gameicon.gif";
+import tetrisGif from "../components/assets/tetris_gameicon.gif";
+import spaceGif from "../components/assets/space_gameicon.gif";
 
 const staticGames = [
   {
-    _id: "pacman_id",
-    name: "Pac-Man",
-    image: "./src/components/assets/pacman_gameicon.gif",
+    _id: "69037ebeb9b885d62009954f",
+    name: "Pac-man",
+    image: pacmanGif,
     color: "bg-yellow-400",
     small: true,
-    objectId: "690537bcf23a2d756f728f17",
   },
   {
-    _id: "asteroids_id",
+    _id: "69037ebeb9b885d620099552",
     name: "Asteroids",
-    image: "./src/components/assets/asteroids_gameicon.gif",
+    image: asteroidsGif,
     color: "bg-blue-500",
     small: false,
-    objectId: "690537bcf23a2d756f728f1a",
   },
   {
-    _id: "tetris_id",
+    _id: "69037ebeb9b885d620099550",
     name: "Tetris",
-    image: "./src/components/assets/tetris_gameicon.gif",
+    image: tetrisGif,
     color: "bg-pink-500",
     small: false,
-    objectId: "690537bcf23a2d756f728f18",
   },
   {
-    _id: "spaceinvaders_id",
+    _id: "69037ebeb9b885d620099551",
     name: "Space Invaders",
-    image: "./src/components/assets/space_gameicon.gif",
+    image: spaceGif,
     color: "bg-green-500",
     small: false,
-    objectId: "690537bcf23a2d756f728f19",
   },
 ];
 

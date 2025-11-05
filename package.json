@@ -8,7 +8,8 @@
     "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "start": "node dist/server.js"
+    "start": "node dist/server.js",
+    "start:all": "npm run build && docker compose up -d && concurrently \"npm run start:backend\" \"npm run start:frontend\""
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.15",
