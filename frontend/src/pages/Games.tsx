@@ -51,8 +51,6 @@ const JoystickSVG = () => (
     <rect x="18" y="6" width="12" height="36" fill="black" />
     {/* Horizontal bar */}
     <rect x="6" y="18" width="36" height="12" fill="black" />
-    {/* Center circle */}
-    <circle cx="24" cy="24" r="8" fill="black" />
   </svg>
 );
 
@@ -92,8 +90,8 @@ function Games() {
           alt={`${game.name} game animation`}
           className={
             game.small
-              ? "object-cover w-4/5 h-4/5"
-              : "object-cover w-full h-full"
+              ? "object-cover w-4/5 h-4/5 mx-auto"
+              : "object-cover w-full h-full mx-auto"
           }
           style={game.small ? { width: "80px", height: "80px" } : {}}
         />
@@ -125,7 +123,7 @@ function Games() {
       <div className="min-h-screen flex flex-col items-center justify-start pt-5 px-2 sm:px-8">
         {/* Headline on top, centered */}
         <div className="w-full flex justify-center items-center px-2 sm:px-12 pb-2 mt-2">
-          <h1 className="text-3xl md:text-6xl lg:text-7xl font-['Pixelify_Sans'] text-white drop-shadow text-center mb-10">
+          <h1 className="text-3xl md:text-6xl lg:text-5xl font-['Pixelify_Sans'] text-bold text-white drop-shadow text-center mb-10">
             CHOOSE A GAME TO TRACK
           </h1>
         </div>

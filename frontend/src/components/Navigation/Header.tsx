@@ -1,18 +1,20 @@
 import React from "react";
 import WeatherWidget from "../Weather/WeatherWidget";
 import GlobalSearch from "../GlobalSearch";
-import CurrentUserBadge from "../User/CurrentUserBadge";
+import CurrentUserBadge from "../Navigation/CurrentUserBadge";
 
 const Header: React.FC = () => (
-  <header className="w-full flex flex-col sm:flex-row justify-between items-center px-2 sm:px-8 py-1 bg-transparent">
-    <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-8">
+  <header className="w-full grid grid-cols-[auto_1fr_auto] items-center px-2 sm:px-8 py-1 bg-transparent">
+    {/* Left: Weather */}
+    <div className="justify-self-start ml-3 sm:ml-0">
       <WeatherWidget />
-      <div className="w-full sm:w-auto">
-        <GlobalSearch />
-      </div>
     </div>
-    <div className="flex justify-between items-center w-full">
-      <div className="flex-1" />
+    {/* Center: Search */}
+    <div className="justify-self-center ">
+      <GlobalSearch />
+    </div>
+    {/* Right: User badge */}
+    <div className="justify-self-end mt-2 ">
       <CurrentUserBadge />
     </div>
   </header>
