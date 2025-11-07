@@ -1,7 +1,8 @@
 // @ts-nocheck
 import { useState } from "react";
 import { z } from "zod";
-import Star from "../components/Star";
+import LeftStar from "../components/LeftStar";
+import RightStar from "../components/RightStar";
 import { apiClient } from "../components/api/apiClient";
 import { useNavigate } from "react-router-dom";
 import defaultAvatar from "../components/assets/user_default.jpeg";
@@ -99,7 +100,7 @@ function Register() {
           >
             {/* Left star (columns 1-2) */}
             <div className="col-span-2 flex items-center justify-center">
-              <Star size={20} delay="0s" />
+              <LeftStar size={20} color="gold" />
             </div>
             {/* Mushroom (columns 3-6) */}
             <div className="col-span-4 flex items-center justify-center">
@@ -125,7 +126,7 @@ function Register() {
             <div className="col-span-4 flex items-center justify-center"></div>
             {/* Right star (columns 7-8) */}
             <div className="col-span-2 flex items-center justify-center">
-              <Star size={12} delay="0.7s" />
+              <RightStar size={12} color="gold" />
             </div>
           </div>
           <div className="w-full max-w-xl bg-pink-500 bg-opacity-40 rounded-xl shadow-lg px-2 sm:px-8 py-6 flex flex-col items-center gap-4">

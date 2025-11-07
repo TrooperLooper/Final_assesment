@@ -5,20 +5,19 @@ import {
   CategoryScale,
   LinearScale,
   BarElement,
-  Title,
-  Tooltip,
-  Legend,
 } from "chart.js";
+import ChartDataLabels from "chartjs-plugin-datalabels";
 
-// Register required Chart.js components
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend
-);
+ChartJS.register(CategoryScale, LinearScale, BarElement, ChartDataLabels);
+
+const GAME_COLORS: Record<string, string> = {
+  "Pac-man": "#FACC15",
+  Asteroids: "#3B82F6",
+  Tetris: "#EC4899",
+  "Space Invaders": "#22C55E",
+};
+
+const ALL_GAMES = ["Pac-man", "Tetris", "Asteroids", "Space Invaders"];
 
 interface BarGraphProps {
   data: {
@@ -29,58 +28,86 @@ interface BarGraphProps {
 }
 
 const BarGraph: React.FC<BarGraphProps> = ({ data }) => {
+  const filledData = ALL_GAMES.map((name) => {
+    const found = data.find((item) => item.gameName === name);
+    return found || { gameName: name, minutesPlayed: 0, iconUrl: "" };
+  });
+
   const chartData = {
-    labels: data.map((item) => item.gameName), // Game names
+    labels: filledData.map((item) => item.gameName),
     datasets: [
       {
-        label: "Minutes Played",
-        data: data.map((item) => item.minutesPlayed), // Minutes played per game
-        backgroundColor: "rgba(75, 192, 192, 0.6)",
+        label: "",
+        data: filledData.map((item) => item.minutesPlayed),
+        backgroundColor: filledData.map(
+          (item) => GAME_COLORS[item.gameName] || "#888"
+        ),
+        borderRadius: 0,
+        barThickness: 32, // Increased bar height
+        maxBarThickness: 40,
       },
     ],
   };
 
   const options = {
-    indexAxis: "y", // makes bars horizontal
+    indexAxis: "y" as const,
     responsive: true,
+    maintainAspectRatio: false,
     plugins: {
-      legend: {
-        position: "top" as const,
+      legend: { display: false },
+      title: { display: false },
+      tooltip: { enabled: false },
+    },
+    scales: {
+      x: {
+        max: 30,
+        grid: { display: false, drawBorder: false },
+        ticks: { display: false },
       },
-      title: {
-        display: true,
-        text: "Minutes Played Per Game",
+      y: {
+        grid: { display: false, drawBorder: false },
+        ticks: {
+          color: "#fff",
+          font: { size: 16, weight: "bold" as const },
+          callback: () => "", // <-- No label, no minutes
+        },
       },
     },
   };
 
   return (
-    <div>
-      <Bar data={chartData} options={options} />
+    <div style={{ display: "flex", alignItems: "center", height: "220px" }}>
+      {/* Game names column */}
+      <div className="flex flex-col justify-between h-full mr-1">
+        {filledData.map((item, idx) => (
+          <div
+            key={item.gameName}
+            className="text-white font-bold text-sm"
+            style={{ height: "25%" }} // 4 games, so 25% each
+          >
+            {item.gameName}
+            <div className="text-xs font-normal">{item.minutesPlayed} min</div>
+          </div>
+        ))}
+      </div>
+      {/* Chart */}
+      <div style={{ flex: 1, height: "100%", maxWidth: "180px" }}>
+        <Bar
+          data={{
+            ...chartData,
+            datasets: [
+              {
+                ...chartData.datasets[0],
+                barThickness: 32, // Increased bar height
+                maxBarThickness: 40,
+              },
+            ],
+          }}
+          options={options}
+        />
+      </div>
     </div>
   );
 };
-
-// Example mock data for BarGraph
-const mockBarData = [
-  {
-    gameName: "Pac-man",
-    minutesPlayed: 120,
-    iconUrl: "/assets/pacman_gameicon.gif",
-  },
-  {
-    gameName: "Tetris",
-    minutesPlayed: 90,
-    iconUrl: "/assets/tetris_gameicon.gif",
-  },
-  {
-    gameName: "Space Invaders",
-    minutesPlayed: 60,
-    iconUrl: "/assets/space_gameicon.gif",
-  },
-];
-
-// Usage example (in parent component or for testing)
-// <BarGraph data={mockBarData} />
 
 export default BarGraph;

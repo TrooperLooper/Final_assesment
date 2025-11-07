@@ -15,7 +15,7 @@ const RADIUS = 20;
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 
 const GameStatsRow: React.FC<GameStatsRowProps> = ({ games }) => (
-  <div className="bg-white/10 rounded-xl p-4 shadow flex flex-col gap-4 items-center justify-center w-full max-w-xl mx-auto">
+  <div className="bg-white/10 rounded-b-xl p-4 shadow flex flex-col items-center justify-center w-full max-w-xl mx-auto">
     {games.map((game) => {
       const percentArc = (game.percent / 100) * CIRCUMFERENCE;
       return (
@@ -26,9 +26,9 @@ const GameStatsRow: React.FC<GameStatsRowProps> = ({ games }) => (
           <img
             src={game.icon}
             alt={game.name}
-            className="w-10 h-10 object-contain"
+            className="w-8 h-8 object-contain"
           />
-          <span className="font-bold text-center text-white text-lg flex-1">
+          <span className="font-bold text-center text-white text-base flex-1">
             {game.name}
           </span>
           <div className="w-12 h-12 flex items-center justify-center">

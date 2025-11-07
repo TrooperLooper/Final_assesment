@@ -69,7 +69,7 @@ The application consists of **5 main pages** that create a complete game time tr
 
 - **React** with **TypeScript** ⚛️
 - **Vite** (build tool) ⚡
-- **Tailwind CSS** (styling) 🎨
+- **Tailwind CSS 4.1** (styling) 🎨
 - **React Router** (navigation) 🧭
 - **Recharts** (statistics visualization) 📊
 - **Zod** (validation) ✅
@@ -93,6 +93,9 @@ The application consists of **5 main pages** that create a complete game time tr
 - **SonarQube** (advanced code analysis - optional) 🔍
 - **MongoDB Compass** (database GUI) 🧭
 - **Insomnia** (API testing) 🔗
+
+Always use context7 for context, especially installing libraries, dependencies etc.
+Tailwind docs: https://tailwindcss.com/docs/installation/using-vite
 
 ## 📊 Database Schema Design
 
