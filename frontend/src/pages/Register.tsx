@@ -1,7 +1,8 @@
 // @ts-nocheck
 import { useState } from "react";
 import { z } from "zod";
-import Star from "../components/Star";
+import LeftStar from "../components/LeftStar";
+import RightStar from "../components/RightStar";
 import { apiClient } from "../components/api/apiClient";
 import { useNavigate } from "react-router-dom";
 import defaultAvatar from "../components/assets/user_default.jpeg";
@@ -93,14 +94,27 @@ const Register: React.FC = () => {
             className="grid grid-cols-8 w-full mb-2"
             style={{ maxWidth: 600 }}
           >
-            {loading ? 'Registering...' : 'Register'}
-          </button>
-        </form>
-
-        <div className="mt-4 text-center">
-          <button
-            onClick={() => navigate('/games')}
-            className="text-indigo-600 hover:text-indigo-800 text-sm"
+            {/* Left star (columns 1-2) */}
+            <div className="col-span-2 flex items-center justify-center">
+              <LeftStar size={20} color="gold" />
+            </div>
+            {/* Mushroom (columns 3-6) */}
+            <div className="col-span-4 flex items-center justify-center">
+              <img
+                src="./src/components/assets/svamp_animation.gif"
+                alt="A cute mushroom animation"
+                height={180}
+                width={180}
+                className="mb-2"
+              />
+            </div>
+            {/* Empty right cell (columns 7-8) */}
+            <div className="col-span-2" />
+          </div>
+          {/* Grid row for headline and right star */}
+          <div
+            className="grid grid-cols-8 w-full mb-6"
+            style={{ maxWidth: 600 }}
           >
             {/* Empty left cell (columns 1-2) */}
             <div className="col-span-2" />
@@ -108,7 +122,7 @@ const Register: React.FC = () => {
             <div className="col-span-4 flex items-center justify-center"></div>
             {/* Right star (columns 7-8) */}
             <div className="col-span-2 flex items-center justify-center">
-              <Star size={12} delay="0.7s" />
+              <RightStar size={12} color="gold" />
             </div>
           </div>
           <div className="w-full max-w-xl bg-pink-500 bg-opacity-40 rounded-xl shadow-lg px-2 sm:px-8 py-6 flex flex-col items-center gap-4">

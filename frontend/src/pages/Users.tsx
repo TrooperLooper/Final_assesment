@@ -24,7 +24,7 @@ function Users() {
           <div className="grid grid-cols-3 items-center px-12 pb-2 mt-2">
             <div></div>
             <div className="flex justify-center">
-              <h1 className="text-4xl md:text-6xl lg:text-7xl  text-center font-['Pixelify_Sans'] mb-5 text-white drop-shadow">
+              <h1 className="text-3xl sm:text-5xl font-bold text-center font-['Pixelify_Sans'] mb-5 text-white drop-shadow-lg">
                 ALL USERS
               </h1>
             </div>

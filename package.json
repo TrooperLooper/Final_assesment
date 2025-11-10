@@ -4,13 +4,16 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "nodemon --watch src --exec tsx src/server.ts",
-    "seed": "tsx src/utils/seedDatabase.ts",
-    "build": "tsc",
-    "start": "node dist/server.js"
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "lint": "eslint .",
+    "preview": "vite preview",
+    "start": "node dist/server.js",
+    "start:all": "npm run build && docker compose up -d && concurrently \"npm run start:backend\" \"npm run start:frontend\""
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.1.15",
+    "chartjs-plugin-datalabels": "^2.2.0",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
