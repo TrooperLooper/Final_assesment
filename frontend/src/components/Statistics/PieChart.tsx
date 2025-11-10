@@ -44,14 +44,14 @@ const PieChart: React.FC<SingleGamePieChartProps> = ({
           }}
         />
       )}
-      <span className="text-white font-bold mb-2">{gameName}</span>
+      <span className="text-white mb-2">{gameName}</span>
       <div className="w-20 h-20">
         <Pie
           data={chartData}
           options={{ plugins: { legend: { display: false } } }}
         />
       </div>
-      <span className="text-white mt-2 text-sm font-bold ">
+      <span className="sofia-sans-extra-condensed-regular font-extrabold text-white mt-2 text-sm">
         {percent.toFixed(0)}%
       </span>
     </div>

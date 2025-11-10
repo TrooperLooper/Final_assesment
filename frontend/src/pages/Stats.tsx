@@ -15,6 +15,7 @@ import asteroidsIcon from "../components/assets/asteroids_btn.jpeg";
 import tetrisIcon from "../components/assets/tetris_btn.jpeg";
 import spaceIcon from "../components/assets/space_btn.jpeg";
 import StarIcon from "../components/StarIcon";
+import { useNavigate } from "react-router-dom";
 
 interface PlayTimeData {
   userId: string;
@@ -25,6 +26,7 @@ interface PlayTimeData {
 }
 
 function Stats() {
+  const navigate = useNavigate();
   const [gameStats, setGameStats] = useState<
     { gameName: string; iconUrl: string; minutesPlayed: number }[]
   >([]);
@@ -173,29 +175,46 @@ function Stats() {
                 </div>
 
                 {/* Column 3: Buttons (snug, stack on mobile) */}
-                <div className="flex flex-col mt-2 gap-3 sm:gap-4 items-center md:items-end w-auto">
+                <div className="flex flex-col mt-2 gap-4 items-center md:items-end w-auto">
+                  {/* New User Button */}
                   <button
                     type="button"
-                    className="py-2 px-4 sm:px-6 rounded-lg font-bold text-xs text-center sm:text-sm shadow-lg transition-all
-                    active:scale-95 active:shadow-inner
-                    bg-yellow-400 text-pink-900 hover:bg-yellow-300  whitespace-nowrap w-[190px]"
-                    onClick={() => {
-                      /* handle choose new player */
-                    }}
+                    className="
+      w-14 h-14 rounded-full bg-red-600
+      border-2 border-black/70
+      flex items-center justify-center
+      shadow-lg transition-all
+      active:scale-95 active:shadow-inner
+      hover:border-yellow-400
+      focus:outline-none
+    "
+                    onClick={() => navigate("/register")}
+                    aria-label="New user"
                   >
-                    CHOOSE NEW PLAYER
+                    {/* You can use a user icon or just text */}
+                    <span className="text-white text-lg font-bold">+</span>
                   </button>
+                  <span className="text-xs text-white mt-1">New user</span>
+
+                  {/* New Game Button */}
                   <button
                     type="button"
-                    className="py-2 px-4 sm:px-6 rounded-lg font-bold text-xs sm:text-sm shadow-lg transition-all
-                    active:scale-95 active:shadow-inner
-                    bg-yellow-400 text-pink-900 hover:bg-yellow-300 whitespace-nowrap w-[190px]"
-                    onClick={() => {
-                      /* handle play new game */
-                    }}
+                    className="
+      w-14 h-14 rounded-full bg-red-600
+      border-2 border-black/70
+      flex items-center justify-center
+      shadow-lg transition-all
+      active:scale-95 active:shadow-inner
+      hover:border-yellow-400
+      focus:outline-none
+    "
+                    onClick={() => navigate("/games")}
+                    aria-label="New game"
                   >
-                    PLAY NEW GAME
+                    {/* You can use a gamepad icon or just text */}
+                    <span className="text-white text-lg font-bold">🎮</span>
                   </button>
+                  <span className="text-xs text-white mt-1">New game</span>
                 </div>
               </div>
 
@@ -205,7 +224,7 @@ function Stats() {
                 <div className="flex flex-col">
                   <div className="bg-pink-600 text-center rounded-t-xl px-4 py-2">
                     <span className="text-white text-sm font-semibold">
-                      Time spent per game
+                      Time - all games
                     </span>
                   </div>
                   <div className="flex items-center justify-center">
@@ -221,7 +240,7 @@ function Stats() {
                     </span>
                   </div>
                   <div className="w-full max-w-3xl mx-auto p-0">
-                    <div className="p-2 flex items-center justify-center">
+                    <div className="p-2 mt-5 flex items-center justify-center">
                       <BarGraph data={gameStats} />
                     </div>
                   </div>
@@ -231,21 +250,17 @@ function Stats() {
           </div>
 
           {/* Row 3: Dotgraph + Linegraph */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="bg-white/10 rounded-xl p-6 shadow flex items-center justify-center">
+          <div className="flex flex-col gap-8 w-full">
+            <div className="bg-white/10 rounded-xl p-6 shadow flex items-center justify-center w-full">
               <SessionsGraph data={sessionsData} />
             </div>
-            <div className="bg-white/10 rounded-xl p-6 shadow flex items-center justify-center">
+            <div className="bg-white/10 rounded-xl p-6 shadow flex items-center justify-center w-full">
               <WeeklyPlayTimeGraph data={playTimeData} games={games} />
             </div>
-          </div>
-
-          {/* Row 4: AllUsersBar + Leaderboard */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div className="bg-white/10 rounded-xl p-6 shadow flex items-center justify-center">
+            <div className="bg-white/10 rounded-xl p-6 shadow flex items-center justify-center w-full">
               <AllUsersBarGraph data={gameStats} />
             </div>
-            <div className="bg-white/10 rounded-xl p-6 shadow flex items-center justify-center">
+            <div className="bg-white/10 rounded-xl p-6 shadow flex items-center justify-center w-full">
               <LeaderboardTable
                 data={Array.isArray(gameStats) ? gameStats : []}
               />

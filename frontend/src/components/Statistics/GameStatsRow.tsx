@@ -21,19 +21,11 @@ const GameStatsRow: React.FC<GameStatsRowProps> = ({ games }) => (
       return (
         <div
           key={game.name}
-          className="flex items-center justify-between w-full py-2 border-b border-gray-300 last:border-b-0"
+          className="flex items-center justify-between w-full mb-3"
         >
-          <img
-            src={game.icon}
-            alt={game.name}
-            className="w-8 h-8 object-contain"
-          />
-          <span className="font-bold text-center text-white text-base flex-1">
-            {game.name}
-          </span>
-          <div className="w-12 h-12 flex items-center justify-center">
+          {/* Pie chart first */}
+          <div className="flex items-center justify-center w-auto">
             <svg width="48" height="48" viewBox="0 0 48 48">
-              {/* Full yellow background ring */}
               <circle
                 cx="24"
                 cy="24"
@@ -42,7 +34,6 @@ const GameStatsRow: React.FC<GameStatsRowProps> = ({ games }) => (
                 stroke={backgroundColor}
                 strokeWidth="6"
               />
-              {/* Red indicator arc, always starts at top */}
               <circle
                 cx="24"
                 cy="24"
@@ -61,13 +52,19 @@ const GameStatsRow: React.FC<GameStatsRowProps> = ({ games }) => (
                 textAnchor="middle"
                 fontSize="20"
                 fill="#111"
-                fontWeight="bold"
-                style={{ fontFamily: "'Tulpen One', cursive" }}
+                style={{
+                  fontFamily: "'Sofia Sans Extra Condensed', sans-serif",
+                  fontWeight: 800,
+                }}
               >
                 {game.percent}%
               </text>
             </svg>
           </div>
+          {/* Game name second */}
+          <span className="font-bold text-start text-white text-base flex-1 ml-4 w-auto">
+            {game.name}
+          </span>
         </div>
       );
     })}

@@ -27,7 +27,7 @@ export const RetroTimer: React.FC<RetroTimerProps> = ({
       border-4 
       ${isStopped ? "border-yellow-400" : "border-green-500"}
       rounded-lg
-      p-6
+      p-4
       shadow-lg
       ${!isStopped && "shadow-green-500/50"}
       ${isStopped && "shadow-yellow-400/50"}
@@ -38,7 +38,7 @@ export const RetroTimer: React.FC<RetroTimerProps> = ({
       <div
         className={`
         font-mono 
-        text-6xl 
+        text-5xl 
         ${isStopped ? "text-yellow-400" : "text-green-500"}
         tracking-widest
         text-center
@@ -51,9 +51,9 @@ export const RetroTimer: React.FC<RetroTimerProps> = ({
       <div
         className={`
         text-center 
-        mt-3
+        mt-2
         font-mono
-        text-sm
+        text-xs
         tracking-wider
         ${isStopped ? "text-yellow-400" : "text-green-500"}
       `}
