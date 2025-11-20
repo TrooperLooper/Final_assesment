@@ -33,28 +33,28 @@ const gameAssets: Record<string, { image: string; color: string; small: boolean 
 
 const staticGames = [
   {
-    _id: "69037ebeb9b885d62009954f",
+    _id: "690537bcf23a2d756f728f17",
     name: "Pac-man",
     image: pacmanGif,
     color: "bg-yellow-400",
     small: true,
   },
   {
-    _id: "69037ebeb9b885d620099552",
+    _id: "690537bcf23a2d756f728f1a",
     name: "Asteroids",
     image: asteroidsGif,
     color: "bg-blue-500",
     small: false,
   },
   {
-    _id: "69037ebeb9b885d620099550",
+    _id: "690537bcf23a2d756f728f18",
     name: "Tetris",
     image: tetrisGif,
     color: "bg-pink-500",
     small: false,
   },
   {
-    _id: "69037ebeb9b885d620099551",
+    _id: "690537bcf23a2d756f728f19",
     name: "Space Invaders",
     image: spaceGif,
     color: "bg-green-500",
