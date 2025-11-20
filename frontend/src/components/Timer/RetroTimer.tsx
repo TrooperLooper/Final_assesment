@@ -131,7 +131,7 @@ export const RetroTimer: React.FC<RetroTimerProps> = ({
                 ${isStopped ? "text-yellow-400" : "text-green-500"}
               `}
               >
-                {isStopped ? "⏸ MAX REACHED" : "▶ RUNNING"}
+                {isStopped ? "⏸ TIME STOPPED" : "▶ RUNNING"}
               </div>
             </div>
           </div>

@@ -1,13 +1,10 @@
 import { useEffect, useState } from "react";
 import BarGraph from "../components/Statistics/BarGraph";
-import PieChart from "../components/Statistics/PieChart";
-import TotalTimePlayed from "../components/Statistics/TotalTimePlayed";
 import SessionsGraph from "../components/Statistics/SessionsGraph";
 import WeeklyPlayTimeGraph from "../components/Statistics/WeeklyPlayTimeGraph";
 import LeaderboardTable from "../components/Statistics/LeaderboardTable";
 import AllUsersBarGraph from "../components/Statistics/AllUsersBarGraph";
 import defaultAvatar from "../components/assets/user_default.jpeg";
-import axios from "axios";
 import Layout from "../components/Navigation/Layout";
 import GameStatsRow from "../components/Statistics/GameStatsRow";
 import pacmanIcon from "../components/assets/pacman_btn.jpeg";
@@ -17,38 +14,15 @@ import spaceIcon from "../components/assets/space_btn.jpeg";
 import StarIcon from "../components/StarIcon";
 import { useNavigate } from "react-router-dom";
 
-interface PlayTimeData {
-  userId: string;
-  userName: string;
-  gameId: string;
-  day: string; // ISO date string
-  minutesPlayed: number;
-}
-
 function Stats() {
   const navigate = useNavigate();
   const [gameStats, setGameStats] = useState<
     { gameName: string; iconUrl: string; minutesPlayed: number }[]
   >([]);
-  const [sessionsData, setSessionsData] = useState<
-    { gameId: string; sessions: number }[]
-  >([]);
-  const [weeklyStats, setWeeklyStats] = useState<
-    { gameId: string; minutesPlayed: number }[]
-  >([]);
-  const [playTimeData, setPlayTimeData] = useState<PlayTimeData[]>([]);
   const [loading, setLoading] = useState(true);
-  const [games, setGames] = useState<{ id: string; name: string }[]>([]);
 
   useEffect(() => {
     // Mock data for testing
-    const mockGames = [
-      { id: "1", name: "Pac-Man" },
-      { id: "2", name: "Tetris" },
-      { id: "3", name: "Asteroids" },
-      { id: "4", name: "Space Invaders" },
-    ];
-
     const mockGameStats = [
       { gameName: "Pac-Man", iconUrl: "", minutesPlayed: 120 },
       { gameName: "Tetris", iconUrl: "", minutesPlayed: 90 },
@@ -56,43 +30,7 @@ function Stats() {
       { gameName: "Space Invaders", iconUrl: "", minutesPlayed: 30 },
     ];
 
-    const mockSessionsData = [
-      { gameId: "1", sessions: 10 },
-      { gameId: "2", sessions: 8 },
-      { gameId: "3", sessions: 5 },
-      { gameId: "4", sessions: 3 },
-    ];
-
-    const mockWeeklyStats = [
-      { gameId: "1", minutesPlayed: 40 },
-      { gameId: "2", minutesPlayed: 30 },
-      { gameId: "3", minutesPlayed: 20 },
-      { gameId: "4", minutesPlayed: 10 },
-    ];
-
-    const mockPlayTimeData = [
-      {
-        userId: "u1",
-        userName: "Alice",
-        gameId: "1",
-        day: "2025-10-28",
-        minutesPlayed: 20,
-      },
-      {
-        userId: "u2",
-        userName: "Bob",
-        gameId: "2",
-        day: "2025-10-28",
-        minutesPlayed: 15,
-      },
-      // ...more mock data
-    ];
-
-    setGames(mockGames);
     setGameStats(mockGameStats);
-    setSessionsData(mockSessionsData);
-    setWeeklyStats(mockWeeklyStats);
-    setPlayTimeData(mockPlayTimeData);
     setLoading(false);
   }, []);
 
@@ -249,21 +187,19 @@ function Stats() {
             </div>
           </div>
 
-          {/* Row 3: Dotgraph + Linegraph */}
+          {/* Statistics Graphs */}
           <div className="flex flex-col gap-8 w-full">
-            <div className="bg-white/10 rounded-xl p-6 shadow flex items-center justify-center w-full">
-              <SessionsGraph data={sessionsData} />
+            <div className="bg-white/10 rounded-xl p-6 shadow w-full">
+              <SessionsGraph />
             </div>
-            <div className="bg-white/10 rounded-xl p-6 shadow flex items-center justify-center w-full">
-              <WeeklyPlayTimeGraph data={playTimeData} games={games} />
+            <div className="bg-white/10 rounded-xl p-6 shadow w-full">
+              <WeeklyPlayTimeGraph />
             </div>
-            <div className="bg-white/10 rounded-xl p-6 shadow flex items-center justify-center w-full">
-              <AllUsersBarGraph data={gameStats} />
+            <div className="bg-white/10 rounded-xl p-6 shadow w-full">
+              <AllUsersBarGraph />
             </div>
-            <div className="bg-white/10 rounded-xl p-6 shadow flex items-center justify-center w-full">
-              <LeaderboardTable
-                data={Array.isArray(gameStats) ? gameStats : []}
-              />
+            <div className="bg-white/10 rounded-xl p-6 shadow w-full">
+              <LeaderboardTable />
             </div>
           </div>
         </div>

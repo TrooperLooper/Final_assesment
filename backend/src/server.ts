@@ -3,8 +3,9 @@ import mongoose from "mongoose";
 import cors from "cors";
 import dotenv from "dotenv";
 import userRouter from "./routes/userRoutes";
-import gamesRouter from "./routes/gameRoutes";
+import gamesRouter from "./routes/GameRoutes";
 import sessionRouter from "./routes/sessionRoutes";
+import statisticsRouter from "./routes/statisticsRoutes";
 import { seedDatabase } from "./utils/seedDatabase";
 
 dotenv.config();
@@ -17,6 +18,7 @@ app.use("/uploads", express.static("uploads")); //Profile pictures (static folde
 app.use("/api/users", userRouter); //User routes
 app.use("/api/games", gamesRouter); //Games routes
 app.use("/api/sessions", sessionRouter); //Sessions routes
+app.use("/api/statistics", statisticsRouter); //Statistics routes
 
 const PORT = process.env.PORT || 3000;
 const MONGO =

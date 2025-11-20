@@ -56,6 +56,7 @@ const JoystickSVG = () => (
 
 function Games() {
   const [games, setGames] = useState([]);
+  const [currentUser, setCurrentUser] = useState<any>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -64,57 +65,79 @@ function Games() {
         setGames(Array.isArray(data) ? data : []);
       })
       .catch(() => setGames([]));
+
+    // Check for current user in localStorage
+    const user = localStorage.getItem("currentUser");
+    if (user) {
+      try {
+        setCurrentUser(JSON.parse(user));
+      } catch {
+        setCurrentUser(null);
+      }
+    }
   }, []);
 
-  const renderGameCard = (game: (typeof staticGames)[0]) => (
-    <div
-      key={game._id}
-      className={`
+  const renderGameCard = (game: (typeof staticGames)[0]) => {
+    const isDisabled = !currentUser;
+
+    return (
+      <div
+        key={game._id}
+        className={`
         flex flex-col items-center rounded-xl shadow-lg ${game.color}
-        p-4 transition-transform hover:scale-105 active:scale-95 cursor-pointer
+        p-4 transition-transform ${
+          isDisabled
+            ? "opacity-50 cursor-not-allowed"
+            : "hover:scale-105 active:scale-95 cursor-pointer"
+        }
         w-[180px] h-[260px] m-2
       `}
-      onClick={() => navigate(`/play/${game._id}`)}
-      style={{
-        minWidth: "120px",
-        minHeight: "160px",
-      }}
-    >
-      {/* Image container always same size, fills with black */}
-      <div
-        className="overflow-hidden rounded-lg border-4 border-white mb-3 flex items-center justify-center bg-black"
-        style={{ width: "140px", height: "140px" }}
-      >
-        <img
-          src={game.image}
-          alt={`${game.name} game animation`}
-          className={
-            game.small
-              ? "object-cover w-4/5 h-4/5 mx-auto"
-              : "object-cover w-full h-full mx-auto"
+        onClick={() => {
+          if (!isDisabled) {
+            navigate(`/play/${game._id}`);
           }
-          style={game.small ? { width: "80px", height: "80px" } : {}}
-        />
-      </div>
-      {/* Game name: slightly smaller, uniform font size, tight line height */}
-      <h4
-        className="font-bold font-['Winky_Sans'] text-white text-center drop-shadow tracking-widest uppercase leading-tight"
-        style={{
-          fontSize: "0.90rem",
-          maxWidth: "130px",
-          overflow: "hidden",
-          textOverflow: "ellipsis",
-          whiteSpace: "nowrap",
-          margin: 0,
-          lineHeight: 1.05,
         }}
-        title={game.name}
+        style={{
+          minWidth: "120px",
+          minHeight: "160px",
+        }}
       >
-        {game.name}
-      </h4>
-      <JoystickSVG />
-    </div>
-  );
+        {/* Image container always same size, fills with black */}
+        <div
+          className="overflow-hidden rounded-lg border-4 border-white mb-3 flex items-center justify-center bg-black"
+          style={{ width: "140px", height: "140px" }}
+        >
+          <img
+            src={game.image}
+            alt={`${game.name} game animation`}
+            className={
+              game.small
+                ? "object-cover w-4/5 h-4/5 mx-auto"
+                : "object-cover w-full h-full mx-auto"
+            }
+            style={game.small ? { width: "80px", height: "80px" } : {}}
+          />
+        </div>
+        {/* Game name: slightly smaller, uniform font size, tight line height */}
+        <h4
+          className="font-bold font-['Winky_Sans'] text-white text-center drop-shadow tracking-widest uppercase leading-tight"
+          style={{
+            fontSize: "0.90rem",
+            maxWidth: "130px",
+            overflow: "hidden",
+            textOverflow: "ellipsis",
+            whiteSpace: "nowrap",
+            margin: 0,
+            lineHeight: 1.05,
+          }}
+          title={game.name}
+        >
+          {game.name}
+        </h4>
+        <JoystickSVG />
+      </div>
+    );
+  };
 
   return (
     <Layout>
@@ -141,6 +164,29 @@ function Games() {
                 : staticGames
               ).map(renderGameCard)}
             </div>
+
+            {/* Error message when no user is selected */}
+            {!currentUser && (
+              <div className="mt-6 mb-4 text-center">
+                <p className="text-red-500 font-bold text-lg bg-black/40 px-6 py-3 rounded-lg inline-block border-2 border-red-500">
+                  ⚠️ Please register or select a user to track your game time!
+                </p>
+                <div className="mt-4">
+                  <button
+                    onClick={() => navigate("/register")}
+                    className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded-lg transition-all active:scale-95"
+                  >
+                    Register New User
+                  </button>
+                  <button
+                    onClick={() => navigate("/users")}
+                    className="ml-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg transition-all active:scale-95"
+                  >
+                    Select Existing User
+                  </button>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
