@@ -1,18 +1,13 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 
-interface LeaderboardTableProps {
-  // No need to pass data, will fetch from backend
-}
-
 interface LeaderboardEntry {
-  userId: string;
   userName: string;
-  totalMinutes: number;
-  rank: number;
+  gameName: string;
+  minutes: number;
 }
 
-const LeaderboardTable: React.FC<LeaderboardTableProps> = () => {
+const LeaderboardTable: React.FC = () => {
   const [data, setData] = useState<LeaderboardEntry[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -37,35 +32,28 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = () => {
 
   return (
     <div className="w-full">
-      <h3 className="text-white text-xl font-bold mb-4">Global Leaderboard</h3>
+      <h3 className="text-white text-xl font-bold mb-4">Leaderboard</h3>
       <div className="bg-white/10 rounded-lg overflow-hidden">
         <table className="w-full text-white">
           <thead className="bg-white/20">
             <tr>
-              <th className="text-left px-4 py-3 font-semibold">Rank</th>
-              <th className="text-left px-4 py-3 font-semibold">Player</th>
+              <th className="text-left px-4 py-3 font-semibold">Name</th>
+              <th className="text-left px-4 py-3 font-semibold">Game</th>
               <th className="text-right px-4 py-3 font-semibold">
-                Total Minutes
+                Time Played
               </th>
             </tr>
           </thead>
           <tbody>
             {data.map((entry, index) => (
               <tr
-                key={entry.userId}
-                className={`border-b border-white/10 ${
-                  index < 3 ? "bg-yellow-500/20" : ""
-                }`}
+                key={index}
+                className="border-b border-white/10 hover:bg-white/5"
               >
-                <td className="px-4 py-3 font-bold">
-                  {entry.rank === 1 && "🥇"}
-                  {entry.rank === 2 && "🥈"}
-                  {entry.rank === 3 && "🥉"}
-                  {entry.rank > 3 && `#${entry.rank}`}
-                </td>
                 <td className="px-4 py-3">{entry.userName}</td>
+                <td className="px-4 py-3">{entry.gameName}</td>
                 <td className="px-4 py-3 text-right font-semibold">
-                  {entry.totalMinutes} min
+                  {entry.minutes} min
                 </td>
               </tr>
             ))}
@@ -73,7 +61,7 @@ const LeaderboardTable: React.FC<LeaderboardTableProps> = () => {
         </table>
         {data.length === 0 && (
           <div className="text-white/70 text-center py-8">
-            No players on the leaderboard yet
+            No game sessions recorded yet
           </div>
         )}
       </div>

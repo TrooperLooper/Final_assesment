@@ -92,12 +92,13 @@ function Play() {
 
     if (elapsedSeconds > 0 && currentUser && gameId) {
       try {
+        // 1 real second = 1 minute in the system
         await logSession({
           userId: currentUser._id,
           gameId,
-          minutesPlayed: elapsedSeconds,
+          playedSeconds: elapsedSeconds,
         });
-        console.log(`Session logged: ${elapsedSeconds} minutes`);
+        console.log(`Session logged: ${elapsedSeconds} minutes (${elapsedSeconds} real seconds)`);
       } catch (err) {
         console.error("Failed to log session:", err);
       }

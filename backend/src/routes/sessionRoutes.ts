@@ -3,12 +3,14 @@ import {
   startSession,
   stopSession,
   getStats,
+  createSession,
 } from "../controllers/sessionController";
 import mongoose from "mongoose"; // Import mongoose
 import { GameSession } from "../models/GameSession"; // Import the GameSession model
 
 const router = express.Router();
 
+router.post("/", createSession); // Create session directly with minutes
 router.post("/start", startSession);    
 router.post("/stop/:id", stopSession); 
 router.get("/stats", getStats);

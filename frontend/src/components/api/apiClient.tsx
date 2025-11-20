@@ -48,20 +48,20 @@ export const stopSession = async (sessionId: string) => {
   return response.data;
 };
 
-// Log a session (alternative to stopSession)
+// Log a session (1 second of real time = 1 minute in system)
 export const logSession = async ({
   userId,
   gameId,
-  minutesPlayed,
+  playedSeconds,
 }: {
   userId: string;
   gameId: string;
-  minutesPlayed: number;
+  playedSeconds: number;
 }) => {
   const response = await apiClient.post("/sessions", {
     userId,
     gameId,
-    minutesPlayed,
+    playedSeconds,
   });
   return response.data;
 };

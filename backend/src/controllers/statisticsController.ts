@@ -71,51 +71,35 @@ export const getUserSessions = async (req: Request, res: Response) => {
   }
 };
 
-// Get global leaderboard
+// Get leaderboard - individual game sessions ranked by duration
 export const getLeaderboard = async (req: Request, res: Response) => {
   try {
-    const leaderboard = await GameSession.aggregate([
-      {
-        $group: {
-          _id: "$userId",
-          totalMinutes: {
-            $sum: { $divide: ["$playedSeconds", 60] },
-          },
-        },
-      },
-      {
-        $sort: { totalMinutes: -1 },
-      },
-      {
-        $lookup: {
-          from: "users",
-          localField: "_id",
-          foreignField: "_id",
-          as: "userInfo",
-        },
-      },
-      {
-        $unwind: "$userInfo",
-      },
-      {
-        $project: {
-          userId: "$_id",
-          userName: {
-            $concat: ["$userInfo.firstName", " ", "$userInfo.lastName"],
-          },
-          totalMinutes: { $round: ["$totalMinutes", 0] },
-        },
-      },
-    ]);
+    const sessions = await GameSession.find()
+      .populate({
+        path: "userId",
+        select: "firstName lastName",
+      })
+      .populate({
+        path: "gameId",
+        select: "name",
+      })
+      .sort({ playedSeconds: -1 })
+      .exec();
 
-    // Add rank
-    const rankedLeaderboard = leaderboard.map((entry, index) => ({
-      ...entry,
-      rank: index + 1,
-    }));
+    const leaderboard = sessions.map((session: any) => {
+      const user = session.userId;
+      const game = session.gameId;
+      
+      return {
+        userName: user ? `${user.firstName} ${user.lastName}` : "Unknown User",
+        gameName: game?.name || "Unknown Game",
+        minutes: session.playedSeconds || 0,
+      };
+    });
 
-    res.json(rankedLeaderboard);
+    res.json(leaderboard);
   } catch (error) {
+    console.error("Leaderboard error:", error);
     res.status(500).json({ error: "Failed to fetch leaderboard" });
   }
 };
