@@ -24,11 +24,11 @@ interface User {
   profilePicture?: string;
 }
 
-const imageMap: Record<string, string> = {
-  "pacman_gameicon.gif": pacmanGif,
-  "asteroids_gameicon.gif": asteroidsGif,
-  "tetris_gameicon.gif": tetrisGif,
-  "space_gameicon.gif": spaceGif,
+const gameImageMap: Record<string, string> = {
+  "Pac-man": pacmanGif,
+  "Asteroids": asteroidsGif,
+  "Tetris": tetrisGif,
+  "Space Invaders": spaceGif,
 };
 
 const gameColorMap: Record<string, string> = {
@@ -106,14 +106,6 @@ function Play() {
       }
     }
     
-    if (sessionId) {
-      try {
-        await apiClient.post('/sessions/stop', { sessionId });
-      } catch (error) {
-        console.error('Failed to stop session:', error);
-      }
-    }
-    
     navigate('/games');
   };
 
@@ -161,9 +153,7 @@ function Play() {
         <div className="flex flex-row gap-8 items-start">
           <GameCard
             gameName={game.name}
-            gameImage={
-              imageMap[game.imageUrl.split("/").pop() || ""] || game.imageUrl
-            }
+            gameImage={gameImageMap[game.name] || ""}
             gameColor={gameColorMap[game.name] || "bg-gray-400"}
             buttonState={getButtonState()}
             onButtonClick={getButtonHandler()}

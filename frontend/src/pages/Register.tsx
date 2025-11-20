@@ -8,16 +8,20 @@ import { useNavigate } from "react-router-dom";
 import defaultAvatar from "../components/assets/user_default.jpeg";
 import Layout from "../components/Navigation/Layout";
 
-const apiClient = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3000/api'
+const registerSchema = z.object({
+  email: z.string().email("Invalid email address"),
+  firstName: z.string().min(1, "First name is required"),
+  lastName: z.string().min(1, "Last name is required"),
 });
 
 const Register: React.FC = () => {
   const navigate = useNavigate();
-  const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [imagePreview, setImagePreview] = useState(defaultAvatar);
+  const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
 
   const isFormValid = registerSchema.safeParse({
     email,

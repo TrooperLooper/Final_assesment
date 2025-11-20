@@ -1,8 +1,6 @@
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import { Game } from "../models/Game";
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
 
 dotenv.config();
 
@@ -58,12 +56,7 @@ async function seedDatabase() {
   }
 }
 
-// ES Module way to check if this is the main module
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
-
-if (import.meta.url === `file://${process.argv[1]}`) {
-  seedDatabase();
-}
+// Run the seed function
+seedDatabase();
 
 export { seedDatabase };

@@ -7,6 +7,30 @@ import asteroidsGif from "../components/assets/asteroids_gameicon.gif";
 import tetrisGif from "../components/assets/tetris_gameicon.gif";
 import spaceGif from "../components/assets/space_gameicon.gif";
 
+// Map game names to their images and colors
+const gameAssets: Record<string, { image: string; color: string; small: boolean }> = {
+  "Pac-man": {
+    image: pacmanGif,
+    color: "bg-yellow-400",
+    small: true,
+  },
+  "Asteroids": {
+    image: asteroidsGif,
+    color: "bg-blue-500",
+    small: false,
+  },
+  "Tetris": {
+    image: tetrisGif,
+    color: "bg-pink-500",
+    small: false,
+  },
+  "Space Invaders": {
+    image: spaceGif,
+    color: "bg-green-500",
+    small: false,
+  },
+};
+
 const staticGames = [
   {
     _id: "69037ebeb9b885d62009954f",
@@ -55,13 +79,22 @@ const JoystickSVG = () => (
 );
 
 function Games() {
-  const [games, setGames] = useState([]);
+  const [games, setGames] = useState<any[]>([]);
   const navigate = useNavigate();
 
   useEffect(() => {
     fetchGames()
       .then((data) => {
-        setGames(Array.isArray(data) ? data : []);
+        // Merge API data with local assets
+        const gamesWithAssets = Array.isArray(data) 
+          ? data.map((game: any) => ({
+              ...game,
+              image: gameAssets[game.name]?.image || "",
+              color: gameAssets[game.name]?.color || "bg-gray-400",
+              small: gameAssets[game.name]?.small || false,
+            }))
+          : [];
+        setGames(gamesWithAssets);
       })
       .catch(() => setGames([]));
   }, []);

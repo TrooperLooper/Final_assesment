@@ -13,6 +13,26 @@ router.post("/start", startSession);
 router.post("/stop/:id", stopSession); 
 router.get("/stats", getStats);
 
+// Direct session logging endpoint (used by frontend)
+router.post("/", async (req, res) => {
+  try {
+    const { userId, gameId, minutesPlayed } = req.body;
+    
+    const session = await GameSession.create({
+      userId,
+      gameId,
+      startTime: new Date(),
+      endTime: new Date(),
+      playedSeconds: minutesPlayed, // Frontend sends elapsed seconds
+    });
+    
+    res.status(201).json(session);
+  } catch (error) {
+    console.error("Error creating session:", error);
+    res.status(500).json({ message: "Error creating session", error });
+  }
+});
+
 router.get("/user/:userId", async (req, res) => {
   const sessions = await GameSession.find({ userId: req.params.userId })
     .populate('gameId');

@@ -1,12 +1,11 @@
 import { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import BarGraph from "../components/Statistics/BarGraph";
-import PieChart from "../components/Statistics/PieChart";
-import TotalTimePlayed from "../components/Statistics/TotalTimePlayed";
 import SessionsGraph from "../components/Statistics/SessionsGraph";
 import WeeklyPlayTimeGraph from "../components/Statistics/WeeklyPlayTimeGraph";
 import AllUsersBarGraph from "../components/Statistics/AllUsersBarGraph";
+import LeaderboardTable from "../components/Statistics/LeaderboardTable";
 import defaultAvatar from "../components/assets/user_default.jpeg";
-import axios from "axios";
 import Layout from "../components/Navigation/Layout";
 import GameStatsRow from "../components/Statistics/GameStatsRow";
 import pacmanIcon from "../components/assets/pacman_btn.jpeg";
@@ -14,7 +13,6 @@ import asteroidsIcon from "../components/assets/asteroids_btn.jpeg";
 import tetrisIcon from "../components/assets/tetris_btn.jpeg";
 import spaceIcon from "../components/assets/space_btn.jpeg";
 import StarIcon from "../components/StarIcon";
-import { useNavigate } from "react-router-dom";
 
 interface PlayTimeData {
   userId: string;
@@ -25,15 +23,10 @@ interface PlayTimeData {
 }
 
 function Stats() {
+  const { userId } = useParams<{ userId: string }>();
   const navigate = useNavigate();
   const [gameStats, setGameStats] = useState<
     { gameName: string; iconUrl: string; minutesPlayed: number }[]
-  >([]);
-  const [sessionsData, setSessionsData] = useState<
-    { gameId: string; sessions: number }[]
-  >([]);
-  const [weeklyStats, setWeeklyStats] = useState<
-    { gameId: string; minutesPlayed: number }[]
   >([]);
   const [playTimeData, setPlayTimeData] = useState<PlayTimeData[]>([]);
   const [loading, setLoading] = useState(true);
@@ -57,20 +50,6 @@ function Stats() {
       { gameName: "Space Invaders", iconUrl: "", minutesPlayed: 30 },
     ];
 
-    const mockSessionsData = [
-      { gameId: "1", sessions: 10 },
-      { gameId: "2", sessions: 8 },
-      { gameId: "3", sessions: 5 },
-      { gameId: "4", sessions: 3 },
-    ];
-
-    const mockWeeklyStats = [
-      { gameId: "1", minutesPlayed: 40 },
-      { gameId: "2", minutesPlayed: 30 },
-      { gameId: "3", minutesPlayed: 20 },
-      { gameId: "4", minutesPlayed: 10 },
-    ];
-
     const mockPlayTimeData = [
       {
         userId: "u1",
@@ -91,8 +70,6 @@ function Stats() {
 
     setGames(mockGames);
     setGameStats(mockGameStats);
-    setSessionsData(mockSessionsData);
-    setWeeklyStats(mockWeeklyStats);
     setPlayTimeData(mockPlayTimeData);
     setLoading(false);
   }, []);
@@ -253,18 +230,16 @@ function Stats() {
           {/* Row 3: Dotgraph + Linegraph */}
           <div className="flex flex-col gap-8 w-full">
             <div className="bg-white/10 rounded-xl p-6 shadow flex items-center justify-center w-full">
-              <SessionsGraph data={sessionsData} />
+              <SessionsGraph userId={userId} />
             </div>
             <div className="bg-white/10 rounded-xl p-6 shadow flex items-center justify-center w-full">
               <WeeklyPlayTimeGraph data={playTimeData} games={games} />
             </div>
             <div className="bg-white/10 rounded-xl p-6 shadow flex items-center justify-center w-full">
-              <AllUsersBarGraph data={gameStats} />
+              <AllUsersBarGraph />
             </div>
             <div className="bg-white/10 rounded-xl p-6 shadow flex items-center justify-center w-full">
-              <LeaderboardTable
-                data={Array.isArray(gameStats) ? gameStats : []}
-              />
+              <LeaderboardTable />
             </div>
           </div>
         </div>
