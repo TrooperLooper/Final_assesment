@@ -81,10 +81,11 @@ const Register: React.FC = () => {
   };
 
   return (
-    <Layout>
+    <>
       {/* Gradient background as a -z layer */}
       <div className="fixed inset-0 -z-10 w-full h-full bg-gradient-to-t from-pink-400 via-pink-700 to-red-700" />
-      <div className="min-h-screen flex flex-col items-center justify-start pt-5 px-2 sm:px-8">
+      <Layout>
+        <div className="min-h-screen flex flex-col items-center justify-start pt-5 px-2 sm:px-8">
         {/* Headline on top, centered */}
         <div className="w-full flex justify-center mt-2 mb-4">
           <h1 className="text-4xl sm:text-6xl lg:text-8xl font-bold font-['Pixelify_Sans'] text-yellow-300 drop-shadow-lg text-center">
@@ -259,8 +260,9 @@ const Register: React.FC = () => {
             </form>
           </div>
         </div>
-      </div>
-    </Layout>
+        </div>
+      </Layout>
+    </>
   );
 };
 
