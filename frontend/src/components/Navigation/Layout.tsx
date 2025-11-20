@@ -1,5 +1,5 @@
 import NavigationBar from "./NavigationBar";
-import Header from "./Header";
+import Header from "./header";
 
 const Layout = ({ children }) => (
   <div className="flex min-h-screen">
