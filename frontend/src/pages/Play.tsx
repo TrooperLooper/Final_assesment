@@ -59,11 +59,17 @@ function Play() {
       return;
     }
 
+    console.log("Fetching game with ID:", gameId);
     fetchGameById(gameId)
-      .then(setGame)
+      .then((data) => {
+        console.log("Game data received:", data);
+        setGame(data);
+      })
       .catch((err) => {
-        setError("Game not found. Please select a valid game.");
         console.error("Failed to fetch game:", err);
+        console.error("Error response:", err.response?.data);
+        console.error("Error status:", err.response?.status);
+        setError(`Game not found. Error: ${err.response?.data?.message || err.message}`);
       });
   }, [gameId]);
 
