@@ -150,9 +150,10 @@ function Games() {
   );
 
   return (
-    <Layout>
+    <>
       {/* Gradient background as a -z layer */}
       <div className="fixed inset-0 -z-10 w-full h-full bg-gradient-to-b from-blue-950 via-blue-800 to-purple-700" />
+      <Layout>
       <div className="min-h-screen flex flex-col items-center justify-start pt-5 px-2 sm:px-8">
         {/* Headline on top, centered */}
         <div className="w-full flex justify-center items-center px-2 sm:px-12 pb-2 mt-2">
@@ -177,7 +178,8 @@ function Games() {
           </div>
         </div>
       </div>
-    </Layout>
+      </Layout>
+    </>
   );
 }
 

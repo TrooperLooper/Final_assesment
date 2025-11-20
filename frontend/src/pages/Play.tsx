@@ -132,23 +132,30 @@ function Play() {
 
   if (error) {
     return (
-      <Layout>
-        <div className="text-red-500 text-center mt-24">{error}</div>
-      </Layout>
+      <>
+        <div className="fixed inset-0 -z-10 w-full h-full bg-gradient-to-b from-blue-950 via-blue-800 to-purple-700" />
+        <Layout>
+          <div className="text-red-500 text-center mt-24">{error}</div>
+        </Layout>
+      </>
     );
   }
 
   if (!game || !currentUser) {
     return (
-      <Layout>
-        <div className="text-white text-center mt-24">Loading...</div>
-      </Layout>
+      <>
+        <div className="fixed inset-0 -z-10 w-full h-full bg-gradient-to-b from-blue-950 via-blue-800 to-purple-700" />
+        <Layout>
+          <div className="text-white text-center mt-24">Loading...</div>
+        </Layout>
+      </>
     );
   }
 
   return (
-    <Layout>
+    <>
       <div className="fixed inset-0 -z-10 w-full h-full bg-gradient-to-b from-blue-950 via-blue-800 to-purple-700" />
+      <Layout>
       <div className="min-h-screen flex flex-col items-center pt-24 px-2 sm:px-8">
         <div className="flex flex-row gap-8 items-start">
           <GameCard
@@ -165,7 +172,8 @@ function Play() {
           />
         </div>
       </div>
-    </Layout>
+      </Layout>
+    </>
   );
 };
 

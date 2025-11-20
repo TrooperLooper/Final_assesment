@@ -114,8 +114,9 @@ function Stats() {
   ];
 
   return (
-    <Layout>
+    <>
       <div className="GRADIENT fixed inset-0 -z-10 w-full h-full bg-gradient-to-b from-blue-950 via-blue-800 to-purple-700" />
+      <Layout>
       {/* Center the main content */}
       <div className="flex flex-col items-center justify-center min-h-screen w-full">
         <div className="max-w-3xl w-full flex-col gap-8 pt-8 px-2 sm:px-8 ml-0 md:ml-20">
@@ -244,7 +245,8 @@ function Stats() {
           </div>
         </div>
       </div>
-    </Layout>
+      </Layout>
+    </>
   );
 }
 
