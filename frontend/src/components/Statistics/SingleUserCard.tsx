@@ -35,7 +35,7 @@ const SingleUserCard: React.FC<SingleUserCardProps> = ({
 
         {/* Name and Time */}
         <div className="flex flex-col justify-center min-w-[200px] max-w-[600px]">
-          <div className="flex items-center  text-white font-bold text-2xl sm:text-3xl text-center md:text-start mb-4">
+          <div className="flex items-center justify-center md:justify-start text-white font-bold text-2xl sm:text-3xl mb-4">
             {user.firstName} {user.lastName}
             <StarIcon className="ml-2 mt-1" size={25} color="#facc15" />
           </div>

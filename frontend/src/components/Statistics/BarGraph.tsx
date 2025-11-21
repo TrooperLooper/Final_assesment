@@ -1,15 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Bar } from "react-chartjs-2";
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-} from "chart.js";
-import ChartDataLabels from "chartjs-plugin-datalabels";
 import axios from "axios";
-
-ChartJS.register(CategoryScale, LinearScale, BarElement, ChartDataLabels);
 
 const GAME_COLORS: Record<string, string> = {
   "Pac-man": "#FACC15",
@@ -21,7 +11,7 @@ const GAME_COLORS: Record<string, string> = {
 const ALL_GAMES = ["Pac-man", "Tetris", "Asteroids", "Space Invaders"];
 
 interface BarGraphProps {
-  userId?: string; // Optional: if provided, fetch stats for specific user
+  userId?: string;
 }
 
 interface GameStat {
@@ -37,7 +27,6 @@ const BarGraph: React.FC<BarGraphProps> = ({ userId }) => {
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        // Get current user from localStorage if userId not provided
         const currentUserId =
           userId ||
           JSON.parse(localStorage.getItem("currentUser") || "null")?._id;
@@ -69,83 +58,37 @@ const BarGraph: React.FC<BarGraphProps> = ({ userId }) => {
     return found || { gameName: name, minutesPlayed: 0, iconUrl: "" };
   });
 
-  const chartData = {
-    labels: filledData.map((item) => item.gameName),
-    datasets: [
-      {
-        label: "",
-        data: filledData.map((item) => item.minutesPlayed),
-        backgroundColor: filledData.map(
-          (item) => GAME_COLORS[item.gameName] || "#888"
-        ),
-        borderRadius: 4,
-        barThickness: 36,
-        maxBarThickness: 40,
-        categoryPercentage: 0.7,
-        barPercentage: 1,
-      },
-    ],
-  };
-
-  const options = {
-    indexAxis: "y" as const,
-    responsive: true,
-    maintainAspectRatio: false,
-    layout: {
-      padding: {
-        right: 30, // Space for numbers on the right
-      },
-    },
-    plugins: {
-      legend: { display: false },
-      title: { display: false },
-      tooltip: { enabled: false },
-      datalabels: {
-        color: "#fff",
-        font: { size: 14, weight: "bold" as const },
-        anchor: "end" as const,
-        align: "end" as const,
-        offset: 8,
-        formatter: (value: number) => (value > 0 ? value : ""),
-      },
-    },
-    scales: {
-      x: {
-        max: 100,
-        grid: { display: false, drawBorder: false },
-        ticks: { display: false },
-        border: { display: false },
-      },
-      y: {
-        grid: { display: false, drawBorder: false },
-        ticks: { display: false },
-        border: { display: false },
-      },
-    },
-  };
+  // Find the largest minutesPlayed for dynamic scaling
+  const maxMinutes = Math.max(...filledData.map((g) => g.minutesPlayed));
 
   return (
-    <div style={{ display: "flex", alignItems: "center", height: "220px" }}>
-      {/* Game names column */}
-      <div
-        className="flex flex-col justify-start h-full mr-4"
-        style={{ paddingTop: "5px" }}
-      >
-        {filledData.map((item, index) => (
-          <div
-            key={item.gameName}
-            className="text-white font-bold text-base flex items-center"
-            style={{
-              marginBottom: index < filledData.length - 1 ? "32px" : "0",
-            }}
-          >
-            {item.gameName}
-          </div>
-        ))}
-      </div>
-      {/* Chart */}
-      <div style={{ flex: 1, height: "100%", maxWidth: "450px" }}>
-        <Bar data={chartData} options={options} />
+    <div className="w-full" style={{ height: "220px", paddingTop: "5px" }}>
+      <div className="space-y-8">
+        {filledData.map((game) => {
+          // If all are zero, show equal width bars
+          const widthPercent =
+            maxMinutes > 0 ? (game.minutesPlayed / maxMinutes) * 100 : 0;
+          return (
+            <div key={game.gameName} className="flex items-center gap-4">
+              <div className="text-white font-bold text-base min-w-[120px]">
+                {game.gameName}
+              </div>
+              <div className="flex-1 bg-white/20 rounded-full h-8 relative overflow-visible">
+                <div
+                  className="h-full rounded-full"
+                  style={{
+                    width: maxMinutes > 0 ? `${widthPercent}%` : "60px",
+                    minWidth: game.minutesPlayed > 0 ? "60px" : "0",
+                    backgroundColor: GAME_COLORS[game.gameName] || "#888",
+                  }}
+                />
+                <span className="absolute right-2 top-1/2 -translate-y-1/2 text-white text-sm font-bold z-10">
+                  {game.minutesPlayed} min
+                </span>
+              </div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );

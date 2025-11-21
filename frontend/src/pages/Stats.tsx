@@ -16,6 +16,9 @@ import axios from "axios";
 
 function Stats() {
   const [totalTimePlayed, setTotalTimePlayed] = useState(0);
+  const [gamesData, setGamesData] = useState<
+    { name: string; icon: string; percent: number }[]
+  >([]);
   const [loading, setLoading] = useState(true);
 
   // Get current user from localStorage
@@ -38,10 +41,46 @@ function Stats() {
         const res = await axios.get(
           `http://localhost:3000/api/statistics/user/${currentUser._id}`
         );
-        setTotalTimePlayed(res.data.totalMinutes || 0);
+
+        const totalMinutes = res.data.totalMinutes || 0;
+        const gameStats = res.data.gameStats || [];
+
+        setTotalTimePlayed(totalMinutes);
+
+        // Map game stats to percentage data
+        const allGames = [
+          { name: "Pac-man", icon: pacmanIcon },
+          { name: "Tetris", icon: tetrisIcon },
+          { name: "Asteroids", icon: asteroidsIcon },
+          { name: "Space Invaders", icon: spaceIcon },
+        ];
+
+        const gamesWithPercent = allGames.map((game) => {
+          const stat = gameStats.find(
+            (s: { gameName: string; minutesPlayed: number }) =>
+              s.gameName.toLowerCase() === game.name.toLowerCase()
+          );
+          const minutes = stat?.minutesPlayed || 0;
+          const percent =
+            totalMinutes > 0 ? Math.round((minutes / totalMinutes) * 100) : 0;
+
+          return {
+            name: game.name,
+            icon: game.icon,
+            percent,
+          };
+        });
+
+        setGamesData(gamesWithPercent);
       } catch (error) {
         console.error("Error fetching user stats:", error);
         setTotalTimePlayed(0);
+        setGamesData([
+          { name: "Pac-man", icon: pacmanIcon, percent: 0 },
+          { name: "Tetris", icon: tetrisIcon, percent: 0 },
+          { name: "Asteroids", icon: asteroidsIcon, percent: 0 },
+          { name: "Space Invaders", icon: spaceIcon, percent: 0 },
+        ]);
       } finally {
         setLoading(false);
       }
@@ -50,29 +89,6 @@ function Stats() {
   }, [currentUser._id]);
 
   if (loading) return <p>Loading...</p>;
-
-  const gamesData = [
-    {
-      name: "Pac-Man",
-      icon: pacmanIcon,
-      percent: 40,
-    },
-    {
-      name: "Tetris",
-      icon: tetrisIcon,
-      percent: 30,
-    },
-    {
-      name: "Asteroids",
-      icon: asteroidsIcon,
-      percent: 20,
-    },
-    {
-      name: "Space Invaders",
-      icon: spaceIcon,
-      percent: 10,
-    },
-  ];
 
   return (
     <Layout>
