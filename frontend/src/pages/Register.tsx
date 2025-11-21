@@ -87,7 +87,7 @@ function Register() {
       <div className="min-h-screen flex flex-col items-center justify-start pt-5 px-2 sm:px-8">
         {/* Headline on top, centered */}
         <div className="w-full flex justify-center mt-2 mb-4">
-          <h1 className="text-4xl sm:text-6xl lg:text-8xl font-bold font-['Pixelify_Sans'] text-yellow-300 drop-shadow-lg text-center">
+          <h1 className="text-4xl sm:text-6xl lg:text-8xl font-normal font-['Jersey_20'] text-yellow-300 drop-shadow-lg text-center">
             GAME TIMER
           </h1>
         </div>
@@ -129,10 +129,12 @@ function Register() {
               <RightStar size={12} color="gold" />
             </div>
           </div>
-          <div className="w-full max-w-xl bg-pink-500 bg-opacity-40 rounded-xl shadow-lg px-2 sm:px-8 py-6 flex flex-col items-center gap-4">
-            <h3 className="Create_user text-white font-bold self-start text-2xl  mb-2">
-              Create user
+          <div className="w-full max-w-xl bg-rose-800 rounded-tl-xl text-center rounded-tr-xl px-4 py-2">
+            <h3 className="Create_user text-yellow-300 font-['Jersey_20'] font-normal self-start text-3xl">
+              CREATE USER
             </h3>
+          </div>
+          <div className="w-full max-w-xl bg-pink-500 bg-opacity-40 rounded-b-xl rounded-br-xl shadow-lg px-2 sm:px-8 py-6 flex flex-col items-center gap-4">
             <form
               onSubmit={handleSubmit}
               className="w-full flex flex-row gap-8 font-['Winky_Sans']"
@@ -245,7 +247,7 @@ function Register() {
                 <button
                   type="submit"
                   disabled={!isFormValid}
-                  className={`z-10 self-end py-1 px-4 rounded-lg font-bold text-base shadow-lg transition-all
+                  className={`z-10 self-end mt-3 py-1 px-4 rounded-lg font-bold text-base shadow-lg transition-all
                     active:scale-95 active:shadow-inner
                     ${
                       isFormValid

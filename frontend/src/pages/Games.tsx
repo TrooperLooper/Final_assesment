@@ -142,12 +142,12 @@ function Games() {
   return (
     <Layout>
       {/* Gradient background as a -z layer */}
-      <div className="fixed inset-0 -z-10 w-full h-full bg-gradient-to-b from-blue-950 via-blue-800 to-purple-700" />
+      <div className="fixed inset-0 -z-10 w-full h-full bg-gradient-to-b from-green-900 via-green-500 to-yellow-300" />
       <div className="min-h-screen flex flex-col items-center justify-start pt-5 px-2 sm:px-8">
         {/* Headline on top, centered */}
-        <div className="w-full flex justify-center items-center px-2 sm:px-12 pb-2 mt-2">
-          <h1 className="text-3xl md:text-6xl lg:text-5xl font-['Pixelify_Sans'] text-bold text-white drop-shadow text-center mb-10">
-            CHOOSE A GAME TO TRACK
+        <div className="flex justify-center">
+          <h1 className="text-3xl sm:text-5xl font-bold text-center font-['Jersey_20'] sm:mt-4 mb-12 text-white drop-shadow-lg">
+            CHOOSE A GAME
           </h1>
         </div>
         {/* Main content below headline */}

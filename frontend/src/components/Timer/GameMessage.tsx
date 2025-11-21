@@ -32,7 +32,7 @@ export const GameMessage: React.FC<GameMessageProps> = ({
     } else if (hasStopped && elapsedSeconds > 0) {
       return (
         <TypedText
-          text="✓ Session saved! Click EXIT to view stats."
+          text="✓ Session saved! Click --> BUTTON to view stats."
           speed={30}
         />
       );

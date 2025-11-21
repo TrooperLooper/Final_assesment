@@ -62,15 +62,18 @@ const BarGraph: React.FC<BarGraphProps> = ({ userId }) => {
   const maxMinutes = Math.max(...filledData.map((g) => g.minutesPlayed));
 
   return (
-    <div className="w-full" style={{ height: "220px", paddingTop: "5px" }}>
-      <div className="space-y-8">
+    <div className="w-full" style={{ height: "220px", paddingTop: "1px" }}>
+      <div className="space-y-7">
         {filledData.map((game) => {
-          // If all are zero, show equal width bars
           const widthPercent =
             maxMinutes > 0 ? (game.minutesPlayed / maxMinutes) * 100 : 0;
+          const barColor =
+            game.minutesPlayed > 0
+              ? GAME_COLORS[game.gameName] || "#888"
+              : "transparent";
           return (
             <div key={game.gameName} className="flex items-center gap-4">
-              <div className="text-white font-bold text-base min-w-[120px]">
+              <div className="text-white font-bold font-['Winky_Sans'] text-base min-w-[120px]">
                 {game.gameName}
               </div>
               <div className="flex-1 bg-white/20 rounded-full h-8 relative overflow-visible">
@@ -79,7 +82,7 @@ const BarGraph: React.FC<BarGraphProps> = ({ userId }) => {
                   style={{
                     width: maxMinutes > 0 ? `${widthPercent}%` : "60px",
                     minWidth: game.minutesPlayed > 0 ? "60px" : "0",
-                    backgroundColor: GAME_COLORS[game.gameName] || "#888",
+                    backgroundColor: barColor,
                   }}
                 />
                 <span className="absolute right-2 top-1/2 -translate-y-1/2 text-white text-sm font-bold z-10">

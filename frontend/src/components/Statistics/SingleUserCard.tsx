@@ -18,7 +18,7 @@ const SingleUserCard: React.FC<SingleUserCardProps> = ({
   const navigate = useNavigate();
 
   return (
-    <div className="bg-black/40 rounded-xl shadow-lg p-4 sm:p-8 w-full max-w-6xl mb-8">
+    <div className="bg-black/50 mb-2 rounded-tr-xl rounded-tl-xl shadow-lg p-6 sm:p-8 w-full max-w-6xl">
       <div className="grid grid-cols-1 md:grid-cols-[auto_1fr_auto] gap-4 md:gap-8 items-center">
         {/* Profile Picture */}
         <div className="flex items-center justify-center md:justify-start">
@@ -35,11 +35,11 @@ const SingleUserCard: React.FC<SingleUserCardProps> = ({
 
         {/* Name and Time */}
         <div className="flex flex-col justify-center min-w-[200px] max-w-[600px]">
-          <div className="flex items-center justify-center md:justify-start text-white font-bold text-2xl sm:text-3xl mb-4">
+          <div className="flex items-center justify-center md:justify-start font-['Jersey_20'] text-yellow-300 font-bold text-3xl sm:text-5xl mb-4">
             {user.firstName} {user.lastName}
             <StarIcon className="ml-2 mt-1" size={25} color="#facc15" />
           </div>
-          <div className="text-white text-xs sm:text-sm text-center md:text-start ">
+          <div className="text-white/60  text-xs sm:text-sm text-center md:text-start ">
             Total time played
           </div>
           <div className="text-white font-bold text-xl sm:text-2xl text-center md:text-start font-['Winky_Sans']">
@@ -50,6 +50,8 @@ const SingleUserCard: React.FC<SingleUserCardProps> = ({
         {/* Buttons */}
         <div className="flex flex-row gap-4 items-center justify-center md:justify-end">
           <div className="flex flex-col items-center">
+            <span className="text-xs text-white mb-1">Pick user</span>
+
             <button
               type="button"
               className="
@@ -64,12 +66,13 @@ const SingleUserCard: React.FC<SingleUserCardProps> = ({
               onClick={() => navigate("/users")}
               aria-label="Choose user"
             >
-              <span className="text-white text-xl font-bold">A</span>
+              <span className="text-white/60 text-xl font-bold">A</span>
             </button>
-            <span className="text-xs text-white mt-1">Users</span>
           </div>
 
           <div className="flex flex-col items-center">
+            <span className="text-xs text-white mb-1">Pick game</span>
+
             <button
               type="button"
               className="
@@ -84,9 +87,8 @@ const SingleUserCard: React.FC<SingleUserCardProps> = ({
               onClick={() => navigate("/games")}
               aria-label="New game"
             >
-              <span className="text-white text-xl font-bold">B</span>
+              <span className="text-white/60 text-xl font-bold">B</span>
             </button>
-            <span className="text-xs text-white mt-1">Games</span>
           </div>
         </div>
       </div>

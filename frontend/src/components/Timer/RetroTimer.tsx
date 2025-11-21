@@ -67,7 +67,7 @@ export const RetroTimer: React.FC<RetroTimerProps> = ({
       className={`
         flex flex-col rounded-3xl shadow-2xl
         ${gameColor}
-        p-6 w-full max-w-5xl
+        p-8 w-full max-w-5xl
       `}
     >
       {/* Main content: Display on left, Controls on right */}
@@ -96,7 +96,7 @@ export const RetroTimer: React.FC<RetroTimerProps> = ({
               <div className="shrink-0">
                 <div
                   className="overflow-hidden flex items-center justify-center bg-black"
-                  style={{ width: "133px", height: "133px" }}
+                  style={{ width: "100px", height: "100px" }}
                 >
                   <img
                     src={gameImage}
@@ -141,7 +141,7 @@ export const RetroTimer: React.FC<RetroTimerProps> = ({
         </div>
 
         {/* Right: Button and Airholes stacked */}
-        <div className="flex flex-col items-center gap-6 my-15">
+        <div className="flex flex-col items-center gap-6 mt-12">
           {/* Action Button */}
           {onButtonClick && (
             <div className="rounded-full p-0.5 bg-black/20">
@@ -165,6 +165,7 @@ export const RetroTimer: React.FC<RetroTimerProps> = ({
               src={airholesSvg}
               alt="Controller airholes"
               className="w-full h-full"
+              style={{ opacity: 0.6 }}
             />
           </div>
         </div>

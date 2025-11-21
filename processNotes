@@ -1,3 +1,8 @@
+All gaming retro consoles was made as much as possible with divs, instead of SVGs.
+Whenever a player image/names were rquired. we simply solved this by having current user image/names (GET user_id) as reusable component in top end of the top bar.
+
+---
+
 Changes Made Today - November 20, 2025
 
 1. Statistics Backend Infrastructure

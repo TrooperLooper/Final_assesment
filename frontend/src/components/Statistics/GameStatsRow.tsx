@@ -15,13 +15,13 @@ const RADIUS = 20;
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 
 const GameStatsRow: React.FC<GameStatsRowProps> = ({ games }) => (
-  <div className="bg-white/10 rounded-b-xl p-4 shadow flex flex-col items-center justify-center w-full max-w-xl mx-auto">
+  <div className="bg-white/10 rounded-b-xl p-4 shadow flex flex-col items-center justify-center w-full max-w-xl mx-auto md:items-start md:justify-start">
     {games.map((game) => {
       const percentArc = (game.percent / 100) * CIRCUMFERENCE;
       return (
         <div
           key={game.name}
-          className="flex items-center justify-between w-full mb-3"
+          className="flex items-center justify-center w-full mb-3 md:justify-between"
         >
           {/* Pie chart first */}
           <div className="flex items-center justify-center w-auto">
@@ -62,7 +62,7 @@ const GameStatsRow: React.FC<GameStatsRowProps> = ({ games }) => (
             </svg>
           </div>
           {/* Game name second */}
-          <span className="font-bold text-start text-white text-base flex-1 ml-4 w-auto">
+          <span className="font-bold text-start font-['Winky_Sans'] text-white text-base flex-1 ml-4 w-auto">
             {game.name}
           </span>
         </div>

@@ -146,7 +146,7 @@ function Play() {
 
   return (
     <Layout>
-      <div className="fixed inset-0 -z-10 w-full h-full bg-gradient-to-b from-blue-950 via-blue-800 to-purple-700" />
+      <div className="fixed inset-0 -z-10 w-full h-full bg-gradient-to-b from-green-900 via-green-500 to-yellow-300" />
       <div className="min-h-screen flex flex-col items-center pt-24 px-2 sm:px-8">
         <div className="flex flex-row gap-8 items-start">
           <GameCard

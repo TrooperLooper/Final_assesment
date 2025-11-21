@@ -24,7 +24,7 @@ function Users() {
           <div className="grid grid-cols-3 items-center px-12 pb-2 mt-2">
             <div></div>
             <div className="flex justify-center">
-              <h1 className="text-3xl sm:text-5xl font-bold text-center font-['Pixelify_Sans'] mb-5 text-white drop-shadow-lg">
+              <h1 className="text-3xl sm:text-5xl font-bold text-center font-['Jersey_20'] sm:mt-4 mb-1 text-white drop-shadow-lg">
                 ALL USERS
               </h1>
             </div>
@@ -36,13 +36,13 @@ function Users() {
             <div></div>
             <div>
               {" "}
-              <div className="text-center">
-                <p className="text-white text-sm text-center">
-                  Pick a user to see statistics and record a new time
+              <div className="text-center mb-8">
+                <p className="text-white text-xs sm:text-sm text-center">
+                  Pick a user to track game statistics
                 </p>
               </div>
             </div>
-            <div className="flex justify-end">
+            <div className="flex justify-end mt-20 sm:-mt-0">
               <button
                 className="flex items-center gap-2 text-white "
                 style={{ fontSize: "0.9rem" }}
@@ -71,7 +71,7 @@ function Users() {
                   role="button"
                   aria-label={`Go to stats page for ${user.firstName} ${user.lastName}`}
                 >
-                  <div className="w-32 h-32 bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden mb-2">
+                  <div className="w-32 h-32  bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden mb-2">
                     <img
                       src={
                         user.profilePicture &&

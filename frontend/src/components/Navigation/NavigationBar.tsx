@@ -11,9 +11,10 @@ import {
 
 const navItems = [
   { name: "Register", path: "/", icon: <FiUser /> },
+  { name: "Users", path: "/users", icon: <FiUsers /> },
+
   { name: "Games", path: "/games", icon: <FiGrid /> },
   { name: "Stats", path: "/stats/1", icon: <FiBarChart2 /> },
-  { name: "Users", path: "/users", icon: <FiUsers /> },
 ];
 
 const NavigationBar = () => {
@@ -31,7 +32,7 @@ const NavigationBar = () => {
       </button>
 
       {/* Sidebar for medium and large screens */}
-      <nav className="fixed top-0 left-0 h-full w-20 bg-white/20 flex flex-col items-center py-8 gap-6 shadow-lg hidden sm:flex">
+      <nav className="fixed top-0 left-0 h-full w-20 bg-white/20 flex-col items-center pt-25 pb-4 gap-6 shadow-lg hidden sm:flex">
         {navItems.map((item) => (
           <NavLink
             key={item.name}
