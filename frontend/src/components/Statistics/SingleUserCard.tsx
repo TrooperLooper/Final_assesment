@@ -61,8 +61,8 @@ const SingleUserCard: React.FC<SingleUserCardProps> = ({
                 hover:border-yellow-400
                 focus:outline-none
               "
-              onClick={() => navigate("/register")}
-              aria-label="New user"
+              onClick={() => navigate("/users")}
+              aria-label="Choose user"
             >
               <span className="text-white text-xl font-bold">A</span>
             </button>

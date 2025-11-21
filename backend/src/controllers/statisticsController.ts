@@ -103,3 +103,49 @@ export const getLeaderboard = async (req: Request, res: Response) => {
     res.status(500).json({ error: "Failed to fetch leaderboard" });
   }
 };
+
+// Get all users ranked by total play time
+export const getAllUsersLeaderboard = async (req: Request, res: Response) => {
+  try {
+    const sessions = await GameSession.find()
+      .populate({
+        path: "userId",
+        select: "firstName lastName",
+      })
+      .exec();
+
+    // Aggregate total minutes per user
+    const userTotals = sessions.reduce((acc: any, session: any) => {
+      const user = session.userId;
+      if (!user) return acc;
+
+      const userId = user._id.toString();
+      const userName = `${user.firstName} ${user.lastName}`;
+      const minutes = session.playedSeconds || 0;
+
+      if (acc[userId]) {
+        acc[userId].totalMinutes += minutes;
+      } else {
+        acc[userId] = {
+          userId,
+          userName,
+          totalMinutes: minutes,
+        };
+      }
+      return acc;
+    }, {});
+
+    // Convert to array and sort by total minutes
+    const leaderboard = Object.values(userTotals)
+      .sort((a: any, b: any) => b.totalMinutes - a.totalMinutes)
+      .map((user: any, index: number) => ({
+        ...user,
+        rank: index + 1,
+      }));
+
+    res.json(leaderboard);
+  } catch (error) {
+    console.error("All users leaderboard error:", error);
+    res.status(500).json({ error: "Failed to fetch all users leaderboard" });
+  }
+};

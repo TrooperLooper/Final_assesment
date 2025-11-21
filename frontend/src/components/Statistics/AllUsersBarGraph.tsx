@@ -18,7 +18,7 @@ const AllUsersBarGraph: React.FC = () => {
     const fetchLeaderboard = async () => {
       try {
         const res = await axios.get(
-          "http://localhost:3000/api/statistics/leaderboard"
+          "http://localhost:3000/api/statistics/all-users"
         );
         setData(res.data);
       } catch (error) {
@@ -51,15 +51,14 @@ const AllUsersBarGraph: React.FC = () => {
               <div className="text-white font-semibold min-w-[150px]">
                 {user.userName}
               </div>
-              <div className="flex-1 bg-white/20 rounded-full h-8 relative overflow-hidden">
+              <div className="flex-1 bg-white/20 rounded-full h-8 relative overflow-visible">
                 <div
-                  className="bg-gradient-to-r from-pink-500 to-purple-600 h-full rounded-full flex items-center justify-end pr-3"
-                  style={{ width: `${widthPercent}%` }}
-                >
-                  <span className="text-white text-sm font-bold">
-                    {user.totalMinutes} min
-                  </span>
-                </div>
+                  className="bg-gradient-to-r from-pink-500 to-purple-600 h-full rounded-full"
+                  style={{ width: `${widthPercent}%`, minWidth: '60px' }}
+                />
+                <span className="absolute right-2 top-1/2 -translate-y-1/2 text-white text-sm font-bold z-10">
+                  {user.totalMinutes} min
+                </span>
               </div>
             </div>
           );

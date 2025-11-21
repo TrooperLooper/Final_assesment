@@ -4,6 +4,7 @@ import {
   getAllSessions,
   getUserSessions,
   getLeaderboard,
+  getAllUsersLeaderboard,
 } from "../controllers/statisticsController";
 
 const router = express.Router();
@@ -17,7 +18,10 @@ router.get("/sessions", getAllSessions);
 // Get user's sessions
 router.get("/sessions/:userId", getUserSessions);
 
-// Get global leaderboard
+// Get global leaderboard (individual sessions)
 router.get("/leaderboard", getLeaderboard);
+
+// Get all users ranked by total play time
+router.get("/all-users", getAllUsersLeaderboard);
 
 export default router;
