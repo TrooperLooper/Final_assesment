@@ -1,0 +1,39 @@
+Changes Made Today - November 20, 2025
+
+1. Statistics Backend Infrastructure
+
+Created statisticsRoutes.ts with 4 new endpoints:
+GET /api/statistics/user/:userId - Get stats for specific user
+GET /api/statistics/sessions - Get all game sessions
+GET /api/statistics/sessions/:userId - Get sessions for specific user
+GET /api/statistics/leaderboard - Get ranked leaderboard
+Created statisticsController.ts with MongoDB aggregation logic
+Added statistics router to server.ts 2. Game Session Logging Fixed
+
+Added POST /api/sessions route to create game sessions
+Created createSession controller that accepts playedSeconds
+Fixed Play.tsx to properly send session data when timer stops
+Important: 1 real second = 1 minute in the system (per assignment requirements)
+Sessions now save correctly to MongoDB with userId, gameId, and playedSeconds 3. Statistics Components Fixed
+
+SessionsGraph: Shows session count per game with total minutes
+WeeklyPlayTimeGraph: Line chart showing last 7 days of play time
+AllUsersBarGraph: Horizontal bar chart ranking all users by total time
+LeaderboardTable: Table showing Name | Game | Time Played (sorted by longest session first)
+All components now fetch real data from backend, removed all mock data 4. User Experience Improvements
+
+Added error handling to Games page - users must register/select a user before playing
+Game cards are disabled (greyed out) when no user is selected
+Error message with buttons to navigate to Register or Users page
+Fixed Layout.tsx TypeScript error (added ReactNode type) 5. Timer UI Redesign
+
+Redesigned RetroTimer component to look like retro game controller
+Pink background container with logo at bottom, airholes on right side
+Wide display showing game GIF on left, timer on right
+Green message box below display
+Technical Notes:
+
+Backend stores time in playedSeconds field (1 second = 1 minute)
+All statistics calculations convert playedSeconds to minutes for display
+Fixed file casing issue: GameRoutes.ts import in server.ts
+Leaderboard uses Mongoose populate to get user and game names

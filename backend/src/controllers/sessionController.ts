@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import { GameSession } from "../models/GameSession";
 
-
 export const startSession = async (req: Request, res: Response) => {
   const { userId, gameId } = req.body;
   const session = await GameSession.create({
@@ -25,7 +24,9 @@ export const stopSession = async (req: Request, res: Response) => {
 };
 
 export const getStats = async (req: Request, res: Response) => {
-  const sessions = await GameSession.find().populate("userId").populate("gameId");
+  const sessions = await GameSession.find()
+    .populate("userId")
+    .populate("gameId");
   res.json(sessions);
 };
 
@@ -33,9 +34,13 @@ export const getStats = async (req: Request, res: Response) => {
 export const createSession = async (req: Request, res: Response) => {
   try {
     const { userId, gameId, playedSeconds } = req.body;
-    
+
     if (!userId || !gameId || playedSeconds === undefined) {
-      return res.status(400).json({ message: "Missing required fields: userId, gameId, playedSeconds" });
+      return res
+        .status(400)
+        .json({
+          message: "Missing required fields: userId, gameId, playedSeconds",
+        });
     }
 
     // Store the seconds value directly as minutes (1 real second = 1 minute in system)
@@ -46,7 +51,7 @@ export const createSession = async (req: Request, res: Response) => {
       endTime: new Date(),
       playedSeconds, // This value represents minutes in the system
     });
-    
+
     res.status(201).json(session);
   } catch (error) {
     console.error("Error creating session:", error);

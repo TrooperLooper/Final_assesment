@@ -17,9 +17,8 @@ export const getUserStats = async (req: Request, res: Response) => {
     const gameStats = sessions.reduce((acc: any[], session: any) => {
       const gameName = session.gameId?.name || "Unknown";
       const existing = acc.find((g) => g.gameName === gameName);
-      const minutes = session.playedSeconds
-        ? Math.round(session.playedSeconds / 60)
-        : 0;
+      // 1 second = 1 minute in our system
+      const minutes = session.playedSeconds || 0;
 
       if (existing) {
         existing.minutesPlayed += minutes;
@@ -37,6 +36,7 @@ export const getUserStats = async (req: Request, res: Response) => {
 
     res.json({ gameStats, totalMinutes });
   } catch (error) {
+    console.error("getUserStats error:", error);
     res.status(500).json({ error: "Failed to fetch user stats" });
   }
 };
@@ -89,7 +89,7 @@ export const getLeaderboard = async (req: Request, res: Response) => {
     const leaderboard = sessions.map((session: any) => {
       const user = session.userId;
       const game = session.gameId;
-      
+
       return {
         userName: user ? `${user.firstName} ${user.lastName}` : "Unknown User",
         gameName: game?.name || "Unknown Game",

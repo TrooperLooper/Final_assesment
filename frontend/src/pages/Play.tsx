@@ -98,7 +98,9 @@ function Play() {
           gameId,
           playedSeconds: elapsedSeconds,
         });
-        console.log(`Session logged: ${elapsedSeconds} minutes (${elapsedSeconds} real seconds)`);
+        console.log(
+          `Session logged: ${elapsedSeconds} minutes (${elapsedSeconds} real seconds)`
+        );
       } catch (err) {
         console.error("Failed to log session:", err);
       }

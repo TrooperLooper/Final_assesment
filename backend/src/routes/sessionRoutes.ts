@@ -11,13 +11,14 @@ import { GameSession } from "../models/GameSession"; // Import the GameSession m
 const router = express.Router();
 
 router.post("/", createSession); // Create session directly with minutes
-router.post("/start", startSession);    
-router.post("/stop/:id", stopSession); 
+router.post("/start", startSession);
+router.post("/stop/:id", stopSession);
 router.get("/stats", getStats);
 
 router.get("/user/:userId", async (req, res) => {
-  const sessions = await GameSession.find({ userId: req.params.userId })
-    .populate('gameId');
+  const sessions = await GameSession.find({
+    userId: req.params.userId,
+  }).populate("gameId");
   res.json(sessions);
 });
 
