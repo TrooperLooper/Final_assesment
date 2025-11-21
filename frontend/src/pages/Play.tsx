@@ -2,11 +2,12 @@ import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Layout from "../components/Navigation/Layout";
 import { GameCard } from "../components/Timer/GameCard";
-import { fetchGameById, logSession } from "../components/api/apiClient";
+import { fetchGameById} from "../components/api/apiClient";
 import pacmanGif from "../components/assets/pacman_gameicon.gif";
 import asteroidsGif from "../components/assets/asteroids_gameicon.gif";
 import tetrisGif from "../components/assets/tetris_gameicon.gif";
 import spaceGif from "../components/assets/space_gameicon.gif";
+import axios from "axios";
 
 interface Game {
   id: string;
@@ -46,6 +47,7 @@ function Play() {
   const [hasStarted, setHasStarted] = useState(false);
   const [hasStopped, setHasStopped] = useState(false);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
+  const [sessionId, setSessionId] = useState<string | null>(null);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -88,27 +90,36 @@ function Play() {
     };
   }, [isPlaying]);
 
-  const handleStart = () => {
+  const handleStart = async () => {
     setHasStarted(true);
     setHasStopped(false);
     setElapsedSeconds(0);
     setIsPlaying(true);
+
+    if (currentUser && gameId) {
+      try {
+        const response = await axios.post('http://localhost:3000/api/sessions', {
+          userId: currentUser._id,
+          gameId: gameId,
+        });
+        setSessionId(response.data._id);
+        console.log(`Session started: ${response.data._id}`);
+      } catch (err) {
+        console.error("Failed to start session:", err);
+      }
+    }
   };
 
   const handleStop = async () => {
     setIsPlaying(false);
     setHasStopped(true);
 
-    if (elapsedSeconds > 0 && currentUser && gameId) {
+    if (sessionId) {
       try {
-        await logSession({
-          userId: currentUser._id,
-          gameId,
-          minutesPlayed: elapsedSeconds,
-        });
-        console.log(`Session logged: ${elapsedSeconds} minutes`);
+        await axios.put(`http://localhost:3000/api/sessions/${sessionId}/stop`);
+        console.log(`Session stopped: ${sessionId}`);
       } catch (err) {
-        console.error("Failed to log session:", err);
+        console.error("Failed to stop session:", err);
       }
     }
     

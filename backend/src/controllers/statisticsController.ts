@@ -119,3 +119,47 @@ export const getLeaderboard = async (req: Request, res: Response) => {
     res.status(500).json({ error: "Failed to fetch leaderboard" });
   }
 };
+
+export const getGameFrequencyStats = async (req: Request, res: Response) => {
+  try {
+    const games = await Game.find({}, 'name').lean();
+    
+    const gameData: Record<string, any[]> = {};
+
+    for (const game of games) {
+      const sessions = await GameSession.find({ gameId: game._id })
+        .populate('userId', 'firstName lastName')
+        .lean();
+
+      const userStats: Record<string, { timesPlayed: number; totalMinutes: number }> = {};
+
+      sessions.forEach((session: any) => {
+        if (!session.userId) return;
+
+        const userName = `${session.userId.firstName} ${session.userId.lastName}`;
+        
+        // DON'T divide by 60 - treat seconds AS minutes
+        const minutes = session.playedSeconds || 0;
+
+        if (!userStats[userName]) {
+          userStats[userName] = { timesPlayed: 0, totalMinutes: 0 };
+        }
+
+        userStats[userName].timesPlayed += 1;
+        userStats[userName].totalMinutes += minutes;
+      });
+
+      gameData[game.name] = Object.entries(userStats).map(([user, stats]) => ({
+        user,
+        timesPlayed: stats.timesPlayed,
+        totalMinutes: stats.totalMinutes,
+      }));
+    }
+
+    res.json(gameData);
+
+  } catch (error) {
+    console.error('Error fetching game frequency stats:', error);
+    res.status(500).json({ message: 'Failed to fetch game frequency stats' });
+  }
+};

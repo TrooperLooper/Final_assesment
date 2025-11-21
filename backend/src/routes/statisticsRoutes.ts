@@ -4,6 +4,7 @@ import {
   getAllSessions,
   getUserSessions,
   getLeaderboard,
+  getGameFrequencyStats,
 } from "../controllers/statisticsController";
 
 const router = express.Router();
@@ -19,5 +20,8 @@ router.get("/sessions/:userId", getUserSessions);
 
 // Get global leaderboard
 router.get("/leaderboard", getLeaderboard);
+
+// Get game frequency statistics
+router.get('/game-frequency', getGameFrequencyStats);
 
 export default router;

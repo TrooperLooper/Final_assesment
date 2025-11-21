@@ -5,6 +5,7 @@ import SessionsGraph from "../components/Statistics/SessionsGraph";
 import WeeklyPlayTimeGraph from "../components/Statistics/WeeklyPlayTimeGraph";
 import AllUsersBarGraph from "../components/Statistics/AllUsersBarGraph";
 import LeaderboardTable from "../components/Statistics/LeaderboardTable";
+import GameFrequencyGraph from "../components/Statistics/GameFrequencyGraph";
 import defaultAvatar from "../components/assets/user_default.jpeg";
 import Layout from "../components/Navigation/Layout";
 import GameStatsRow from "../components/Statistics/GameStatsRow";
@@ -197,7 +198,10 @@ function Stats() {
               <SessionsGraph />
             </div>
             <div className="bg-white/10 rounded-xl p-6 shadow w-full">
-              <WeeklyPlayTimeGraph />
+              <WeeklyPlayTimeGraph userId={userId} />
+            </div>
+            <div className="bg-white/10 rounded-xl p-6 shadow w-full">
+              <GameFrequencyGraph />
             </div>
             <div className="bg-white/10 rounded-xl p-6 shadow w-full">
               <AllUsersBarGraph />

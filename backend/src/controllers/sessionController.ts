@@ -25,7 +25,11 @@ export const stopSession = async (req: Request, res: Response) => {
   // Cap at 30 minutes (1800 seconds)
   session.playedSeconds = Math.min(actualPlayedSeconds, 1800);
   
+  // MAKE SURE TO SAVE!
   await session.save();
+  
+  console.log(`Session stopped: ${session.playedSeconds} seconds`); // Debug
+  
   res.json(session);
 };
 

@@ -17,7 +17,7 @@ const gameSessionSchema = new Schema<IGameSession>({
   gameId: { type: Schema.Types.ObjectId, ref: "Game", required: true },
   startTime: { type: Date, required: true },
   endTime: { type: Date },
-  playedSeconds: { type: Number },
+  playedSeconds: { type: Number, default: 0 },
   durationMinutes: { type: Number },
   playedAt: { type: Date, default: Date.now },
   isActive: { type: Boolean, default: true },
