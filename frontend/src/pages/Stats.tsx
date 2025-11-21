@@ -14,35 +14,18 @@ import tetrisIcon from "../components/assets/tetris_btn.jpeg";
 import spaceIcon from "../components/assets/space_btn.jpeg";
 import StarIcon from "../components/StarIcon";
 
-interface PlayTimeData {
-  userId: string;
-  userName: string;
-  gameId: string;
-  day: string;
-  minutesPlayed: number;
-}
-
 function Stats() {
   const { userId } = useParams<{ userId: string }>();
   const navigate = useNavigate();
   const [gameStats, setGameStats] = useState<
     { gameName: string; iconUrl: string; minutesPlayed: number }[]
   >([]);
-  const [playTimeData, setPlayTimeData] = useState<PlayTimeData[]>([]);
   const [loading, setLoading] = useState(true);
-  const [games, setGames] = useState<{ id: string; name: string }[]>([]);
 
   
 
   useEffect(() => {
     // Mock data for testing
-    const mockGames = [
-      { id: "1", name: "Pac-Man" },
-      { id: "2", name: "Tetris" },
-      { id: "3", name: "Asteroids" },
-      { id: "4", name: "Space Invaders" },
-    ];
-
     const mockGameStats = [
       { gameName: "Pac-Man", iconUrl: "", minutesPlayed: 120 },
       { gameName: "Tetris", iconUrl: "", minutesPlayed: 90 },
@@ -50,27 +33,7 @@ function Stats() {
       { gameName: "Space Invaders", iconUrl: "", minutesPlayed: 30 },
     ];
 
-    const mockPlayTimeData = [
-      {
-        userId: "u1",
-        userName: "Alice",
-        gameId: "1",
-        day: "2025-10-28",
-        minutesPlayed: 20,
-      },
-      {
-        userId: "u2",
-        userName: "Bob",
-        gameId: "2",
-        day: "2025-10-28",
-        minutesPlayed: 15,
-      },
-      // ...more mock data
-    ];
-
-    setGames(mockGames);
     setGameStats(mockGameStats);
-    setPlayTimeData(mockPlayTimeData);
     setLoading(false);
   }, []);
 
@@ -228,18 +191,18 @@ function Stats() {
             </div>
           </div>
 
-          {/* Row 3: Dotgraph + Linegraph */}
+          {/* Statistics Graphs */}
           <div className="flex flex-col gap-8 w-full">
-            <div className="bg-white/10 rounded-xl p-6 shadow flex items-center justify-center w-full">
-              <SessionsGraph userId={userId} />
+            <div className="bg-white/10 rounded-xl p-6 shadow w-full">
+              <SessionsGraph />
             </div>
-            <div className="bg-white/10 rounded-xl p-6 shadow flex items-center justify-center w-full">
-              <WeeklyPlayTimeGraph data={playTimeData} games={games} />
+            <div className="bg-white/10 rounded-xl p-6 shadow w-full">
+              <WeeklyPlayTimeGraph />
             </div>
-            <div className="bg-white/10 rounded-xl p-6 shadow flex items-center justify-center w-full">
+            <div className="bg-white/10 rounded-xl p-6 shadow w-full">
               <AllUsersBarGraph />
             </div>
-            <div className="bg-white/10 rounded-xl p-6 shadow flex items-center justify-center w-full">
+            <div className="bg-white/10 rounded-xl p-6 shadow w-full">
               <LeaderboardTable />
             </div>
           </div>

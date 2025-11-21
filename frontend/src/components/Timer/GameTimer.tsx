@@ -8,6 +8,10 @@ interface GameTimerProps {
   hasStarted: boolean;
   isPlaying: boolean;
   hasStopped: boolean;
+  gameImage?: string;
+  gameColor?: string;
+  onButtonClick?: () => void;
+  buttonState?: "START" | "STOP" | "EXIT";
 }
 
 export const GameTimer: React.FC<GameTimerProps> = ({
@@ -16,19 +20,28 @@ export const GameTimer: React.FC<GameTimerProps> = ({
   hasStarted,
   isPlaying,
   hasStopped,
+  gameImage,
+  gameColor = "bg-pink-500",
+  onButtonClick,
+  buttonState = "START",
 }) => {
   return (
-    <div className="flex flex-col items-center justify-start flex-1 md:ml-6">
-      <div className="w-full flex justify-center">
-        <RetroTimer elapsedSeconds={elapsedSeconds} isStopped={isStopped} />
-      </div>
-      <GameMessage
-        hasStarted={hasStarted}
-        isPlaying={isPlaying}
-        hasStopped={hasStopped}
-        elapsedSeconds={elapsedSeconds}
-      />
-    </div>
+    <RetroTimer
+      elapsedSeconds={elapsedSeconds}
+      isStopped={isStopped}
+      gameImage={gameImage}
+      gameColor={gameColor}
+      onButtonClick={onButtonClick}
+      buttonState={buttonState}
+      message={
+        <GameMessage
+          hasStarted={hasStarted}
+          isPlaying={isPlaying}
+          hasStopped={hasStopped}
+          elapsedSeconds={elapsedSeconds}
+        />
+      }
+    />
   );
 };
 

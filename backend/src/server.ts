@@ -3,11 +3,9 @@ import mongoose from "mongoose";
 import cors from "cors";
 import dotenv from "dotenv";
 import userRouter from "./routes/userRoutes";
-import gameRoutes from "./routes/GameRoutes";
+import gamesRouter from "./routes/GameRoutes";
 import sessionRouter from "./routes/sessionRoutes";
-import statisticsRoutes from './routes/statisticsRoutes';
-import searchRoutes from './routes/searchRoutes';
-import leaderboardRoutes from './routes/leaderboardRoutes';
+import statisticsRouter from "./routes/statisticsRoutes";
 import { seedDatabase } from "./utils/seedDatabase";
 
 dotenv.config();
@@ -30,9 +28,7 @@ app.use("/uploads", express.static("uploads")); //Profile pictures (static folde
 app.use("/api/users", userRouter); //User routes
 app.use("/api/games", gameRoutes); //Games routes
 app.use("/api/sessions", sessionRouter); //Sessions routes
-app.use('/api/statistics', statisticsRoutes);
-app.use('/api/search', searchRoutes);
-app.use('/api/leaderboard', leaderboardRoutes);
+app.use("/api/statistics", statisticsRouter); //Statistics routes
 
 // MongoDB Connection
 mongoose.connect(MONGODB_URI)
@@ -42,11 +38,11 @@ mongoose.connect(MONGODB_URI)
     
     // Start server only after DB connection
     app.listen(PORT, () => {
-      console.log(`🚀 Server running on http://localhost:${PORT}`);
-      console.log(`📡 API available at http://localhost:${PORT}/api`);
+      console.log(`Server running on http://localhost:${PORT}`);
+      console.log(`API available at http://localhost:${PORT}/api`);
     });
   })
   .catch((error) => {
-    console.error('❌ MongoDB connection error:', error);
+    console.error('MongoDB connection error:', error);
     process.exit(1);
   });

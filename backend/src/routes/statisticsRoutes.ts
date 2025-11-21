@@ -1,16 +1,23 @@
-import { Router } from 'express';
+import express from "express";
 import {
-  getUserStatistics,
-  getGamePopularity,
-  getGlobalLeaderboard,
-  getGameChartData
-} from '../controllers/statisticsController';
+  getUserStats,
+  getAllSessions,
+  getUserSessions,
+  getLeaderboard,
+} from "../controllers/statisticsController";
 
-const router = Router();
+const router = express.Router();
 
-router.get('/user/:userId', getUserStatistics);
-router.get('/games', getGamePopularity);
-router.get('/global', getGlobalLeaderboard);
-router.get('/charts/:gameId', getGameChartData);
+// Get user's game statistics
+router.get("/user/:userId", getUserStats);
+
+// Get all sessions
+router.get("/sessions", getAllSessions);
+
+// Get user's sessions
+router.get("/sessions/:userId", getUserSessions);
+
+// Get global leaderboard
+router.get("/leaderboard", getLeaderboard);
 
 export default router;

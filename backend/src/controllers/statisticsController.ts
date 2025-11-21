@@ -1,69 +1,121 @@
-import { Request, Response } from 'express';
-import { GameSession } from '../models/GameSession';
+import { Request, Response } from "express";
+import { GameSession } from "../models/GameSession";
+import { User } from "../models/User";
+import { Game } from "../models/Game";
+import mongoose from "mongoose";
 
-export const getUserStatistics = async (req: Request, res: Response) => {
-  const { userId } = req.params;
-  const sessions = await GameSession.find({ userId }).populate('gameId');
-  
-  const totalPlayTime = sessions.reduce((sum, s) => sum + (s.playedSeconds || 0), 0);
-  const gameBreakdown = sessions.reduce((acc: any, s) => {
-    const id = s.gameId._id.toString();
-    if (!acc[id]) acc[id] = { game: s.gameId, playTime: 0, sessionCount: 0 };
-    acc[id].playTime += s.playedSeconds || 0;
-    acc[id].sessionCount += 1;
-    return acc;
-  }, {});
-  
-  res.json({
-    totalPlayTime,
-    gamesPlayed: new Set(sessions.map(s => s.gameId._id.toString())).size,
-    sessionCount: sessions.length,
-    gameBreakdown: Object.values(gameBreakdown)
-  });
+// Get user's game statistics
+export const getUserStats = async (req: Request, res: Response) => {
+  try {
+    const { userId } = req.params;
+
+    const sessions = await GameSession.find({ userId })
+      .populate("gameId")
+      .populate("userId");
+
+    // Aggregate by game
+    const gameStats = sessions.reduce((acc: any[], session: any) => {
+      const gameName = session.gameId?.name || "Unknown";
+      const existing = acc.find((g) => g.gameName === gameName);
+      const minutes = session.playedSeconds
+        ? Math.round(session.playedSeconds / 60)
+        : 0;
+
+      if (existing) {
+        existing.minutesPlayed += minutes;
+      } else {
+        acc.push({
+          gameName,
+          iconUrl: session.gameId?.imageUrl || "",
+          minutesPlayed: minutes,
+        });
+      }
+      return acc;
+    }, []);
+
+    const totalMinutes = gameStats.reduce((sum, g) => sum + g.minutesPlayed, 0);
+
+    res.json({ gameStats, totalMinutes });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch user stats" });
+  }
 };
 
-export const getGamePopularity = async (req: Request, res: Response) => {
-  const sessions = await GameSession.find().populate('gameId');
-  
-  const stats = sessions.reduce((acc: any, s) => {
-    const id = s.gameId._id.toString();
-    if (!acc[id]) acc[id] = { game: s.gameId, totalPlayTime: 0, sessionCount: 0, players: new Set() };
-    acc[id].totalPlayTime += s.playedSeconds || 0;
-    acc[id].sessionCount += 1;
-    acc[id].players.add(s.userId.toString());
-    return acc;
-  }, {});
-  
-  res.json(Object.values(stats).map((s: any) => ({
-    game: s.game,
-    totalPlayTime: s.totalPlayTime,
-    sessionCount: s.sessionCount,
-    uniquePlayers: s.players.size
-  })));
+// Get all sessions
+export const getAllSessions = async (req: Request, res: Response) => {
+  try {
+    const sessions = await GameSession.find()
+      .populate("userId")
+      .populate("gameId")
+      .sort({ createdAt: -1 });
+
+    res.json(sessions);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch sessions" });
+  }
 };
 
-export const getGlobalLeaderboard = async (req: Request, res: Response) => {
-  const sessions = await GameSession.find().populate('userId');
-  
-  const userStats = sessions.reduce((acc: any, s) => {
-    const id = s.userId._id.toString();
-    if (!acc[id]) acc[id] = { user: s.userId, totalPlayTime: 0, sessionCount: 0 };
-    acc[id].totalPlayTime += s.playedSeconds || 0;
-    acc[id].sessionCount += 1;
-    return acc;
-  }, {});
-  
-  res.json(Object.values(userStats).sort((a: any, b: any) => b.totalPlayTime - a.totalPlayTime).slice(0, 10));
+// Get user's sessions
+export const getUserSessions = async (req: Request, res: Response) => {
+  try {
+    const { userId } = req.params;
+
+    const sessions = await GameSession.find({ userId })
+      .populate("gameId")
+      .populate("userId")
+      .sort({ createdAt: -1 });
+
+    res.json(sessions);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch user sessions" });
+  }
 };
 
-export const getGameChartData = async (req: Request, res: Response) => {
-  const sessions = await GameSession.find({ gameId: req.params.gameId }).sort({ startTime: 1 });
-  
-  const weekly = sessions.reduce((acc: any, s) => {
-    const week = s.startTime.toISOString().split('T')[0];
-    acc[week] = (acc[week] || 0) + (s.playedSeconds || 0);
-    return acc;
-  }, {});
-  
-  res.json(Object.entries(weekly).map(([date, playTime]) => ({ date, playTime })));
+// Get global leaderboard
+export const getLeaderboard = async (req: Request, res: Response) => {
+  try {
+    const leaderboard = await GameSession.aggregate([
+      {
+        $group: {
+          _id: "$userId",
+          totalMinutes: {
+            $sum: { $divide: ["$playedSeconds", 60] },
+          },
+        },
+      },
+      {
+        $sort: { totalMinutes: -1 },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "_id",
+          foreignField: "_id",
+          as: "userInfo",
+        },
+      },
+      {
+        $unwind: "$userInfo",
+      },
+      {
+        $project: {
+          userId: "$_id",
+          userName: {
+            $concat: ["$userInfo.firstName", " ", "$userInfo.lastName"],
+          },
+          totalMinutes: { $round: ["$totalMinutes", 0] },
+        },
+      },
+    ]);
+
+    // Add rank
+    const rankedLeaderboard = leaderboard.map((entry, index) => ({
+      ...entry,
+      rank: index + 1,
+    }));
+
+    res.json(rankedLeaderboard);
+  } catch (error) {
+    res.status(500).json({ error: "Failed to fetch leaderboard" });
+  }
 };
