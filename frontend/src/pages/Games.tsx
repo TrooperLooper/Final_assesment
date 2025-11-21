@@ -79,7 +79,7 @@ const JoystickSVG = () => (
 );
 
 function Games() {
-  const [games, setGames] = useState([]);
+  const [games, setGames] = useState<Array<{ _id: string; name: string; image: string; color: string; small: boolean }>>([]);
   const [currentUser, setCurrentUser] = useState<any>(null);
   const navigate = useNavigate();
 

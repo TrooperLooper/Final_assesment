@@ -26,7 +26,7 @@ app.use(express.json({ limit: "5mb" }));
 // Routes
 app.use("/uploads", express.static("uploads")); //Profile pictures (static folder)
 app.use("/api/users", userRouter); //User routes
-app.use("/api/games", gameRoutes); //Games routes
+app.use("/api/games", gamesRouter); //Games routes
 app.use("/api/sessions", sessionRouter); //Sessions routes
 app.use("/api/statistics", statisticsRouter); //Statistics routes
 
