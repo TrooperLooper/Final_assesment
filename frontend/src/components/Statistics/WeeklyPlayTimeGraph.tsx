@@ -21,14 +21,17 @@ interface SessionData {
 
 interface WeeklyPlayTimeGraphProps {
   userId?: string;
+  selectedGame: string;
+  onGameChange: (game: string) => void;
 }
 
 const WeeklyPlayTimeGraph: React.FC<WeeklyPlayTimeGraphProps> = ({
   userId,
+  selectedGame,
+  onGameChange,
 }) => {
   const [sessions, setSessions] = useState<SessionData[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedGame, setSelectedGame] = useState<string>("all");
   const [games, setGames] = useState<string[]>([]);
 
   useEffect(() => {
@@ -105,7 +108,7 @@ const WeeklyPlayTimeGraph: React.FC<WeeklyPlayTimeGraphProps> = ({
         </h3>
         <select
           value={selectedGame}
-          onChange={(e) => setSelectedGame(e.target.value)}
+          onChange={(e) => onGameChange(e.target.value)}
           className="bg-gray-700 text-white px-4 py-2 rounded-lg border border-gray-600 focus:outline-none focus:ring-2 focus:ring-pink-500"
         >
           <option value="all">All Games</option>

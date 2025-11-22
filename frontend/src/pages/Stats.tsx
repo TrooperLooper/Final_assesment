@@ -198,7 +198,11 @@ function Stats() {
               <SessionsGraph />
             </div>
             <div className="bg-white/10 rounded-xl p-6 shadow w-full">
-            <WeeklyPlayTimeGraph userId={currentUser._id} />
+            <WeeklyPlayTimeGraph 
+              userId={currentUser._id} 
+              selectedGame={gamesData[0].name} 
+              onGameChange={(game) => console.log("Game changed to:", game)} 
+            />
             </div>
             <div className="bg-white/10 rounded-xl p-6 shadow w-full">
               <GameFrequencyGraph />
