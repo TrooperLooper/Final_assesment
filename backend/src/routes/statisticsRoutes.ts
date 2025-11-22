@@ -22,6 +22,6 @@ router.get("/sessions/:userId", getUserSessions);
 router.get("/leaderboard", getLeaderboard);
 
 // Get game frequency statistics
-router.get('/game-frequency', getGameFrequencyStats);
+router.get("/game-frequency", getGameFrequencyStats);
 
 export default router;

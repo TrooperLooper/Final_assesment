@@ -9,8 +9,8 @@ import { GameSession } from "../models/GameSession"; // Import the GameSession m
 
 const router = express.Router();
 
-router.post("/start", startSession);    
-router.post("/stop/:id", stopSession); 
+router.post("/", startSession);
+router.put("/:id/stop", stopSession);
 router.get("/stats", getStats);
 
 // Direct session logging endpoint (used by frontend)

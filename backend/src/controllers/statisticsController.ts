@@ -122,13 +122,12 @@ export const getLeaderboard = async (req: Request, res: Response) => {
 
 export const getGameFrequencyStats = async (req: Request, res: Response) => {
   try {
-    const games = await Game.find({}, 'name').lean();
-    
+    const games = await Game.find({}, "name").lean();
     const gameData: Record<string, any[]> = {};
 
     for (const game of games) {
       const sessions = await GameSession.find({ gameId: game._id })
-        .populate('userId', 'firstName lastName')
+        .populate("userId", "firstName lastName")
         .lean();
 
       const userStats: Record<string, { timesPlayed: number; totalMinutes: number }> = {};
@@ -137,8 +136,6 @@ export const getGameFrequencyStats = async (req: Request, res: Response) => {
         if (!session.userId) return;
 
         const userName = `${session.userId.firstName} ${session.userId.lastName}`;
-        
-        // DON'T divide by 60 - treat seconds AS minutes
         const minutes = session.playedSeconds || 0;
 
         if (!userStats[userName]) {
@@ -157,9 +154,8 @@ export const getGameFrequencyStats = async (req: Request, res: Response) => {
     }
 
     res.json(gameData);
-
   } catch (error) {
-    console.error('Error fetching game frequency stats:', error);
-    res.status(500).json({ message: 'Failed to fetch game frequency stats' });
+    console.error("Error fetching game frequency stats:", error);
+    res.status(500).json({ message: "Failed to fetch game frequency stats" });
   }
 };

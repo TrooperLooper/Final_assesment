@@ -116,13 +116,13 @@ function Play() {
 
     if (sessionId) {
       try {
-        await axios.put(`http://localhost:3000/api/sessions/${sessionId}/stop`);
-        console.log(`Session stopped: ${sessionId}`);
+        const response = await axios.put(`http://localhost:3000/api/sessions/${sessionId}/stop`);
+        console.log("Backend response:", response.data);
       } catch (err) {
         console.error("Failed to stop session:", err);
       }
     }
-    
+
     navigate('/games');
   };
 

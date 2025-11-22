@@ -33,8 +33,8 @@ app.use("/api/statistics", statisticsRouter); //Statistics routes
 // MongoDB Connection
 mongoose.connect(MONGODB_URI)
   .then(() => {
-    console.log('✅ Connected to MongoDB');
-    console.log('📍 Database:', MONGODB_URI);
+    console.log('Connected to MongoDB');
+    console.log('Database:', MONGODB_URI);
     
     // Start server only after DB connection
     app.listen(PORT, () => {
