@@ -21,7 +21,7 @@ const GameStatsRow: React.FC<GameStatsRowProps> = ({ games }) => (
       return (
         <div
           key={game.name}
-          className="flex items-center justify-center w-full mb-3 md:justify-between"
+          className="flex items-center justify-center w-full mb-3 md:justify-between md:items-start"
         >
           {/* Pie chart first */}
           <div className="flex items-center justify-center w-auto">
@@ -62,7 +62,7 @@ const GameStatsRow: React.FC<GameStatsRowProps> = ({ games }) => (
             </svg>
           </div>
           {/* Game name second */}
-          <span className="font-bold text-start font-['Winky_Sans'] text-white text-base flex-1 ml-4 w-auto">
+          <span className="font-bold text-center md:text-start font-['Winky_Sans'] text-white text-base flex-1 ml-4 w-auto">
             {game.name}
           </span>
         </div>

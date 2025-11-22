@@ -1,5 +1,8 @@
 All gaming retro consoles was made as much as possible with divs, instead of SVGs.
+
 Whenever a player image/names were rquired. we simply solved this by having current user image/names (GET user_id) as reusable component in top end of the top bar.
+
+You cannot enter a game without selecting a user first. If you try to enter a game without selecting a user, you will get an error message with buttons to navigate to Register or Users page.
 
 ---
 
