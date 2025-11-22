@@ -15,21 +15,26 @@ export const startSession = async (req: Request, res: Response) => {
 export const stopSession = async (req: Request, res: Response) => {
   const { id } = req.params;
   const session = await GameSession.findById(id);
-  if (!session) return res.status(404).json({ message: "Session not found" });
+  if (!session) {
+    console.error("❌ Session not found:", id);
+    return res.status(404).json({ message: "Session not found" });
+  }
 
   session.endTime = new Date();
-  
+
   // Calculate actual duration in seconds
   const actualPlayedSeconds = (session.endTime.getTime() - session.startTime.getTime()) / 1000;
-  
+
   // Cap at 30 minutes (1800 seconds)
   session.playedSeconds = Math.min(actualPlayedSeconds, 1800);
-  
-  // MAKE SURE TO SAVE!
+
+  console.log("✅ Calculated playedSeconds:", actualPlayedSeconds);
+  console.log("✅ Capped playedSeconds:", session.playedSeconds);
+
+  // Save the session
   await session.save();
-  
-  console.log(`Session stopped: ${session.playedSeconds} seconds`); // Debug
-  
+
+  console.log("✅ Session saved:", session);
   res.json(session);
 };
 
