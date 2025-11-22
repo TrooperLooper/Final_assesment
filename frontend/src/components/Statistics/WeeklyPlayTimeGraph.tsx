@@ -14,7 +14,7 @@ import axios from "axios";
 interface SessionData {
   _id: string;
   userId: any;
-  gameId: any;
+  gameId: { name?: string } | null;
   playedSeconds?: number;
   createdAt: string;
 }
@@ -28,37 +28,63 @@ const WeeklyPlayTimeGraph: React.FC<WeeklyPlayTimeGraphProps> = ({
 }) => {
   const [sessions, setSessions] = useState<SessionData[]>([]);
   const [loading, setLoading] = useState(true);
+  const [selectedGame, setSelectedGame] = useState<string>("all");
+  const [games, setGames] = useState<string[]>([]);
 
   useEffect(() => {
-    const fetchSessions = async () => {
+    const fetchData = async () => {
       try {
-        const endpoint = userId
+        // Fetch sessions
+        const sessionsEndpoint = userId
           ? `http://localhost:3000/api/statistics/sessions/${userId}`
           : "http://localhost:3000/api/statistics/sessions";
-        const res = await axios.get(endpoint);
-        setSessions(res.data);
+        const sessionsRes = await axios.get(sessionsEndpoint);
+        
+        console.log("Fetched sessions:", sessionsRes.data);
+        setSessions(sessionsRes.data);
+
+        // Fetch ALL games (not just from sessions)
+        const gamesRes = await axios.get("http://localhost:3000/api/games");
+        const allGames = gamesRes.data.map((g: any) => g.name);
+        
+        console.log("All games:", allGames);
+        setGames(allGames);
+        
       } catch (error) {
-        console.error("Error fetching sessions:", error);
+        console.error("Error fetching data:", error);
         setSessions([]);
       } finally {
         setLoading(false);
       }
     };
-    fetchSessions();
+    fetchData();
   }, [userId]);
 
   if (loading) return <div className="text-white">Loading weekly stats...</div>;
 
-  // Get last 7 days
-  const last7Days = Array.from({ length: 7 }, (_, i) => {
-    const date = new Date();
-    date.setDate(date.getDate() - (6 - i));
-    return date.toISOString().split("T")[0];
-  });
+  // Filter sessions by selected game
+  const filteredSessions = selectedGame === "all"
+    ? sessions
+    : sessions.filter((s) => s.gameId?.name === selectedGame);
+
+  // Get last 7 days starting from Monday
+  const getLast7DaysFromMonday = () => {
+    const today = new Date();
+    const currentDay = today.getDay(); // 0 = Sunday, 1 = Monday, etc.
+    const daysFromMonday = currentDay === 0 ? 6 : currentDay - 1;
+    
+    return Array.from({ length: 7 }, (_, i) => {
+      const date = new Date();
+      date.setDate(date.getDate() - daysFromMonday + i);
+      return date.toISOString().split("T")[0];
+    });
+  };
+
+  const last7Days = getLast7DaysFromMonday();
 
   // Group sessions by day
   const dailyData = last7Days.map((day) => {
-    const daySessions = sessions.filter(
+    const daySessions = filteredSessions.filter(
       (s) => s.createdAt.split("T")[0] === day
     );
     const totalMinutes = daySessions.reduce((sum, s) => {
@@ -73,9 +99,23 @@ const WeeklyPlayTimeGraph: React.FC<WeeklyPlayTimeGraphProps> = ({
 
   return (
     <div className="w-full">
-      <h3 className="text-white text-xl font-bold mb-4">
-        Weekly Play Time (Last 7 Days)
-      </h3>
+      <div className="flex justify-between items-center mb-4">
+        <h3 className="text-white text-xl font-bold">
+          Weekly Play Time (Last 7 Days)
+        </h3>
+        <select
+          value={selectedGame}
+          onChange={(e) => setSelectedGame(e.target.value)}
+          className="bg-gray-700 text-white px-4 py-2 rounded-lg border border-gray-600 focus:outline-none focus:ring-2 focus:ring-pink-500"
+        >
+          <option value="all">All Games</option>
+          {games.map((game) => (
+            <option key={game} value={game}>
+              {game}
+            </option>
+          ))}
+        </select>
+      </div>
       <ResponsiveContainer width="100%" height={300}>
         <LineChart data={dailyData}>
           <CartesianGrid strokeDasharray="3 3" stroke="#ffffff20" />

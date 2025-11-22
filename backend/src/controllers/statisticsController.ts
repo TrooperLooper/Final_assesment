@@ -59,15 +59,23 @@ export const getAllSessions = async (req: Request, res: Response) => {
 export const getUserSessions = async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
+    
+    // Validate ObjectId format
+    if (userId && !mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({ message: "Invalid userId format" });
+    }
 
-    const sessions = await GameSession.find({ userId })
-      .populate("gameId")
-      .populate("userId")
-      .sort({ createdAt: -1 });
-
+    const sessions = await GameSession.find(userId ? { userId } : {})
+      .populate("userId", "firstName lastName")
+      .populate("gameId", "name")
+      .lean();
+    
+    console.log(`Found ${sessions.length} sessions for user ${userId || 'all'}`);
+    
     res.json(sessions);
   } catch (error) {
-    res.status(500).json({ error: "Failed to fetch user sessions" });
+    console.error("Error fetching sessions:", error);
+    res.status(500).json({ message: "Failed to fetch sessions" });
   }
 };
 

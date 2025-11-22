@@ -198,7 +198,7 @@ function Stats() {
               <SessionsGraph />
             </div>
             <div className="bg-white/10 rounded-xl p-6 shadow w-full">
-              <WeeklyPlayTimeGraph userId={userId} />
+            <WeeklyPlayTimeGraph userId={currentUser._id} />
             </div>
             <div className="bg-white/10 rounded-xl p-6 shadow w-full">
               <GameFrequencyGraph />
