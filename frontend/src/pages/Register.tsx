@@ -85,6 +85,9 @@ function Register() {
       {/* Gradient background as a -z layer */}
       <div className="fixed inset-0 -z-10 w-full h-full bg-gradient-to-t from-pink-400 via-pink-700 to-red-700" />
       <div className="min-h-screen flex flex-col items-center justify-start pt-5 px-2 sm:px-8">
+        <div className="col-span-2 flex items-center justify-center">
+          <LeftStar size={15} color="gold" />
+        </div>
         {/* Headline on top, centered */}
         <div className="w-full flex justify-center mt-2 mb-4">
           <h1 className="text-4xl sm:text-6xl lg:text-8xl font-normal font-['Jersey_20'] text-yellow-300 drop-shadow-lg text-center">
@@ -131,7 +134,7 @@ function Register() {
           </div>
           <div className="w-full max-w-xl bg-rose-800 rounded-tl-xl text-center rounded-tr-xl px-4 py-2">
             <h3 className="Create_user text-yellow-300 font-['Jersey_20'] font-normal self-start text-3xl">
-              CREATE USER
+              CREATE A NEW USER
             </h3>
           </div>
           <div className="w-full max-w-xl bg-pink-500 bg-opacity-40 rounded-b-xl rounded-br-xl shadow-lg px-2 sm:px-8 py-6 flex flex-col items-center gap-4">
