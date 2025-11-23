@@ -111,7 +111,7 @@ const WeeklyPlayTimeGraph: React.FC<WeeklyPlayTimeGraphProps> = ({
           onChange={(e) => onGameChange(e.target.value)}
           className="bg-gray-700 text-white px-4 py-2 rounded-lg border border-gray-600 focus:outline-none focus:ring-2 focus:ring-pink-500"
         >
-          <option value="all">All Games</option>
+          
           {games.map((game) => (
             <option key={game} value={game}>
               {game}

@@ -16,12 +16,13 @@ import spaceIcon from "../components/assets/space_btn.jpeg";
 import StarIcon from "../components/StarIcon";
 
 function Stats() {
-  const { userId } = useParams<{ userId: string }>();
+  useParams<{ userId: string }>();
   const navigate = useNavigate();
   const [gameStats, setGameStats] = useState<
     { gameName: string; iconUrl: string; minutesPlayed: number }[]
   >([]);
   const [loading, setLoading] = useState(true);
+  const [selectedGame, setSelectedGame] = useState("Pac-man"); // Add this state
 
   
 
@@ -200,8 +201,8 @@ function Stats() {
             <div className="bg-white/10 rounded-xl p-6 shadow w-full">
             <WeeklyPlayTimeGraph 
               userId={currentUser._id} 
-              selectedGame={gamesData[0].name} 
-              onGameChange={(game) => console.log("Game changed to:", game)} 
+              selectedGame={selectedGame} 
+              onGameChange={(game) => setSelectedGame(game)} 
             />
             </div>
             <div className="bg-white/10 rounded-xl p-6 shadow w-full">
