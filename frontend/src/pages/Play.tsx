@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Layout from "../components/Navigation/Layout";
 import { GameCard } from "../components/Timer/GameCard";
-import { fetchGameById} from "../components/api/apiClient";
+import { fetchGameById } from "../components/api/apiClient";
 import pacmanGif from "../components/assets/pacman_gameicon.gif";
 import asteroidsGif from "../components/assets/asteroids_gameicon.gif";
 import tetrisGif from "../components/assets/tetris_gameicon.gif";
@@ -27,8 +27,8 @@ interface User {
 
 const gameImageMap: Record<string, string> = {
   "Pac-man": pacmanGif,
-  "Asteroids": asteroidsGif,
-  "Tetris": tetrisGif,
+  Asteroids: asteroidsGif,
+  Tetris: tetrisGif,
   "Space Invaders": spaceGif,
 };
 
@@ -71,7 +71,9 @@ function Play() {
         console.error("Failed to fetch game:", err);
         console.error("Error response:", err.response?.data);
         console.error("Error status:", err.response?.status);
-        setError(`Game not found. Error: ${err.response?.data?.message || err.message}`);
+        setError(
+          `Game not found. Error: ${err.response?.data?.message || err.message}`
+        );
       });
   }, [gameId]);
 
@@ -98,10 +100,13 @@ function Play() {
 
     if (currentUser && gameId) {
       try {
-        const response = await axios.post('http://localhost:3000/api/sessions', {
-          userId: currentUser._id,
-          gameId: gameId,
-        });
+        const response = await axios.post(
+          "http://localhost:3000/api/sessions",
+          {
+            userId: currentUser._id,
+            gameId: gameId,
+          }
+        );
         setSessionId(response.data._id);
         console.log(`Session started: ${response.data._id}`);
       } catch (err) {
@@ -117,7 +122,7 @@ function Play() {
     if (elapsedSeconds > 0 && currentUser && gameId) {
       try {
         // Log session with elapsed seconds
-        await axios.post('http://localhost:3000/api/sessions', {
+        await axios.post("http://localhost:3000/api/sessions", {
           userId: currentUser._id,
           gameId,
           minutesPlayed: elapsedSeconds,
@@ -129,8 +134,6 @@ function Play() {
         console.error("Failed to log session:", err);
       }
     }
-
-    navigate('/games');
   };
 
   const handleExit = () => {
@@ -178,27 +181,27 @@ function Play() {
 
   return (
     <>
-      <div className="fixed inset-0 -z-10 w-full h-full bg-gradient-to-b from-blue-950 via-blue-800 to-purple-700" />
+      <div className="fixed inset-0 -z-10 w-full h-full bg-gradient-to-b from-green-900 via-green-500 to-yellow-300" />
       <Layout>
-      <div className="min-h-screen flex flex-col items-center pt-24 px-2 sm:px-8">
-        <div className="flex flex-row gap-8 items-start">
-          <GameCard
-            gameName={game.name}
-            gameImage={gameImageMap[game.name] || ""}
-            gameColor={gameColorMap[game.name] || "bg-gray-400"}
-            buttonState={getButtonState()}
-            onButtonClick={getButtonHandler()}
-            elapsedSeconds={elapsedSeconds}
-            isStopped={!isPlaying}
-            hasStarted={hasStarted}
-            isPlaying={isPlaying}
-            hasStopped={hasStopped}
-          />
+        <div className="min-h-screen flex flex-col items-center pt-24 px-2 sm:px-8">
+          <div className="flex flex-row gap-8 items-start">
+            <GameCard
+              gameName={game.name}
+              gameImage={gameImageMap[game.name] || ""}
+              gameColor={gameColorMap[game.name] || "bg-gray-400"}
+              buttonState={getButtonState()}
+              onButtonClick={getButtonHandler()}
+              elapsedSeconds={elapsedSeconds}
+              isStopped={!isPlaying}
+              hasStarted={hasStarted}
+              isPlaying={isPlaying}
+              hasStopped={hasStopped}
+            />
+          </div>
         </div>
-      </div>
       </Layout>
     </>
   );
-};
+}
 
 export default Play;

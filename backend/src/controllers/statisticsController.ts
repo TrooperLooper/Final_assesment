@@ -59,7 +59,7 @@ export const getAllSessions = async (req: Request, res: Response) => {
 export const getUserSessions = async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
-    
+
     // Validate ObjectId format
     if (userId && !mongoose.Types.ObjectId.isValid(userId)) {
       return res.status(400).json({ message: "Invalid userId format" });
@@ -69,9 +69,11 @@ export const getUserSessions = async (req: Request, res: Response) => {
       .populate("userId", "firstName lastName")
       .populate("gameId", "name")
       .lean();
-    
-    console.log(`Found ${sessions.length} sessions for user ${userId || 'all'}`);
-    
+
+    console.log(
+      `Found ${sessions.length} sessions for user ${userId || "all"}`
+    );
+
     res.json(sessions);
   } catch (error) {
     console.error("Error fetching sessions:", error);
@@ -168,7 +170,10 @@ export const getGameFrequencyStats = async (req: Request, res: Response) => {
         .populate("userId", "firstName lastName")
         .lean();
 
-      const userStats: Record<string, { timesPlayed: number; totalMinutes: number }> = {};
+      const userStats: Record<
+        string,
+        { timesPlayed: number; totalMinutes: number }
+      > = {};
 
       sessions.forEach((session: any) => {
         if (!session.userId) return;

@@ -31,22 +31,21 @@ const LeaderboardTable: React.FC = () => {
   if (loading) return <div className="text-white">Loading leaderboard...</div>;
 
   // Find top player for each game
-  const games = [
-    "Pac-man",
-    "Tetris",
-    "Asteroids",
-    "Space Invaders",
-  ];
+  const games = ["Pac-man", "Tetris", "Asteroids", "Space Invaders"];
 
-  const topPlayers = games.map((game) => {
-    // Find all entries for this game (case-insensitive)
-    const entries = data.filter(
-      (entry) => entry.gameName.toLowerCase() === game.toLowerCase()
-    );
-    // Find the entry with the most minutes
-    if (entries.length === 0) return null;
-    return entries.reduce((max, curr) => (curr.minutes > max.minutes ? curr : max));
-  }).filter(Boolean);
+  const topPlayers = games
+    .map((game) => {
+      // Find all entries for this game (case-insensitive)
+      const entries = data.filter(
+        (entry) => entry.gameName.toLowerCase() === game.toLowerCase()
+      );
+      // Find the entry with the most minutes
+      if (entries.length === 0) return null;
+      return entries.reduce((max, curr) =>
+        curr.minutes > max.minutes ? curr : max
+      );
+    })
+    .filter(Boolean);
 
   return (
     <div className="w-full">
@@ -57,7 +56,9 @@ const LeaderboardTable: React.FC = () => {
             <tr>
               <th className="text-left px-4 py-3 font-semibold">Name</th>
               <th className="text-left px-4 py-3 font-semibold">Game</th>
-              <th className="text-right px-4 py-3 font-semibold">Time Played</th>
+              <th className="text-right px-4 py-3 font-semibold">
+                Time Played
+              </th>
             </tr>
           </thead>
           <tbody>
@@ -69,7 +70,9 @@ const LeaderboardTable: React.FC = () => {
                 >
                   <td className="px-4 py-3">{entry!.userName}</td>
                   <td className="px-4 py-3">{entry!.gameName}</td>
-                  <td className="px-4 py-3 text-right font-semibold">{entry!.minutes} min</td>
+                  <td className="px-4 py-3 text-right font-semibold">
+                    {entry!.minutes} min
+                  </td>
                 </tr>
               ))
             ) : (

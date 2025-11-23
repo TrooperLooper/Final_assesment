@@ -70,7 +70,7 @@ const WeatherWidget: React.FC<WeatherWidgetProps> = () => {
   }, []);
 
   return (
-    <div className="grid grid-rows-2 grid-cols-1 justify-start items-start mt-2 text-xs font-normal rounded px-3 py-2 min-w-[140px] max-w-[300px] text-gray-800 bg-white/80 backdrop-blur-sm shadow-md">
+    <div className="grid grid-rows-2 grid-cols-1 justify-start items-start mt-2 text-xs font-normal rounded px-3 py-2 min-w-[140px] max-w-[300px] text-white">
       <div className="font-bold justify-self-start">{date}</div>
       {weather ? (
         <div className="flex items-start justify-start">

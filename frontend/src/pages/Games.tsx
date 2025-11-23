@@ -8,18 +8,21 @@ import tetrisGif from "../components/assets/tetris_gameicon.gif";
 import spaceGif from "../components/assets/space_gameicon.gif";
 
 // Map game names to their images and colors
-const gameAssets: Record<string, { image: string; color: string; small: boolean }> = {
+const gameAssets: Record<
+  string,
+  { image: string; color: string; small: boolean }
+> = {
   "Pac-man": {
     image: pacmanGif,
     color: "bg-yellow-400",
     small: true,
   },
-  "Asteroids": {
+  Asteroids: {
     image: asteroidsGif,
     color: "bg-blue-500",
     small: false,
   },
-  "Tetris": {
+  Tetris: {
     image: tetrisGif,
     color: "bg-pink-500",
     small: false,
@@ -79,7 +82,15 @@ const JoystickSVG = () => (
 );
 
 function Games() {
-  const [games, setGames] = useState<Array<{ _id: string; name: string; image: string; color: string; small: boolean }>>([]);
+  const [games, setGames] = useState<
+    Array<{
+      _id: string;
+      name: string;
+      image: string;
+      color: string;
+      small: boolean;
+    }>
+  >([]);
   const [currentUser, setCurrentUser] = useState<any>(null);
   const navigate = useNavigate();
 
@@ -87,7 +98,7 @@ function Games() {
     fetchGames()
       .then((data) => {
         // Merge API data with local assets
-        const gamesWithAssets = Array.isArray(data) 
+        const gamesWithAssets = Array.isArray(data)
           ? data.map((game: any) => ({
               ...game,
               image: gameAssets[game.name]?.image || "",
@@ -175,55 +186,55 @@ function Games() {
   return (
     <>
       {/* Gradient background as a -z layer */}
-      <div className="fixed inset-0 -z-10 w-full h-full bg-gradient-to-b from-blue-950 via-blue-800 to-purple-700" />
+      <div className="fixed inset-0 -z-10 w-full h-full bg-gradient-to-b from-green-900 via-green-500 to-yellow-300" />
       <Layout>
-      <div className="min-h-screen flex flex-col items-center justify-start pt-5 px-2 sm:px-8">
-        {/* Headline on top, centered */}
-        <div className="flex justify-center">
-          <h1 className="text-3xl sm:text-5xl font-bold text-center font-['Jersey_20'] sm:mt-4 mb-12 text-white drop-shadow-lg">
-            CHOOSE A GAME
-          </h1>
-        </div>
-        {/* Main content below headline */}
-        <div className="flex flex-col items-center w-full">
-          <div className="w-full max-w-4xl flex flex-col items-center gap-8">
-            <div
-              className="
+        <div className="min-h-screen flex flex-col items-center justify-start pt-5 px-2 sm:px-8">
+          {/* Headline on top, centered */}
+          <div className="flex justify-center">
+            <h1 className="text-3xl sm:text-5xl font-bold text-center font-['Jersey_20'] sm:mt-4 mb-12 text-white drop-shadow-lg">
+              CHOOSE A GAME
+            </h1>
+          </div>
+          {/* Main content below headline */}
+          <div className="flex flex-col items-center w-full">
+            <div className="w-full max-w-4xl flex flex-col items-center gap-8">
+              <div
+                className="
                 flex flex-wrap justify-center gap-8
                 max-w-md sm:max-w-2xl lg:max-w-4xl
               "
-            >
-              {(Array.isArray(games) && games.length > 0
-                ? games
-                : staticGames
-              ).map(renderGameCard)}
-            </div>
-
-            {/* Error message when no user is selected */}
-            {!currentUser && (
-              <div className="mt-6 mb-4 text-center">
-                <p className="text-red-500 font-bold text-lg bg-black/40 px-6 py-3 rounded-lg inline-block border-2 border-red-500">
-                  ⚠️ Please register or select a user to track your game time!
-                </p>
-                <div className="mt-4">
-                  <button
-                    onClick={() => navigate("/register")}
-                    className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded-lg transition-all active:scale-95"
-                  >
-                    Register New User
-                  </button>
-                  <button
-                    onClick={() => navigate("/users")}
-                    className="ml-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg transition-all active:scale-95"
-                  >
-                    Select Existing User
-                  </button>
-                </div>
+              >
+                {(Array.isArray(games) && games.length > 0
+                  ? games
+                  : staticGames
+                ).map(renderGameCard)}
               </div>
-            )}
+
+              {/* Error message when no user is selected */}
+              {!currentUser && (
+                <div className="mt-6 mb-4 text-center">
+                  <p className="text-red-500 font-bold text-lg bg-black/40 px-6 py-3 rounded-lg inline-block border-2 border-red-500">
+                    ⚠️ Please register or select a user to track your game time!
+                  </p>
+                  <div className="mt-4">
+                    <button
+                      onClick={() => navigate("/register")}
+                      className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded-lg transition-all active:scale-95"
+                    >
+                      Register New User
+                    </button>
+                    <button
+                      onClick={() => navigate("/users")}
+                      className="ml-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg transition-all active:scale-95"
+                    >
+                      Select Existing User
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
-      </div>
       </Layout>
     </>
   );

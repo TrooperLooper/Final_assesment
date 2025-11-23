@@ -23,8 +23,6 @@ function Stats() {
   const [loading, setLoading] = useState(true);
   const [selectedGame, setSelectedGame] = useState("Pac-man");
 
-  
-
   // Get current user from localStorage
   const currentUser = JSON.parse(
     localStorage.getItem("currentUser") || "null"
@@ -98,104 +96,104 @@ function Stats() {
     <>
       <div className="GRADIENT fixed inset-0 -z-10 w-full h-full bg-gradient-to-b from-blue-950 via-blue-800 to-purple-700" />
       <Layout>
-      {/* Center the main content */}
-      <div className="flex flex-col items-center justify-center min-h-screen w-full">
-        <div className="flex justify-center">
-          <h1 className="text-3xl sm:text-5xl font-bold text-center font-['Jersey_20'] sm:ml-2 md:ml-20 sm:mt-6 mb-5 text-white drop-shadow-lg">
-            STATS
-          </h1>
-        </div>
-        <div className="max-w-3xl w-full flex-col gap-8 pt-8 px-2 sm:px-8 ml-0 md:ml-20">
-          {/* Single User Card */}
-          <div className="flex justify-center w-full">
-            <SingleUserCard
-              user={currentUser}
-              totalTimePlayed={totalTimePlayed}
-            />
+        {/* Center the main content */}
+        <div className="flex flex-col items-center justify-center min-h-screen w-full">
+          <div className="flex justify-center">
+            <h1 className="text-3xl sm:text-5xl font-bold text-center font-['Jersey_20'] sm:ml-2 md:ml-20 sm:mt-6 mb-5 text-white drop-shadow-lg">
+              STATS
+            </h1>
           </div>
+          <div className="max-w-3xl w-full flex-col gap-8 pt-8 px-2 sm:px-8 ml-0 md:ml-20">
+            {/* Single User Card */}
+            <div className="flex justify-center w-full">
+              <SingleUserCard
+                user={currentUser}
+                totalTimePlayed={totalTimePlayed}
+              />
+            </div>
 
-          {/* Two Graphs Container */}
-          <div className="flex justify-center w-full mb-2">
-            <div className="bg-black/30 rounded-b-2xl shadow-lg p-4 sm:p-8 w-full max-w-6xl mb-8">
-              <div className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-8">
-                {/* PieChart - narrower */}
-                <div className="flex flex-col">
-                  <div className="bg-indigo-950  rounded-t-xl text-center px-4 py-2 w-full">
-                    <span className="text-yellow-300 text-xl font-normal font-['Jersey_20']">
-                      TIME PER GAME
-                    </span>
+            {/* Two Graphs Container */}
+            <div className="flex justify-center w-full mb-2">
+              <div className="bg-black/30 rounded-b-2xl shadow-lg p-4 sm:p-8 w-full max-w-6xl mb-8">
+                <div className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-8">
+                  {/* PieChart - narrower */}
+                  <div className="flex flex-col">
+                    <div className="bg-indigo-950  rounded-t-xl text-center px-4 py-2 w-full">
+                      <span className="text-yellow-300 text-xl font-normal font-['Jersey_20']">
+                        TIME PER GAME
+                      </span>
+                    </div>
+                    <div className="flex items-center justify-center">
+                      <GameStatsRow games={gamesData} />
+                    </div>
                   </div>
-                  <div className="flex items-center justify-center">
-                    <GameStatsRow games={gamesData} />
-                  </div>
-                </div>
 
-                {/* BarGraph - wider */}
-                <div className="bg-white/10 rounded-xl shadow w-full p-0">
-                  <div className="bg-indigo-950  rounded-t-xl text-center px-4 py-2 w-full">
-                    <span className="text-yellow-300 text-xl font-normal font-['Jersey_20']">
-                      MINUTES PLAYED PER GAME
-                    </span>
-                  </div>
-                  <div className="w-full p-0">
-                    <div className="p-4 mt-2 flex items-center justify-center">
-                      <BarGraph />
+                  {/* BarGraph - wider */}
+                  <div className="bg-white/10 rounded-xl shadow w-full p-0">
+                    <div className="bg-indigo-950  rounded-t-xl text-center px-4 py-2 w-full">
+                      <span className="text-yellow-300 text-xl font-normal font-['Jersey_20']">
+                        MINUTES PLAYED PER GAME
+                      </span>
+                    </div>
+                    <div className="w-full p-0">
+                      <div className="p-4 mt-2 flex items-center justify-center">
+                        <BarGraph />
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
 
-          <div className="bg-black/50 rounded-t-2xl shadow-lg p-4 sm:p-8 w-full max-w-6xl mb-2">
-            <div className="flex items-center  font-['Jersey_20'] text-yellow-300 font-bold text-3xl sm:text-5xl mb-2">
-              <div className="w-30 h-30 justify-center md:justify-start bg-amber-600 mr-8"></div>
-              <div className="justify-start">
-                <h2 className="">All players</h2>
+            <div className="bg-black/50 rounded-t-2xl shadow-lg p-4 sm:p-8 w-full max-w-6xl mb-2">
+              <div className="flex items-center  font-['Jersey_20'] text-yellow-300 font-bold text-3xl sm:text-5xl mb-2">
+                <div className="w-30 h-30 justify-center md:justify-start bg-amber-600 mr-8"></div>
+                <div className="justify-start">
+                  <h2 className="">All players</h2>
+                </div>
               </div>
             </div>
-          </div>
 
-          <div className="parentDiv bg-black/30 rounded-b-2xl shadow-lg p-4 sm:p-8 w-full max-w-6xl mb-8">
-            {/* Statistics Graphs */}
-            <div className="flex flex-col gap-8 w-full">
-              <div className="bg-white/10 rounded-xl p-6 shadow w-full">
-                <SessionsGraph />
-              </div>
-              <div className="bg-white/10 rounded-xl p-6 shadow w-full">
-                <WeeklyPlayTimeGraph 
-                  selectedGame={selectedGame} 
-                  onGameChange={(game) => setSelectedGame(game)} 
-                />
-              </div>
-              <div className="bg-white/10 rounded-xl p-6 shadow w-full">
-                <GameFrequencyGraph />
-              </div>
-              <div className="bg-white/10 rounded-xl p-6 shadow w-full">
-                <AllUsersBarGraph />
-              </div>
-              <div className="bg-white/10 rounded-xl p-6 shadow w-full">
-                <LeaderboardTable />
-              </div>
-              {/* Scroll to Top Button */}
-              <div className="flex flex-col items-center">
-                <button
-                  onClick={() =>
-                    window.scrollTo({ top: 0, behavior: "smooth" })
-                  }
-                  className="w-12 h-12 rounded-full bg-black border-4 border-black/50 flex items-center justify-center shadow-2xl hover:border-yellow-300 transition-all active:scale-95"
-                  style={{ fontSize: "1.5rem" }}
-                >
-                  <span className="text-yellow-300 font-bold">Y</span>
-                </button>
-                <span className="text-xs text-white mt-2">
-                  Beam me up to the top
-                </span>
+            <div className="parentDiv bg-black/30 rounded-b-2xl shadow-lg p-4 sm:p-8 w-full max-w-6xl mb-8">
+              {/* Statistics Graphs */}
+              <div className="flex flex-col gap-8 w-full">
+                <div className="bg-white/10 rounded-xl p-6 shadow w-full">
+                  <SessionsGraph />
+                </div>
+                <div className="bg-white/10 rounded-xl p-6 shadow w-full">
+                  <WeeklyPlayTimeGraph
+                    selectedGame={selectedGame}
+                    onGameChange={(game) => setSelectedGame(game)}
+                  />
+                </div>
+                <div className="bg-white/10 rounded-xl p-6 shadow w-full">
+                  <GameFrequencyGraph />
+                </div>
+                <div className="bg-white/10 rounded-xl p-6 shadow w-full">
+                  <AllUsersBarGraph />
+                </div>
+                <div className="bg-white/10 rounded-xl p-6 shadow w-full">
+                  <LeaderboardTable />
+                </div>
+                {/* Scroll to Top Button */}
+                <div className="flex flex-col items-center">
+                  <button
+                    onClick={() =>
+                      window.scrollTo({ top: 0, behavior: "smooth" })
+                    }
+                    className="w-12 h-12 rounded-full bg-black border-4 border-black/50 flex items-center justify-center shadow-2xl hover:border-yellow-300 transition-all active:scale-95"
+                    style={{ fontSize: "1.5rem" }}
+                  >
+                    <span className="text-yellow-300 font-bold">Y</span>
+                  </button>
+                  <span className="text-xs text-white mt-2">
+                    Beam me up to the top
+                  </span>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
       </Layout>
     </>
   );

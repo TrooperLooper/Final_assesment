@@ -14,7 +14,7 @@ const router = express.Router();
 router.post("/", async (req, res) => {
   try {
     const { userId, gameId, minutesPlayed } = req.body;
-    
+
     const session = await GameSession.create({
       userId,
       gameId,
@@ -22,7 +22,7 @@ router.post("/", async (req, res) => {
       endTime: new Date(),
       playedSeconds: minutesPlayed, // Frontend sends elapsed seconds
     });
-    
+
     res.status(201).json(session);
   } catch (error) {
     console.error("Error creating session:", error);
