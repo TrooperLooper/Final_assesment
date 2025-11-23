@@ -1,74 +1,77 @@
 import React from "react";
 
 interface GameStatsRowProps {
-  games: {
+  games: Array<{
     name: string;
     icon: string;
     percent: number;
-  }[];
+  }>;
+  selectedGame?: string;
+  onGameSelect?: (gameName: string) => void;
 }
 
-const indicatorColor = "#FF5E5B"; // red
-const backgroundColor = "#FFD800"; // yellow
+const GameStatsRow: React.FC<GameStatsRowProps> = ({ games, selectedGame, onGameSelect }) => {
+  const RADIUS = 28;
+  const STROKE_WIDTH = 4;
+  const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
 
-const RADIUS = 20;
-const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
-
-const GameStatsRow: React.FC<GameStatsRowProps> = ({ games }) => (
-  <div className="bg-white/10 rounded-b-xl p-4 shadow flex flex-col items-center justify-center w-full max-w-xl mx-auto">
-    {games.map((game) => {
-      const percentArc = (game.percent / 100) * CIRCUMFERENCE;
-      return (
-        <div
-          key={game.name}
-          className="flex items-center justify-between w-full mb-3"
-        >
-          {/* Pie chart first */}
-          <div className="flex items-center justify-center w-auto">
-            <svg width="48" height="48" viewBox="0 0 48 48">
-              <circle
-                cx="24"
-                cy="24"
-                r={RADIUS}
-                fill="#f3f3f3"
-                stroke={backgroundColor}
-                strokeWidth="6"
-              />
-              <circle
-                cx="24"
-                cy="24"
-                r={RADIUS}
-                fill="none"
-                stroke={indicatorColor}
-                strokeWidth="6"
-                strokeDasharray={`${percentArc} ${CIRCUMFERENCE - percentArc}`}
-                strokeDashoffset={CIRCUMFERENCE * 0.25}
-                transform="rotate(0 24 24)"
-                style={{ transition: "stroke-dasharray 0.3s" }}
-              />
-              <text
-                x="24"
-                y="30"
-                textAnchor="middle"
-                fontSize="20"
-                fill="#111"
-                style={{
-                  fontFamily: "'Sofia Sans Extra Condensed', sans-serif",
-                  fontWeight: 800,
-                }}
+  return (
+    <div className="flex justify-center items-center gap-8 p-8">
+      {games.map((game, index) => {
+        const offset = CIRCUMFERENCE - (game.percent / 100) * CIRCUMFERENCE;
+        
+        return (
+          <div 
+            key={index} 
+            className={`flex flex-col items-center gap-2 ${onGameSelect ? 'cursor-pointer' : ''}`}
+            onClick={() => onGameSelect?.(game.name)}
+          >
+            <div className="relative w-16 h-16">
+              <svg className="w-16 h-16 transform -rotate-90" viewBox="0 0 64 64">
+                {/* Background circle - always visible */}
+                <circle
+                  cx="32"
+                  cy="32"
+                  r={RADIUS}
+                  stroke="#FFD800"
+                  strokeWidth={STROKE_WIDTH}
+                  fill="none"
+                  opacity="1"
+                />
+                {/* Progress circle - shows percentage */}
+                <circle
+                  cx="32"
+                  cy="32"
+                  r={RADIUS}
+                  stroke="#FF5E5B"
+                  strokeWidth={STROKE_WIDTH}
+                  fill="none"
+                  strokeDasharray={CIRCUMFERENCE}
+                  strokeDashoffset={offset}
+                  strokeLinecap="round"
+                  className="transition-all duration-300"
+                  opacity="1"
+                />
+              </svg>
+              {/* Game icon in center */}
+              <div 
+                className={`absolute inset-0 flex items-center justify-center transition-all ${
+                  selectedGame === game.name ? 'scale-110' : ''
+                }`}
               >
-                {game.percent}%
-              </text>
-            </svg>
+                <img
+                  src={game.icon}
+                  alt={game.name}
+                  className="w-10 h-10 object-contain"
+                />
+              </div>
+            </div>
+            <span className="text-white text-sm font-semibold">{game.percent}%</span>
           </div>
-          {/* Game name second */}
-          <span className="font-bold text-start text-white text-base flex-1 ml-4 w-auto">
-            {game.name}
-          </span>
-        </div>
-      );
-    })}
-  </div>
-);
+        );
+      })}
+    </div>
+  );
+};
 
 export default GameStatsRow;

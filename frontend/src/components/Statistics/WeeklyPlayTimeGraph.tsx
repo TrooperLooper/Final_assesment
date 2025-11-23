@@ -44,13 +44,14 @@ const WeeklyPlayTimeGraph: React.FC<WeeklyPlayTimeGraphProps> = ({
         const sessionsRes = await axios.get(sessionsEndpoint);
         
         console.log("Fetched sessions:", sessionsRes.data);
+        console.log("Selected game:", selectedGame);
         setSessions(sessionsRes.data);
 
         // Fetch ALL games (not just from sessions)
         const gamesRes = await axios.get("http://localhost:3000/api/games");
         const allGames = gamesRes.data.map((g: any) => g.name);
         
-        console.log("All games:", allGames);
+        console.log("All games from API:", allGames);
         setGames(allGames);
         
       } catch (error) {
@@ -66,9 +67,9 @@ const WeeklyPlayTimeGraph: React.FC<WeeklyPlayTimeGraphProps> = ({
   if (loading) return <div className="text-white">Loading weekly stats...</div>;
 
   // Filter sessions by selected game
-  const filteredSessions = selectedGame === "all"
-    ? sessions
-    : sessions.filter((s) => s.gameId?.name === selectedGame);
+  const filteredSessions = sessions.filter((s) => s.gameId?.name === selectedGame);
+
+  console.log("Filtered sessions for", selectedGame, ":", filteredSessions);
 
   // Get last 7 days starting from Monday
   const getLast7DaysFromMonday = () => {
@@ -100,6 +101,9 @@ const WeeklyPlayTimeGraph: React.FC<WeeklyPlayTimeGraphProps> = ({
     };
   });
 
+  console.log("Daily data:", dailyData);
+  console.log("Max minutes:", Math.max(...dailyData.map(d => d.minutes)));
+
   return (
     <div className="w-full">
       <div className="flex justify-between items-center mb-4">
@@ -111,7 +115,6 @@ const WeeklyPlayTimeGraph: React.FC<WeeklyPlayTimeGraphProps> = ({
           onChange={(e) => onGameChange(e.target.value)}
           className="bg-gray-700 text-white px-4 py-2 rounded-lg border border-gray-600 focus:outline-none focus:ring-2 focus:ring-pink-500"
         >
-          
           {games.map((game) => (
             <option key={game} value={game}>
               {game}
@@ -125,6 +128,8 @@ const WeeklyPlayTimeGraph: React.FC<WeeklyPlayTimeGraphProps> = ({
           <XAxis dataKey="day" stroke="#fff" />
           <YAxis
             stroke="#fff"
+            domain={[0, (dataMax: number) => Math.max(dataMax, 10)]}
+            tickCount={6}
             label={{
               value: "Minutes",
               angle: -90,
@@ -135,12 +140,12 @@ const WeeklyPlayTimeGraph: React.FC<WeeklyPlayTimeGraphProps> = ({
           <Tooltip
             contentStyle={{
               backgroundColor: "#1a1a1a",
-              border: "1px solid #333",
+              border: "1px solid #fff",
               borderRadius: "8px",
             }}
             labelStyle={{ color: "#fff" }}
           />
-          <Legend wrapperStyle={{ color: "#fff" }} />
+          <Legend />
           <Line
             type="monotone"
             dataKey="minutes"
@@ -148,7 +153,6 @@ const WeeklyPlayTimeGraph: React.FC<WeeklyPlayTimeGraphProps> = ({
             strokeWidth={3}
             dot={{ fill: "#ec4899", r: 5 }}
             activeDot={{ r: 7 }}
-            name="Minutes Played"
           />
         </LineChart>
       </ResponsiveContainer>

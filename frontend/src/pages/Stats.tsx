@@ -22,24 +22,8 @@ function Stats() {
     { gameName: string; iconUrl: string; minutesPlayed: number }[]
   >([]);
   const [loading, setLoading] = useState(true);
-  const [selectedGame, setSelectedGame] = useState("Pac-man"); // Add this state
+  const [selectedGame, setSelectedGame] = useState("Pac-man");
 
-  
-
-  useEffect(() => {
-    // Mock data for testing
-    const mockGameStats = [
-      { gameName: "Pac-Man", iconUrl: "", minutesPlayed: 120 },
-      { gameName: "Tetris", iconUrl: "", minutesPlayed: 90 },
-      { gameName: "Asteroids", iconUrl: "", minutesPlayed: 60 },
-      { gameName: "Space Invaders", iconUrl: "", minutesPlayed: 30 },
-    ];
-
-    setGameStats(mockGameStats);
-    setLoading(false);
-  }, []);
-
-  // Get current user from localStorage (fallback to default if not found)
   const currentUser = JSON.parse(
     localStorage.getItem("currentUser") || "null"
   ) || {
@@ -48,35 +32,91 @@ function Stats() {
     profilePicture: defaultAvatar,
   };
 
-  if (loading) return <p>Loading...</p>;
+  useEffect(() => {
+    const fetchGameStats = async () => {
+      if (!currentUser._id) {
+        setLoading(false);
+        return;
+      }
 
-  const totalTimePlayed = gameStats.reduce(
-    (total, game) => total + game.minutesPlayed,
-    0
-  );
+      try {
+        const res = await fetch(`http://localhost:3000/api/statistics/sessions/${currentUser._id}`);
+        const sessions = await res.json();
+
+        // Calculate minutes per game
+        const gameMinutes: Record<string, number> = {};
+        sessions.forEach((session: any) => {
+          const gameName = session.gameId?.name || "Unknown";
+          const minutes = session.playedSeconds ? Math.round(session.playedSeconds / 60) : 0;
+          gameMinutes[gameName] = (gameMinutes[gameName] || 0) + minutes;
+        });
+
+        const totalMinutes = Object.values(gameMinutes).reduce((sum, min) => sum + min, 0);
+
+        // Create stats with real data
+        const stats = Object.entries(gameMinutes).map(([gameName, minutes]) => ({
+          gameName,
+          iconUrl: "",
+          minutesPlayed: minutes,
+        }));
+
+        setGameStats(stats);
+      } catch (error) {
+        console.error("Error fetching game stats:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchGameStats();
+  }, [currentUser._id]);
+
+  // Calculate total minutes for percentage calculation
+  const totalMinutes = gameStats.reduce((sum, game) => sum + game.minutesPlayed, 0);
 
   const gamesData = [
     {
-      name: "Pac-Man",
+      name: "Pac-man",
       icon: pacmanIcon,
-      percent: 40,
+      percent: totalMinutes > 0 
+        ? Math.round(((gameStats.find(g => g.gameName === "Pac-man")?.minutesPlayed || 0) / totalMinutes) * 100)
+        : 0,
     },
     {
       name: "Tetris",
       icon: tetrisIcon,
-      percent: 30,
+      percent: totalMinutes > 0 
+        ? Math.round(((gameStats.find(g => g.gameName === "Tetris")?.minutesPlayed || 0) / totalMinutes) * 100)
+        : 0,
     },
     {
       name: "Asteroids",
       icon: asteroidsIcon,
-      percent: 20,
+      percent: totalMinutes > 0 
+        ? Math.round(((gameStats.find(g => g.gameName === "Asteroids")?.minutesPlayed || 0) / totalMinutes) * 100)
+        : 0,
     },
     {
       name: "Space Invaders",
       icon: spaceIcon,
-      percent: 10,
+      percent: totalMinutes > 0 
+        ? Math.round(((gameStats.find(g => g.gameName === "Space Invaders")?.minutesPlayed || 0) / totalMinutes) * 100)
+        : 0,
     },
   ];
+
+  if (loading) {
+    return (
+      <>
+        <div className="GRADIENT fixed inset-0 -z-10 w-full h-full bg-gradient-to-b from-blue-950 via-blue-800 to-purple-700" />
+        <Layout>
+          <div className="flex items-center justify-center min-h-screen">
+            <div className="text-white text-xl">Loading statistics...</div>
+          </div>
+        </Layout>
+      </>
+    );
+  }
 
   return (
     <>
@@ -114,7 +154,7 @@ function Stats() {
                     Total time played
                   </div>
                   <div className="text-white font-bold text-2xl sm:text-4xl text-center md:text-start">
-                    {totalTimePlayed} min
+                    {totalMinutes} min
                   </div>
                 </div>
 
@@ -172,7 +212,11 @@ function Stats() {
                     </span>
                   </div>
                   <div className="flex items-center justify-center">
-                    <GameStatsRow games={gamesData} />
+                    <GameStatsRow 
+                      games={gamesData} 
+                      selectedGame={selectedGame}
+                      onGameSelect={(game) => setSelectedGame(game)}
+                    />
                   </div>
                 </div>
 
