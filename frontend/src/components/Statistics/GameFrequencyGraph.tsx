@@ -8,8 +8,10 @@ import {
   Tooltip,
   ResponsiveContainer,
   Legend,
+  Cell,
 } from "recharts";
-import axios from "axios";
+import { fetchGameFrequencyStats } from "../api/apiClient";
+import { getUserColor } from "../../utils/userColors";
 
 interface UserGameData {
   user: string;
@@ -33,11 +35,9 @@ const GameFrequencyGraph: React.FC<GameFrequencyGraphProps> = ({
   useEffect(() => {
     const fetchGameData = async () => {
       try {
-        const res = await axios.get(
-          "http://localhost:3000/api/statistics/game-frequency"
-        );
-        setGameData(res.data);
-        setSelectedGame(Object.keys(res.data)[0] || "");
+        const data = await fetchGameFrequencyStats();
+        setGameData(data);
+        setSelectedGame(Object.keys(data)[0] || "");
       } catch (error) {
         console.error("Error fetching game frequency data:", error);
         const mockData = {
@@ -75,7 +75,20 @@ const GameFrequencyGraph: React.FC<GameFrequencyGraphProps> = ({
   // Add console log to debug data
   console.log("Current game data:", currentData);
 
-  // Calculate dynamic Y-axis domain based on actual data
+  // Calculate dynamic axis domains based on actual data
+  const maxMinutes =
+    currentData.length > 0
+      ? Math.max(...currentData.map((d) => d.totalMinutes))
+      : 60;
+
+  const xDomain = [0, 15];
+  const yDomain = [0, Math.max(60, Math.ceil(maxMinutes * 1.1))];
+
+  // Assign colors to each user
+  const dataWithColors = currentData.map((item) => ({
+    ...item,
+    color: getUserColor(item.user),
+  }));
 
   const CustomTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
@@ -96,15 +109,15 @@ const GameFrequencyGraph: React.FC<GameFrequencyGraphProps> = ({
   };
 
   return (
-    <div className="bg-gray-800/50 rounded-lg p-6 shadow-lg">
-      <div className="flex justify-between items-center mb-6">
-        <h3 className="text-white text-xl font-semibold">
-          Game Play Frequency
-        </h3>
+    <div className="w-full p-0">
+      <div className="bg-pink-600 rounded-t-xl text-center px-4 py-2 w-full flex justify-between items-center">
+        <span className="text-white text-xl font-normal font-['Jersey_20']">
+          GAME PLAY FREQUENCY
+        </span>
         <select
           value={selectedGame}
           onChange={(e) => setSelectedGame(e.target.value)}
-          className="px-4 py-2 bg-gray-700 text-white rounded-lg border border-gray-600 focus:outline-none focus:border-pink-500 cursor-pointer"
+          className="px-4 py-2 bg-gradient-to-r from-pink-500 to-purple-600 text-white font-bold rounded-lg border-2 border-yellow-300 focus:outline-none focus:border-yellow-400 cursor-pointer shadow-lg hover:from-pink-600 hover:to-purple-700"
         >
           {Object.keys(gameData).map((game) => (
             <option key={game} value={game}>
@@ -113,55 +126,73 @@ const GameFrequencyGraph: React.FC<GameFrequencyGraphProps> = ({
           ))}
         </select>
       </div>
+      <div className="bg-transparent rounded-b-xl p-6">
+        <ResponsiveContainer width="100%" height={400}>
+          <ScatterChart margin={{ top: 20, right: 30, bottom: 40, left: 20 }}>
+            <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+            <XAxis
+              type="number"
+              dataKey="timesPlayed"
+              name="Times Played"
+              domain={xDomain}
+              stroke="#fff"
+              tick={{ fill: "#fff" }}
+              label={{
+                value: "Times Played",
+                position: "insideBottom",
+                offset: -15,
+                fill: "#fff",
+                style: { fontSize: "14px" },
+              }}
+            />
+            <YAxis
+              type="number"
+              dataKey="totalMinutes"
+              name="Total Minutes"
+              domain={yDomain}
+              stroke="#fff"
+              tick={{ fill: "#fff" }}
+              label={{
+                value: "Total Minutes",
+                angle: -90,
+                position: "insideLeft",
+                fill: "#fff",
+                style: { fontSize: "14px" },
+              }}
+            />
+            <Tooltip content={<CustomTooltip />} />
+            <Scatter name="Players" data={dataWithColors}>
+              {dataWithColors.map((entry, index) => (
+                <Cell key={`cell-${index}`} fill={entry.color} />
+              ))}
+            </Scatter>
+          </ScatterChart>
+        </ResponsiveContainer>
 
-      <ResponsiveContainer width="100%" height={400}>
-        <ScatterChart margin={{ top: 20, right: 30, bottom: 40, left: 40 }}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
-          <XAxis
-            type="number"
-            dataKey="timesPlayed"
-            name="Times Played"
-            domain={[0, 10]}
-            stroke="#fff"
-            tick={{ fill: "#fff" }}
-            label={{
-              value: "Times Played Per Week",
-              position: "insideBottom",
-              offset: -15,
-              fill: "#fff",
-              style: { fontSize: "14px" },
-            }}
-          />
-          <YAxis
-            type="number"
-            dataKey="totalMinutes"
-            name="Total Minutes"
-            domain={[0, 60]}
-            stroke="#fff"
-            tick={{ fill: "#fff" }}
-            label={{
-              value: "Total Minutes",
-              angle: -90,
-              position: "insideLeft",
-              fill: "#fff",
-              style: { fontSize: "14px" },
-            }}
-          />
-          <Tooltip content={<CustomTooltip />} />
-          <Legend wrapperStyle={{ color: "#fff", paddingTop: "20px" }} />
-          <Scatter
-            name="Players"
-            data={currentData}
-            fill="#ec4899"
-          />
-        </ScatterChart>
-      </ResponsiveContainer>
+        {currentData.length === 0 && (
+          <div className="text-white/70 text-center mt-4">
+            No data available for this game
+          </div>
+        )}
 
-      {currentData.length === 0 && (
-        <div className="text-white/70 text-center mt-4">
-          No data available for this game
-        </div>
-      )}
+        {/* User Legend */}
+        {dataWithColors.length > 0 && (
+          <div className="mt-6 pt-4 border-t border-gray-600">
+            <h4 className="text-white text-sm font-semibold mb-3">Players:</h4>
+            <div className="flex flex-wrap gap-3">
+              {dataWithColors.map((item, index) => (
+                <div key={index} className="flex items-center gap-2">
+                  <div
+                    className="w-4 h-4 rounded-full"
+                    style={{ backgroundColor: item.color }}
+                  />
+                  <span className="text-white/80 text-sm">{item.user}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   );
 };

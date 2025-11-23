@@ -34,37 +34,6 @@ const gameAssets: Record<
   },
 };
 
-const staticGames = [
-  {
-    _id: "690537bcf23a2d756f728f17",
-    name: "Pac-man",
-    image: pacmanGif,
-    color: "bg-yellow-400",
-    small: true,
-  },
-  {
-    _id: "690537bcf23a2d756f728f1a",
-    name: "Asteroids",
-    image: asteroidsGif,
-    color: "bg-blue-500",
-    small: false,
-  },
-  {
-    _id: "690537bcf23a2d756f728f18",
-    name: "Tetris",
-    image: tetrisGif,
-    color: "bg-pink-500",
-    small: false,
-  },
-  {
-    _id: "690537bcf23a2d756f728f19",
-    name: "Space Invaders",
-    image: spaceGif,
-    color: "bg-green-500",
-    small: false,
-  },
-];
-
 // Sharp-edged, fat joystick SVG
 const JoystickSVG = () => (
   <svg
@@ -108,7 +77,10 @@ function Games() {
           : [];
         setGames(gamesWithAssets);
       })
-      .catch(() => setGames([]));
+      .catch((error) => {
+        console.error("Failed to fetch games:", error);
+        setGames([]);
+      });
 
     // Check for current user in localStorage
     const user = localStorage.getItem("currentUser");
@@ -121,7 +93,13 @@ function Games() {
     }
   }, []);
 
-  const renderGameCard = (game: (typeof staticGames)[0]) => {
+  const renderGameCard = (game: {
+    _id: string;
+    name: string;
+    image: string;
+    color: string;
+    small: boolean;
+  }) => {
     const isDisabled = !currentUser;
 
     return (
@@ -204,10 +182,13 @@ function Games() {
                 max-w-md sm:max-w-2xl lg:max-w-4xl
               "
               >
-                {(Array.isArray(games) && games.length > 0
-                  ? games
-                  : staticGames
-                ).map(renderGameCard)}
+                {games.length > 0 ? (
+                  games.map(renderGameCard)
+                ) : (
+                  <div className="text-white text-center py-8">
+                    <p className="text-lg">Loading games...</p>
+                  </div>
+                )}
               </div>
 
               {/* Error message when no user is selected */}

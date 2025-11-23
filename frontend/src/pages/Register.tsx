@@ -3,7 +3,7 @@ import { useState } from "react";
 import { z } from "zod";
 import LeftStar from "../components/LeftStar";
 import RightStar from "../components/RightStar";
-import { apiClient } from "../components/api/apiClient";
+import { createUser } from "../components/api/apiClient";
 import { useNavigate } from "react-router-dom";
 import defaultAvatar from "../components/assets/user_default.jpeg";
 import Layout from "../components/Navigation/Layout";
@@ -57,26 +57,30 @@ const Register: React.FC = () => {
       return;
     }
     setErrors({});
+    setLoading(true);
 
     try {
-      // Your registration API call
-      const response = await apiClient.post("/users", {
+      // Only include profilePicture if it's not the default
+      const userData: any = {
         email,
         firstName,
         lastName,
-        profilePicture: imagePreview, // or file upload logic
-      });
+      };
 
-      // Only redirect if registration is successful
-      if (response.status === 201) {
-        const newUser = response.data; // assuming the new user data is in response.data
-        localStorage.setItem("currentUser", JSON.stringify(newUser));
-        navigate(`/stats/${newUser._id}`); // or navigate("/games") if you want to go to games page
+      // Only send profilePicture if user uploaded a custom one
+      if (imagePreview !== defaultAvatar) {
+        userData.profilePicture = imagePreview;
       }
+
+      const newUser = await createUser(userData);
+      
+      localStorage.setItem("currentUser", JSON.stringify(newUser));
+      navigate(`/stats/${newUser._id}`);
     } catch (error) {
-      // Show error to user
       console.error("Registration error:", error.response?.data || error);
-      // Optionally display error message in the UI
+      alert(`Registration failed: ${error.response?.data?.message || error.message || 'Please try again'}`);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -249,16 +253,16 @@ const Register: React.FC = () => {
                   {/* 3rd: Register button (right aligned) */}
                   <button
                     type="submit"
-                    disabled={!isFormValid}
+                    disabled={!isFormValid || loading}
                     className={`z-10 self-end mt-3 py-1 px-4 rounded-lg font-bold text-base shadow-lg transition-all
                     active:scale-95 active:shadow-inner
                     ${
-                      isFormValid
+                      isFormValid && !loading
                         ? "bg-yellow-400 text-pink-900 hover:bg-yellow-300"
                         : "bg-gray-400 opacity-50 text-gray-700 cursor-not-allowed"
                     }`}
                   >
-                    REGISTER
+                    {loading ? "REGISTERING..." : "REGISTER"}
                   </button>
                 </div>
               </form>

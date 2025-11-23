@@ -13,14 +13,14 @@ const router = express.Router();
 // Direct session logging endpoint (used by frontend)
 router.post("/", async (req, res) => {
   try {
-    const { userId, gameId, minutesPlayed } = req.body;
+    const { userId, gameId, playedSeconds } = req.body;
 
     const session = await GameSession.create({
       userId,
       gameId,
       startTime: new Date(),
       endTime: new Date(),
-      playedSeconds: minutesPlayed, // Frontend sends elapsed seconds
+      playedSeconds, // Frontend sends playedSeconds (1 second = 1 minute in system)
     });
 
     res.status(201).json(session);
