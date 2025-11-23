@@ -59,15 +59,23 @@ export const getAllSessions = async (req: Request, res: Response) => {
 export const getUserSessions = async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
+    
+    // Validate ObjectId format
+    if (userId && !mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({ message: "Invalid userId format" });
+    }
 
-    const sessions = await GameSession.find({ userId })
-      .populate("gameId")
-      .populate("userId")
-      .sort({ createdAt: -1 });
-
+    const sessions = await GameSession.find(userId ? { userId } : {})
+      .populate("userId", "firstName lastName")
+      .populate("gameId", "name")
+      .lean();
+    
+    console.log(`Found ${sessions.length} sessions for user ${userId || 'all'}`);
+    
     res.json(sessions);
   } catch (error) {
-    res.status(500).json({ error: "Failed to fetch user sessions" });
+    console.error("Error fetching sessions:", error);
+    res.status(500).json({ message: "Failed to fetch sessions" });
   }
 };
 
@@ -147,5 +155,45 @@ export const getAllUsersLeaderboard = async (req: Request, res: Response) => {
   } catch (error) {
     console.error("All users leaderboard error:", error);
     res.status(500).json({ error: "Failed to fetch all users leaderboard" });
+  }
+};
+
+export const getGameFrequencyStats = async (req: Request, res: Response) => {
+  try {
+    const games = await Game.find({}, "name").lean();
+    const gameData: Record<string, any[]> = {};
+
+    for (const game of games) {
+      const sessions = await GameSession.find({ gameId: game._id })
+        .populate("userId", "firstName lastName")
+        .lean();
+
+      const userStats: Record<string, { timesPlayed: number; totalMinutes: number }> = {};
+
+      sessions.forEach((session: any) => {
+        if (!session.userId) return;
+
+        const userName = `${session.userId.firstName} ${session.userId.lastName}`;
+        const minutes = session.playedSeconds || 0;
+
+        if (!userStats[userName]) {
+          userStats[userName] = { timesPlayed: 0, totalMinutes: 0 };
+        }
+
+        userStats[userName].timesPlayed += 1;
+        userStats[userName].totalMinutes += minutes;
+      });
+
+      gameData[game.name] = Object.entries(userStats).map(([user, stats]) => ({
+        user,
+        timesPlayed: stats.timesPlayed,
+        totalMinutes: stats.totalMinutes,
+      }));
+    }
+
+    res.json(gameData);
+  } catch (error) {
+    console.error("Error fetching game frequency stats:", error);
+    res.status(500).json({ message: "Failed to fetch game frequency stats" });
   }
 };

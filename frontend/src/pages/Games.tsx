@@ -7,6 +7,30 @@ import asteroidsGif from "../components/assets/asteroids_gameicon.gif";
 import tetrisGif from "../components/assets/tetris_gameicon.gif";
 import spaceGif from "../components/assets/space_gameicon.gif";
 
+// Map game names to their images and colors
+const gameAssets: Record<string, { image: string; color: string; small: boolean }> = {
+  "Pac-man": {
+    image: pacmanGif,
+    color: "bg-yellow-400",
+    small: true,
+  },
+  "Asteroids": {
+    image: asteroidsGif,
+    color: "bg-blue-500",
+    small: false,
+  },
+  "Tetris": {
+    image: tetrisGif,
+    color: "bg-pink-500",
+    small: false,
+  },
+  "Space Invaders": {
+    image: spaceGif,
+    color: "bg-green-500",
+    small: false,
+  },
+};
+
 const staticGames = [
   {
     _id: "690537bcf23a2d756f728f17",
@@ -55,14 +79,23 @@ const JoystickSVG = () => (
 );
 
 function Games() {
-  const [games, setGames] = useState([]);
+  const [games, setGames] = useState<Array<{ _id: string; name: string; image: string; color: string; small: boolean }>>([]);
   const [currentUser, setCurrentUser] = useState<any>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
     fetchGames()
       .then((data) => {
-        setGames(Array.isArray(data) ? data : []);
+        // Merge API data with local assets
+        const gamesWithAssets = Array.isArray(data) 
+          ? data.map((game: any) => ({
+              ...game,
+              image: gameAssets[game.name]?.image || "",
+              color: gameAssets[game.name]?.color || "bg-gray-400",
+              small: gameAssets[game.name]?.small || false,
+            }))
+          : [];
+        setGames(gamesWithAssets);
       })
       .catch(() => setGames([]));
 
@@ -140,9 +173,10 @@ function Games() {
   };
 
   return (
-    <Layout>
+    <>
       {/* Gradient background as a -z layer */}
-      <div className="fixed inset-0 -z-10 w-full h-full bg-gradient-to-b from-green-900 via-green-500 to-yellow-300" />
+      <div className="fixed inset-0 -z-10 w-full h-full bg-gradient-to-b from-blue-950 via-blue-800 to-purple-700" />
+      <Layout>
       <div className="min-h-screen flex flex-col items-center justify-start pt-5 px-2 sm:px-8">
         {/* Headline on top, centered */}
         <div className="flex justify-center">
@@ -190,7 +224,8 @@ function Games() {
           </div>
         </div>
       </div>
-    </Layout>
+      </Layout>
+    </>
   );
 }
 

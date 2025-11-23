@@ -8,20 +8,20 @@ import { useNavigate } from "react-router-dom";
 import defaultAvatar from "../components/assets/user_default.jpeg";
 import Layout from "../components/Navigation/Layout";
 
-// Zod schema for validation
 const registerSchema = z.object({
   email: z.string().email("Invalid email address"),
   firstName: z.string().min(1, "First name is required"),
   lastName: z.string().min(1, "Last name is required"),
 });
 
-function Register() {
-  const [email, setEmail] = useState("");
-  const [firstName, setFirstName] = useState("");
-  const [lastName, setLastName] = useState("");
+const Register: React.FC = () => {
+  const navigate = useNavigate();
+  const [email, setEmail] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
   const [imagePreview, setImagePreview] = useState(defaultAvatar);
   const [errors, setErrors] = useState({});
-  const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
 
   const isFormValid = registerSchema.safeParse({
     email,
@@ -81,13 +81,11 @@ function Register() {
   };
 
   return (
-    <Layout>
+    <>
       {/* Gradient background as a -z layer */}
       <div className="fixed inset-0 -z-10 w-full h-full bg-gradient-to-t from-pink-400 via-pink-700 to-red-700" />
-      <div className="min-h-screen flex flex-col items-center justify-start pt-5 px-2 sm:px-8">
-        <div className="col-span-2 flex items-center justify-center">
-          <LeftStar size={15} color="gold" />
-        </div>
+      <Layout>
+        <div className="min-h-screen flex flex-col items-center justify-start pt-5 px-2 sm:px-8">
         {/* Headline on top, centered */}
         <div className="w-full flex justify-center mt-2 mb-4">
           <h1 className="text-4xl sm:text-6xl lg:text-8xl font-normal font-['Jersey_20'] text-yellow-300 drop-shadow-lg text-center">
@@ -264,9 +262,10 @@ function Register() {
             </form>
           </div>
         </div>
-      </div>
-    </Layout>
+        </div>
+      </Layout>
+    </>
   );
-}
+};
 
 export default Register;

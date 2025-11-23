@@ -1,18 +1,16 @@
 import axios from "axios";
 
-const API_BASE_URL = "http://localhost:3000/api";
-
-export const fetchGames = async () => {
-  const res = await axios.get("/api/games");
-  return res.data;
-};
-
 export const apiClient = axios.create({
-  baseURL: API_BASE_URL,
+  baseURL: "http://localhost:3000/api",
   headers: {
     "Content-Type": "application/json",
   },
 });
+
+export const fetchGames = async () => {
+  const res = await apiClient.get("/games");
+  return res.data;
+};
 
 // Fetch a game by its ID
 export const fetchGameById = async (gameId: string) => {

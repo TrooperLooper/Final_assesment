@@ -5,6 +5,7 @@ import {
   getUserSessions,
   getLeaderboard,
   getAllUsersLeaderboard,
+  getGameFrequencyStats,
 } from "../controllers/statisticsController";
 
 const router = express.Router();
@@ -23,5 +24,8 @@ router.get("/leaderboard", getLeaderboard);
 
 // Get all users ranked by total play time
 router.get("/all-users", getAllUsersLeaderboard);
+
+// Get game frequency statistics
+router.get("/game-frequency", getGameFrequencyStats);
 
 export default router;

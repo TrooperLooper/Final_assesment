@@ -2,9 +2,10 @@ import { useEffect, useState } from "react";
 import BarGraph from "../components/Statistics/BarGraph";
 import SessionsGraph from "../components/Statistics/SessionsGraph";
 import WeeklyPlayTimeGraph from "../components/Statistics/WeeklyPlayTimeGraph";
-import LeaderboardTable from "../components/Statistics/LeaderboardTable";
 import AllUsersBarGraph from "../components/Statistics/AllUsersBarGraph";
 import SingleUserCard from "../components/Statistics/SingleUserCard";
+import LeaderboardTable from "../components/Statistics/LeaderboardTable";
+import GameFrequencyGraph from "../components/Statistics/GameFrequencyGraph";
 import defaultAvatar from "../components/assets/user_default.jpeg";
 import Layout from "../components/Navigation/Layout";
 import GameStatsRow from "../components/Statistics/GameStatsRow";
@@ -20,6 +21,9 @@ function Stats() {
     { name: string; icon: string; percent: number }[]
   >([]);
   const [loading, setLoading] = useState(true);
+  const [selectedGame, setSelectedGame] = useState("Pac-man");
+
+  
 
   // Get current user from localStorage
   const currentUser = JSON.parse(
@@ -91,8 +95,9 @@ function Stats() {
   if (loading) return <p>Loading...</p>;
 
   return (
-    <Layout>
+    <>
       <div className="GRADIENT fixed inset-0 -z-10 w-full h-full bg-gradient-to-b from-blue-950 via-blue-800 to-purple-700" />
+      <Layout>
       {/* Center the main content */}
       <div className="flex flex-col items-center justify-center min-h-screen w-full">
         <div className="flex justify-center">
@@ -158,7 +163,13 @@ function Stats() {
                 <SessionsGraph />
               </div>
               <div className="bg-white/10 rounded-xl p-6 shadow w-full">
-                <WeeklyPlayTimeGraph />
+                <WeeklyPlayTimeGraph 
+                  selectedGame={selectedGame} 
+                  onGameChange={(game) => setSelectedGame(game)} 
+                />
+              </div>
+              <div className="bg-white/10 rounded-xl p-6 shadow w-full">
+                <GameFrequencyGraph />
               </div>
               <div className="bg-white/10 rounded-xl p-6 shadow w-full">
                 <AllUsersBarGraph />
@@ -185,7 +196,8 @@ function Stats() {
           </div>
         </div>
       </div>
-    </Layout>
+      </Layout>
+    </>
   );
 }
 

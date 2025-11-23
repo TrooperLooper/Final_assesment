@@ -1,4 +1,5 @@
 import mongoose, { Schema } from "mongoose";
+import { Request, Response } from "express";
 
 export interface IGameSession {
   userId: mongoose.Types.ObjectId;
@@ -17,7 +18,7 @@ const gameSessionSchema = new Schema<IGameSession>({
   gameId: { type: Schema.Types.ObjectId, ref: "Game", required: true },
   startTime: { type: Date, required: true },
   endTime: { type: Date },
-  playedSeconds: { type: Number },
+  playedSeconds: { type: Number, default: 0 },
   durationMinutes: { type: Number },
   playedAt: { type: Date, default: Date.now },
   isActive: { type: Boolean, default: true },
@@ -28,3 +29,19 @@ export const GameSession = mongoose.model<IGameSession>(
   "GameSession",
   gameSessionSchema
 );
+
+export const startSession = async (req: Request, res: Response) => {
+  const { userId, gameId } = req.body;
+
+  console.log("Starting session for user:", userId, "and game:", gameId);
+
+  const session = await GameSession.create({
+    userId,
+    gameId,
+    startTime: new Date(),
+  });
+
+  console.log("Session created:", session);
+
+  res.status(201).json(session);
+};
