@@ -118,7 +118,7 @@ const Register: React.FC = () => {
                 </div>
                 <img
                   src="./src/components/assets/svamp_animation.gif"
-                  alt="A cute mushroom animation"
+                  alt="Animated mushroom character for registration"
                   height={120}
                   width={120}
                   className="mb-2 sm:h-[180px] sm:w-[180px]"
@@ -237,7 +237,7 @@ const Register: React.FC = () => {
                   >
                     <img
                       src={imagePreview}
-                      alt="Profile avatar"
+                      alt="Profile picture preview for registration"
                       className="w-16 h-16 rounded-full object-cover border-2 border-pink-400"
                     />
                     <div className="flex flex-col">

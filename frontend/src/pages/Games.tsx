@@ -131,7 +131,7 @@ function Games() {
         >
           <img
             src={game.image}
-            alt={`${game.name} game animation`}
+            alt={`Animated preview of ${game.name}`}
             className={
               game.small
                 ? "object-cover w-4/5 h-4/5 mx-auto"

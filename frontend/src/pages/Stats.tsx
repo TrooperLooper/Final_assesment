@@ -147,7 +147,7 @@ function Stats() {
               <div className="flex items-center  font-['Jersey_20'] text-yellow-300 font-bold text-3xl sm:text-5xl mb-2">
                 <img
                   src={allPlayersIcon}
-                  alt="All players icon"
+                  alt="Pixel art avatar representing all players"
                   className="w-24 h-24 sm:w-32 sm:h-32 rounded-lg border-2 border-white mr-4 sm:mr-8 object-cover"
                 />
                 <div className="justify-start">

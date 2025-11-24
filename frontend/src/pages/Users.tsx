@@ -5,8 +5,15 @@ import { apiClient, API_BASE_URL } from "../components/api/apiClient";
 import defaultAvatar from "../components/assets/user_default.jpeg";
 import { FiPlus } from "react-icons/fi";
 
+type User = {
+  _id: string;
+  firstName?: string;
+  lastName?: string;
+  profilePicture?: string;
+};
+
 function Users() {
-  const [users, setUsers] = useState([]);
+  const [users, setUsers] = useState<User[]>([]);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -84,8 +91,8 @@ function Users() {
                         }
                         alt={
                           user.firstName && user.lastName
-                            ? `${user.firstName} ${user.lastName}`
-                            : "User avatar"
+                            ? `Profile picture of ${user.firstName} ${user.lastName}`
+                            : "Default user avatar"
                         }
                         className="object-cover w-28 h-28"
                         onError={(e) => {
