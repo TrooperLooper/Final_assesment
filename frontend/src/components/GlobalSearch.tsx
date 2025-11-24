@@ -17,12 +17,12 @@ const GlobalSearch: React.FC<GlobalSearchProps> = ({ onSearch }) => {
     <div className="relative w-32 sm:w-40 md:w-[300px]">
       <input
         type="text"
-        placeholder="Search users..."
+        placeholder="Search..."
         value={query}
         onChange={handleChange}
-        className="w-full rounded text-sm px-3 py-1 pr-10 bg-white/50 text-gray-900 outline-none"
+        className="w-full rounded text-sm px-3 py-1 pr-10 bg-white/40 text-white placeholder:text-white/70 outline-none"
       />
-      <FiSearch className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-900" />
+      <FiSearch className="absolute right-3 top-1/2 transform -translate-y-1/2 text-white" />
     </div>
   );
 };
