@@ -80,4 +80,6 @@ See the ERD below for relationships:
 
 ---
 
+Credits: This was a backend group-assignment completed by @s-weberg and @TrooperLooper at Sundsgårdens Folkhögskola 2025.
+
 **Enjoy tracking your game time and climbing the leaderboard!**
