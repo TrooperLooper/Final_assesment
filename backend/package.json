@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "nodemon --watch src --exec tsx src/server.ts",
     "build": "tsc",
-    "seed": "tsx src/utils/seedDatabase.ts"
+    "seed": "tsx src/utils/seedDatabase.ts",
+    "lint": "eslint . --ext .ts",
+    "lint:fix": "eslint . --ext .ts --fix"
   },
   "dependencies": {
     "axios": "^1.13.1",
@@ -16,13 +18,13 @@
     "express": "^4.21.2",
     "mongoose": "^7.8.7",
     "multer": "^2.0.2",
-    "sequelize": "^6.37.7",
     "react-chartjs-2": "^5.3.1",
     "react-icons": "^5.5.0",
     "react-router-dom": "^7.9.5",
     "recharts": "^3.3.0",
+    "sequelize": "^6.37.7",
     "winston": "^3.18.3",
-    "zod": "^4.1.12"
+    "zod": "^4.1.13"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",
@@ -31,6 +33,9 @@
     "@types/multer": "^2.0.0",
     "@types/node": "^20.19.24",
     "@types/sequelize": "^4.28.20",
+    "@typescript-eslint/eslint-plugin": "^8.47.0",
+    "@typescript-eslint/parser": "^8.47.0",
+    "eslint": "^9.39.1",
     "nodemon": "^3.1.11",
     "ts-node": "^10.9.2",
     "tsx": "^4.20.6",
