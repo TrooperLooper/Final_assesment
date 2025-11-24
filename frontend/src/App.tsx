@@ -11,22 +11,6 @@ import Play from "./pages/Play";
 import Stats from "./pages/Stats";
 import Games from "./pages/Games";
 import Users from "./pages/Users";
-<<<<<<< Updated upstream
-
-function App() {
-  return (
-    <Router>
-      <div className="min-h-screen">
-        <Routes>
-          <Route path="/" element={<Register />} />
-          <Route path="/users" element={<Users />} />
-          <Route path="/games" element={<Games />} />
-          <Route path="/play/:gameId" element={<Play />} />
-          <Route path="/stats/:userId" element={<Stats />} />
-        </Routes>
-      </div>
-    </Router>
-=======
 
 function AnimatedRoutes() {
   const location = useLocation();
@@ -62,7 +46,6 @@ function App() {
         </div>
       </Router>
     </WeatherProvider>
->>>>>>> Stashed changes
   );
 }
 

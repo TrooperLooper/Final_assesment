@@ -1,16 +1,10 @@
 // @ts-nocheck
 import { useState } from "react";
 import { z } from "zod";
-<<<<<<< Updated upstream
+import { motion } from "motion/react";
 import LeftStar from "../components/LeftStar";
 import RightStar from "../components/RightStar";
 import { apiClient } from "../components/api/apiClient";
-=======
-import { motion } from "motion/react";
-import LeftStar from "../components/Stars/LeftStar";
-import RightStar from "../components/Stars/RightStar";
-import { createUser } from "../components/api/apiClient";
->>>>>>> Stashed changes
 import { useNavigate } from "react-router-dom";
 import defaultAvatar from "../components/assets/user_default.jpeg";
 import Layout from "../components/Navigation/Layout";
