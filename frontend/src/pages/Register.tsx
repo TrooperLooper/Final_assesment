@@ -1,8 +1,8 @@
 // @ts-nocheck
 import { useState } from "react";
 import { z } from "zod";
-import LeftStar from "../components/LeftStar";
-import RightStar from "../components/RightStar";
+import LeftStar from "../components/Stars/LeftStar";
+import RightStar from "../components/Stars/RightStar";
 import { createUser } from "../components/api/apiClient";
 import { useNavigate } from "react-router-dom";
 import defaultAvatar from "../components/assets/user_default.jpeg";
@@ -73,12 +73,16 @@ const Register: React.FC = () => {
       }
 
       const newUser = await createUser(userData);
-      
+
       localStorage.setItem("currentUser", JSON.stringify(newUser));
       navigate(`/stats/${newUser._id}`);
     } catch (error) {
       console.error("Registration error:", error.response?.data || error);
-      alert(`Registration failed: ${error.response?.data?.message || error.message || 'Please try again'}`);
+      alert(
+        `Registration failed: ${
+          error.response?.data?.message || error.message || "Please try again"
+        }`
+      );
     } finally {
       setLoading(false);
     }
@@ -108,13 +112,16 @@ const Register: React.FC = () => {
                 <LeftStar size={20} color="gold" />
               </div>
               {/* Mushroom (columns 3-6) */}
-              <div className="col-span-4 flex items-center justify-center">
+              <div className="col-span-4 flex flex-col items-center justify-center">
+                <div className="mb-2">
+                  <RightStar size={16} color="gold" />
+                </div>
                 <img
                   src="./src/components/assets/svamp_animation.gif"
                   alt="A cute mushroom animation"
-                  height={180}
-                  width={180}
-                  className="mb-2"
+                  height={120}
+                  width={120}
+                  className="mb-2 sm:h-[180px] sm:w-[180px]"
                 />
               </div>
               {/* Empty right cell (columns 7-8) */}
@@ -134,18 +141,18 @@ const Register: React.FC = () => {
                 <RightStar size={12} color="gold" />
               </div>
             </div>
-            <div className="w-full max-w-xl bg-rose-800 rounded-tl-xl text-center rounded-tr-xl px-4 py-2">
-              <h3 className="Create_user text-yellow-300 font-['Jersey_20'] font-normal self-start text-3xl">
+            <div className="w-full sm:max-w-xl max-w-xs mx-auto bg-rose-800 rounded-tl-xl text-center rounded-tr-xl px-4 py-2">
+              <h3 className="Create_user text-yellow-300 font-['Jersey_20'] font-normal self-start text-2xl">
                 CREATE A NEW USER
               </h3>
             </div>
-            <div className="w-full max-w-xl bg-pink-500 bg-opacity-40 rounded-b-xl rounded-br-xl shadow-lg px-2 sm:px-8 py-6 flex flex-col items-center gap-4">
+            <div className="w-full sm:max-w-xl max-w-xs mx-auto bg-pink-500 bg-opacity-40 rounded-b-xl rounded-br-xl shadow-lg px-2 sm:px-8 py-6 flex flex-col items-center gap-4">
               <form
                 onSubmit={handleSubmit}
-                className="w-full flex flex-row gap-8 font-['Winky_Sans']"
+                className="w-full flex flex-col sm:flex-row gap-8 font-['Winky_Sans'] px-2 sm:px-0"
               >
                 {/* First div: Form fields (left aligned) */}
-                <div className="flex flex-col gap-4 w-1/2">
+                <div className="flex flex-col gap-4 w-full sm:w-1/2">
                   <div className="flex flex-col">
                     <label
                       htmlFor="email"
@@ -217,7 +224,7 @@ const Register: React.FC = () => {
                 </div>
 
                 {/* Second div: Image uploader (pink column) */}
-                <div className="flex flex-col gap-4 w-1/2 rounded-lg ">
+                <div className="flex flex-col gap-4 w-full sm:w-1/2 rounded-lg ">
                   {/* 1st: Label */}
                   <label className="text-yellow-200 font-semibold text-sm">
                     PROFILE PICTURE
@@ -225,7 +232,7 @@ const Register: React.FC = () => {
 
                   {/* 2nd: Image preview and upload prompt */}
                   <div
-                    className="flex flex-row gap-4 mb-2 items-center border-2 border-dashed bg-pink-400 border-white rounded-lg p-3 cursor-pointer"
+                    className="flex flex-row gap-4 mb-2 items-center border-2 border-dashed bg-pink-400 border-white rounded-lg p-3 cursor-pointer w-full"
                     onClick={() => document.getElementById("fileInput").click()}
                   >
                     <img

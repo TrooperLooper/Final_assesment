@@ -11,10 +11,16 @@ const TypedText: React.FC<{
     setDisplayed("");
     let i = 0;
     const safeText = typeof text === "string" ? text : "";
+
+    if (safeText.length === 0) return;
+
     const interval = setInterval(() => {
-      setDisplayed((prev) => prev + (safeText[i] ?? ""));
-      i++;
-      if (i >= safeText.length) clearInterval(interval);
+      if (i < safeText.length) {
+        setDisplayed(safeText.substring(0, i + 1));
+        i++;
+      } else {
+        clearInterval(interval);
+      }
     }, speed);
     return () => clearInterval(interval);
   }, [text, speed]);

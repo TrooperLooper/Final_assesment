@@ -1,7 +1,7 @@
 import React from "react";
 import WeatherWidget from "../Weather/WeatherWidget";
-import GlobalSearch from "../GlobalSearch";
-import CurrentUserBadge from "../Navigation/CurrentUserBadge";
+import GlobalSearch from "./GlobalSearch";
+import CurrentUserBadge from "./CurrentUserBadge";
 
 const Header: React.FC = () => (
   <header className="w-full grid grid-cols-[auto_1fr_auto] items-center px-2 sm:px-8 py-1 bg-transparent">

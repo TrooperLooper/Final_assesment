@@ -12,6 +12,7 @@ import pacmanIcon from "../components/assets/pacman_btn.jpeg";
 import asteroidsIcon from "../components/assets/asteroids_btn.jpeg";
 import tetrisIcon from "../components/assets/tetris_btn.jpeg";
 import spaceIcon from "../components/assets/space_btn.jpeg";
+import allPlayersIcon from "../components/assets/all_players.png";
 import { fetchUserStats, fetchGames } from "../components/api/apiClient";
 
 function Stats() {
@@ -144,7 +145,11 @@ function Stats() {
 
             <div className="bg-black/50 rounded-t-2xl shadow-lg p-4 sm:p-8 w-full max-w-6xl mb-2">
               <div className="flex items-center  font-['Jersey_20'] text-yellow-300 font-bold text-3xl sm:text-5xl mb-2">
-                <div className="w-30 h-30 justify-center md:justify-start bg-amber-600 mr-8"></div>
+                <img
+                  src={allPlayersIcon}
+                  alt="All players icon"
+                  className="w-24 h-24 sm:w-32 sm:h-32 rounded-lg border-2 border-white mr-4 sm:mr-8 object-cover"
+                />
                 <div className="justify-start">
                   <h2 className="">All players</h2>
                 </div>
