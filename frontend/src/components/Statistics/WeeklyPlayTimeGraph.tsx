@@ -119,14 +119,14 @@ const WeeklyPlayTimeGraph: React.FC<WeeklyPlayTimeGraphProps> = () => {
 
   return (
     <div className="w-full p-0">
-      <div className="bg-pink-600 rounded-t-xl text-center px-4 py-2 w-full flex justify-between items-center">
-        <span className="text-white text-xl font-normal font-['Jersey_20']">
+      <div className="bg-pink-600 rounded-t-xl text-center px-4 py-2 w-full items-center">
+        <span className="text-white text-xl font-normal mr-8 font-['Jersey_20']">
           WEEKLY PLAY TIME BY USER
         </span>
         <select
           value={selectedGame}
           onChange={(e) => setSelectedGame(e.target.value)}
-          className="px-4 py-2 bg-gradient-to-r from-pink-500 to-purple-600 text-white font-bold rounded-lg border-2 border-yellow-300 focus:outline-none focus:border-yellow-400 cursor-pointer shadow-lg hover:from-pink-600 hover:to-purple-700"
+          className="px-4 py-2 bg-yellow-300 text-pink-600 font-bold rounded-lg border-2 border-pink-500 focus:outline-none focus:border-pink-600 cursor-pointer shadow-lg hover:bg-yellow-400"
         >
           {games.map((game) => (
             <option key={game} value={game}>

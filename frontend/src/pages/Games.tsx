@@ -166,7 +166,42 @@ function Games() {
       {/* Gradient background as a -z layer */}
       <div className="fixed inset-0 -z-10 w-full h-full bg-gradient-to-b from-green-900 via-green-500 to-yellow-300" />
       <Layout>
-        <div className="min-h-screen flex flex-col items-center justify-start pt-5 px-2 sm:px-8">
+        <div className="min-h-screen flex flex-col items-center justify-start pt-5 px-2 sm:px-8 relative">
+          {/* Error message when no user is selected - now absolutely positioned above game cards */}
+          {!currentUser && (
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 z-20 w-full max-w-sm mt-30">
+              <div className="border-4 border-white bg-red-900 p-6 text-center font-['Jersey_20'] shadow-2xl">
+                {/* Retro header bar */}
+                <div className="mb-4 pb-3 border-b-2 border-white">
+                  <p className="text-white text-xl font-bold tracking-widest">
+                    WHOOPSIE ALERT
+                  </p>
+                </div>
+                {/* Main message */}
+                <div className="mb-4">
+                  <p className="text-white text-sm">No user found.</p>
+                  <p className="text-white text-sm">
+                    Please register or select a user first.
+                  </p>
+                </div>
+                {/* Action buttons */}
+                <div className="flex flex-col sm:flex-row gap-3 justify-center mt-5 pt-3 border-t-2 border-white">
+                  <button
+                    onClick={() => navigate("/register")}
+                    className="border-2 border-white bg-transparent text-white font-bold py-1 px-4 rounded transition-all hover:bg-white/10 active:scale-95 font-['Jersey_20'] text-sm tracking-wide"
+                  >
+                    ► register
+                  </button>
+                  <button
+                    onClick={() => navigate("/users")}
+                    className="border-2 border-white bg-transparent text-white font-bold py-1 px-4 rounded transition-all hover:bg-white/10 active:scale-95 font-['Jersey_20'] text-sm tracking-wide"
+                  >
+                    ► select user
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
           {/* Headline on top, centered */}
           <div className="flex justify-center">
             <h1 className="text-3xl sm:text-5xl font-bold text-center font-['Jersey_20'] sm:mt-4 mb-12 text-white drop-shadow-lg">
@@ -178,9 +213,9 @@ function Games() {
             <div className="w-full max-w-4xl flex flex-col items-center gap-8">
               <div
                 className="
-                flex flex-wrap justify-center gap-8
-                max-w-md sm:max-w-2xl lg:max-w-4xl
-              "
+            flex flex-wrap justify-center gap-8
+            max-w-md sm:max-w-2xl lg:max-w-4xl
+          "
               >
                 {games.length > 0 ? (
                   games.map(renderGameCard)
@@ -190,29 +225,6 @@ function Games() {
                   </div>
                 )}
               </div>
-
-              {/* Error message when no user is selected */}
-              {!currentUser && (
-                <div className="mt-6 mb-4 text-center">
-                  <p className="text-red-500 font-bold text-lg bg-black/40 px-6 py-3 rounded-lg inline-block border-2 border-red-500">
-                    ⚠️ Please register or select a user to track your game time!
-                  </p>
-                  <div className="mt-4">
-                    <button
-                      onClick={() => navigate("/register")}
-                      className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded-lg transition-all active:scale-95"
-                    >
-                      Register New User
-                    </button>
-                    <button
-                      onClick={() => navigate("/users")}
-                      className="ml-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg transition-all active:scale-95"
-                    >
-                      Select Existing User
-                    </button>
-                  </div>
-                </div>
-              )}
             </div>
           </div>
         </div>

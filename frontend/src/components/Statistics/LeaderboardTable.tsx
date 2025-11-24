@@ -61,9 +61,13 @@ const LeaderboardTable: React.FC = () => {
           <table className="w-full text-white">
             <thead className="bg-white/20">
               <tr>
-                <th className="text-left px-4 py-3 font-semibold">Name</th>
-                <th className="text-left px-4 py-3 font-semibold">Game</th>
-                <th className="text-right px-4 py-3 font-semibold">
+                <th className="text-left px-4 py-3 font-['Winky_Sans'] font-semibold">
+                  Name
+                </th>
+                <th className="text-left px-4 py-3 font-['Winky_Sans'] font-semibold">
+                  Game
+                </th>
+                <th className="text-right px-4 py-3 font-['Winky_Sans'] font-semibold">
                   Time Played
                 </th>
               </tr>
