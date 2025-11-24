@@ -1,9 +1,16 @@
 // @ts-nocheck
 import { useState } from "react";
 import { z } from "zod";
+<<<<<<< Updated upstream
 import LeftStar from "../components/LeftStar";
 import RightStar from "../components/RightStar";
 import { apiClient } from "../components/api/apiClient";
+=======
+import { motion } from "motion/react";
+import LeftStar from "../components/Stars/LeftStar";
+import RightStar from "../components/Stars/RightStar";
+import { createUser } from "../components/api/apiClient";
+>>>>>>> Stashed changes
 import { useNavigate } from "react-router-dom";
 import defaultAvatar from "../components/assets/user_default.jpeg";
 import Layout from "../components/Navigation/Layout";
@@ -85,7 +92,13 @@ const Register: React.FC = () => {
       {/* Gradient background as a -z layer */}
       <div className="fixed inset-0 -z-10 w-full h-full bg-gradient-to-t from-pink-400 via-pink-700 to-red-700" />
       <Layout>
-        <div className="min-h-screen flex flex-col items-center justify-start pt-5 px-2 sm:px-8">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
+          className="flex flex-col items-center justify-start pt-5 px-2 sm:px-8"
+        >
           {/* Headline on top, centered */}
           <div className="w-full flex justify-center mt-2 mb-4">
             <h1 className="text-4xl sm:text-6xl lg:text-8xl font-normal font-['Jersey_20'] text-yellow-300 drop-shadow-lg text-center">
@@ -264,7 +277,7 @@ const Register: React.FC = () => {
               </form>
             </div>
           </div>
-        </div>
+        </motion.div>
       </Layout>
     </>
   );

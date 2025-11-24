@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { motion } from "motion/react";
 import Layout from "../components/Navigation/Layout";
 import { GameCard } from "../components/Timer/GameCard";
 import { fetchGameById } from "../components/api/apiClient";
@@ -162,7 +163,15 @@ function Play() {
       <>
         <div className="fixed inset-0 -z-10 w-full h-full bg-gradient-to-b from-blue-950 via-blue-800 to-purple-700" />
         <Layout>
-          <div className="text-red-500 text-center mt-24">{error}</div>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
+            className="text-red-500 text-center mt-24"
+          >
+            {error}
+          </motion.div>
         </Layout>
       </>
     );
@@ -173,7 +182,15 @@ function Play() {
       <>
         <div className="fixed inset-0 -z-10 w-full h-full bg-gradient-to-b from-blue-950 via-blue-800 to-purple-700" />
         <Layout>
-          <div className="text-white text-center mt-24">Loading...</div>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
+            className="text-white text-center mt-24"
+          >
+            Loading...
+          </motion.div>
         </Layout>
       </>
     );
@@ -183,7 +200,13 @@ function Play() {
     <>
       <div className="fixed inset-0 -z-10 w-full h-full bg-gradient-to-b from-green-900 via-green-500 to-yellow-300" />
       <Layout>
-        <div className="min-h-screen flex flex-col items-center pt-24 px-2 sm:px-8">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
+          className="flex flex-col items-center pt-24 px-2 sm:px-8"
+        >
           <div className="flex flex-row gap-8 items-start">
             <GameCard
               gameName={game.name}
@@ -198,7 +221,7 @@ function Play() {
               hasStopped={hasStopped}
             />
           </div>
-        </div>
+        </motion.div>
       </Layout>
     </>
   );

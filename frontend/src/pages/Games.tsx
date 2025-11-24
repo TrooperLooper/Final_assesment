@@ -1,6 +1,7 @@
 import Layout from "../components/Navigation/Layout";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
+import { motion } from "motion/react";
 import { fetchGames } from "../components/api/apiClient";
 import pacmanGif from "../components/assets/pacman_gameicon.gif";
 import asteroidsGif from "../components/assets/asteroids_gameicon.gif";
@@ -188,7 +189,13 @@ function Games() {
       {/* Gradient background as a -z layer */}
       <div className="fixed inset-0 -z-10 w-full h-full bg-gradient-to-b from-green-900 via-green-500 to-yellow-300" />
       <Layout>
-        <div className="min-h-screen flex flex-col items-center justify-start pt-5 px-2 sm:px-8">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
+          className="flex flex-col items-center justify-start pt-5 px-2 sm:px-8"
+        >
           {/* Headline on top, centered */}
           <div className="flex justify-center">
             <h1 className="text-3xl sm:text-5xl font-bold text-center font-['Jersey_20'] sm:mt-4 mb-12 text-white drop-shadow-lg">
@@ -212,29 +219,44 @@ function Games() {
 
               {/* Error message when no user is selected */}
               {!currentUser && (
-                <div className="mt-6 mb-4 text-center">
-                  <p className="text-red-500 font-bold text-lg bg-black/40 px-6 py-3 rounded-lg inline-block border-2 border-red-500">
-                    ⚠️ Please register or select a user to track your game time!
-                  </p>
-                  <div className="mt-4">
-                    <button
-                      onClick={() => navigate("/register")}
-                      className="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-6 rounded-lg transition-all active:scale-95"
-                    >
-                      Register New User
-                    </button>
-                    <button
-                      onClick={() => navigate("/users")}
-                      className="ml-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg transition-all active:scale-95"
-                    >
-                      Select Existing User
-                    </button>
+                <div className="mt-6 mb-4 w-full max-w-sm">
+                  <div className="border-4 border-white bg-red-900 p-6 text-center font-['Jersey_20']">
+                    {/* Retro header bar */}
+                    <div className="mb-4 pb-3 border-b-2 border-white">
+                      <p className="text-white text-xl font-bold tracking-widest">
+                        WHOOPSIE ALERT
+                      </p>
+                    </div>
+
+                    {/* Main message */}
+                    <div className="mb-4">
+                      <p className="text-white text-sm">no user found.</p>
+                      <p className="text-white text-sm">
+                        please register or select a user first
+                      </p>
+                    </div>
+
+                    {/* Action buttons */}
+                    <div className="flex flex-col sm:flex-row gap-3 justify-center mt-5 pt-3 border-t-2 border-white">
+                      <button
+                        onClick={() => navigate("/register")}
+                        className="border-2 border-white bg-transparent text-white font-bold py-1 px-4 rounded transition-all hover:bg-white/10 active:scale-95 font-['Jersey_20'] text-sm tracking-wide"
+                      >
+                        ► register
+                      </button>
+                      <button
+                        onClick={() => navigate("/users")}
+                        className="border-2 border-white bg-transparent text-white font-bold py-1 px-4 rounded transition-all hover:bg-white/10 active:scale-95 font-['Jersey_20'] text-sm tracking-wide"
+                      >
+                        ► select user
+                      </button>
+                    </div>
                   </div>
                 </div>
               )}
             </div>
           </div>
-        </div>
+        </motion.div>
       </Layout>
     </>
   );

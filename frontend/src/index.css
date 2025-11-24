@@ -6,6 +6,10 @@
 
 @import "tailwindcss";
 
+html {
+  scrollbar-gutter: stable;
+}
+
 .jersey-20-regular {
   font-family: "Jersey 20", sans-serif;
   font-weight: 400;

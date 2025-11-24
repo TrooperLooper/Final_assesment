@@ -10,8 +10,15 @@ const userSchema = z.object({
 });
 
 export const getAllUsers = async (req: Request, res: Response) => {
-  const users = await User.find();
-  res.json(users);
+  try {
+    console.log("📋 Fetching all users...");
+    const users = await User.find();
+    console.log(`✅ Found ${users.length} users`);
+    res.json(users);
+  } catch (error) {
+    console.error("❌ Error fetching users:", error);
+    res.status(500).json({ error: "Failed to fetch users" });
+  }
 };
 
 export const getUserById = async (req: Request, res: Response) => {

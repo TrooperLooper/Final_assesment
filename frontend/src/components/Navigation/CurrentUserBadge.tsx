@@ -8,7 +8,7 @@ export const CurrentUserBadge: React.FC = () => {
   if (!user) return null;
 
   return (
-    <div className="flex flex-col items-center justify-end mr-4">
+    <div className="flex flex-col items-center justify-center h-16">
       <img
         src={
           user.profilePicture && user.profilePicture.trim()
@@ -16,9 +16,9 @@ export const CurrentUserBadge: React.FC = () => {
             : defaultAvatar
         }
         alt="Profile"
-        className="w-10 h-10 rounded-full object-cover border border-gray-300"
+        className="w-10 h-10 rounded-full object-cover border border-gray-300 shrink-0"
       />
-      <span className="text-xs mt-1 text-white/50 font-semibold text-center">
+      <span className="text-xs mt-1 text-white/50 font-semibold text-center line-clamp-1">
         {user.firstName} {user.lastName}
       </span>
     </div>

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { motion } from "motion/react";
 import BarGraph from "../components/Statistics/BarGraph";
 import SessionsGraph from "../components/Statistics/SessionsGraph";
 import WeeklyPlayTimeGraph from "../components/Statistics/WeeklyPlayTimeGraph";
@@ -90,14 +91,37 @@ function Stats() {
     fetchUserStats();
   }, [currentUser._id]);
 
-  if (loading) return <p>Loading...</p>;
+  if (loading) {
+    return (
+      <>
+        <div className="GRADIENT fixed inset-0 -z-10 w-full h-full bg-gradient-to-b from-blue-950 via-blue-800 to-purple-700" />
+        <Layout>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
+            className="flex items-center justify-center"
+          >
+            <p className="text-white text-xl">Loading...</p>
+          </motion.div>
+        </Layout>
+      </>
+    );
+  }
 
   return (
     <>
       <div className="GRADIENT fixed inset-0 -z-10 w-full h-full bg-gradient-to-b from-blue-950 via-blue-800 to-purple-700" />
       <Layout>
         {/* Center the main content */}
-        <div className="flex flex-col items-center justify-center min-h-screen w-full">
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
+          className="flex flex-col items-center justify-center w-full"
+        >
           <div className="flex justify-center">
             <h1 className="text-3xl sm:text-5xl font-bold text-center font-['Jersey_20'] sm:ml-2 md:ml-20 sm:mt-6 mb-5 text-white drop-shadow-lg">
               STATS
@@ -193,7 +217,7 @@ function Stats() {
               </div>
             </div>
           </div>
-        </div>
+        </motion.div>
       </Layout>
     </>
   );
