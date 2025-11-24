@@ -8,10 +8,6 @@ import GameFrequencyGraph from "../components/Statistics/GameFrequencyGraph";
 import defaultAvatar from "../components/assets/user_default.jpeg";
 import Layout from "../components/Navigation/Layout";
 import GameStatsRow from "../components/Statistics/GameStatsRow";
-import pacmanIcon from "../components/assets/pacman_btn.jpeg";
-import asteroidsIcon from "../components/assets/asteroids_btn.jpeg";
-import tetrisIcon from "../components/assets/tetris_btn.jpeg";
-import spaceIcon from "../components/assets/space_btn.jpeg";
 import allPlayersIcon from "../components/assets/all_players.png";
 import { fetchUserStats, fetchGames } from "../components/api/apiClient";
 
@@ -48,12 +44,7 @@ function Stats() {
 
         // Fetch games from API and map with local icons
         const apiGames = await fetchGames();
-        const iconMap: Record<string, string> = {
-          "Pac-man": pacmanIcon,
-          Tetris: tetrisIcon,
-          Asteroids: asteroidsIcon,
-          "Space Invaders": spaceIcon,
-        };
+        const iconMap: Record<string, string> = {};
 
         const gamesWithPercent = apiGames.map((game: any) => {
           const stat = gameStats.find(
@@ -76,10 +67,10 @@ function Stats() {
         console.error("Error fetching user stats:", error);
         setTotalTimePlayed(0);
         setGamesData([
-          { name: "Pac-man", icon: pacmanIcon, percent: 0 },
-          { name: "Tetris", icon: tetrisIcon, percent: 0 },
-          { name: "Asteroids", icon: asteroidsIcon, percent: 0 },
-          { name: "Space Invaders", icon: spaceIcon, percent: 0 },
+          { name: "Pac-man", icon: "", percent: 0 },
+          { name: "Tetris", icon: "", percent: 0 },
+          { name: "Asteroids", icon: "", percent: 0 },
+          { name: "Space Invaders", icon: "", percent: 0 },
         ]);
       } finally {
         setLoading(false);
