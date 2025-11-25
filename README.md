@@ -3,7 +3,13 @@
 A fun accessible game time tracker for users, games, and sessions.  
 Track your playtime, view statistics, and compete on the leaderboard!
 
+This project was built as a backend school assignment at Sundsgården Folkhögskola in 2025. Focusing on RESTful API design, MongoDB integration, and TypeScript best practices.
+
+Registration & timetracking flow demonstration
+
 ![Registration flow demonstration](GameTimer_Register.gif)
+
+User statistics dashboard demonstration
 
 ![User statistics dashboard](GameTimer_Users_Stats.gif)
 
@@ -52,30 +58,41 @@ See the ERD below for relationships:
 
 ---
 
-## 🏁 How to Run
+## 🏁 Quick Start
 
-1. **Clone the repo**
-2. **Install dependencies**
-   ```bash
-   cd frontend
-   npm install
-   ```
-3. **Set environment variables**
-   - Add your OpenWeatherMap API key to `.env` as `VITE_WEATHER_API_KEY`
-   - Set backend API URL as `VITE_API_URL`
-4. **Start the frontend**
-   ```bash
-   npm run dev
-   ```
-5. **Start the backend**
-   ```bash
-   cd ../backend
-   npm install
-   npm run dev
-   ```
+**Prerequisites:**
+
+- Node.js & npm installed
+- Docker installed (runs MongoDB automatically)
+
+**Setup:**
+
+1. Clone the repo
+2. `npm install` (installs both frontend & backend)
+3. `npm run seed` (seed 4 games to database)
+4. `./dev.sh` (starts Docker, backend, and frontend)
+
+**Open:** http://localhost:5173
+
+**To See Data in Action:**
+
+1. Register a user (go to `/register`)
+2. Select the user on the Games page
+3. Play a game and log some time
+4. View stats on the Stats page
+
+**Alternatively (Manual - without Docker):**
+
+```bash
+# Terminal 1 - Backend
+cd backend && npm install && npm run dev
+
+# Terminal 2 - Frontend
+cd frontend && npm install && npm run dev
+```
 
 ---
 
-Credits: Backend school project at Sundsgården Folkhögskola 2025. Shared effort by @s-weberg and @TrooperLooper
+Credits: Shared effort by @s-weberg and @TrooperLooper
 
 **Enjoy tracking your game time and climbing the leaderboard!**
