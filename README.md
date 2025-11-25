@@ -1,9 +1,11 @@
 # 🎮 Game Timer
 
-![Game Timer Screenshot](frontend/src/assets/screenshots/game-timer-screenshot.png)
-
 A fun accessible game time tracker for users, games, and sessions.  
 Track your playtime, view statistics, and compete on the leaderboard!
+
+![Game Timer Screenshot](frontend/GameTimer_Register.gif)
+
+![Game Timer Screenshot](frontend/GameTimer_Users_Stats.gif)
 
 ---
 
@@ -79,5 +81,7 @@ See the ERD below for relationships:
 ![ERD](frontend/src/assets/screenshots/game-timer-erd.png)
 
 ---
+
+Credits: Backend school project at Sundsgården Folkhögskola 2025. Shared effort by @s-weberg and @TrooperLooper
 
 **Enjoy tracking your game time and climbing the leaderboard!**
