@@ -35,7 +35,7 @@ Track your playtime, view statistics, and compete on the leaderboard!
 
 See the ERD below for relationships:
 
-![ERD](frontend/src/assets/screenshots/game-timer-erd.png)
+![ERD](ERD-game.drawio.png)
 
 - **User:** Stores user info and profile picture
 - **Game:** Stores game info and icons
@@ -73,12 +73,6 @@ See the ERD below for relationships:
    npm install
    npm run dev
    ```
-
----
-
-## 📊 ERD
-
-![ERD](ERD-game.drawio.png)
 
 ---
 
