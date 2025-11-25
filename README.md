@@ -3,7 +3,8 @@
 A fun accessible game time tracker for users, games, and sessions.  
 Track your playtime, view statistics, and compete on the leaderboard!
 
-This project was built as a backend school assignment at Sundsgården Folkhögskola in 2025. Focusing on RESTful API design, MongoDB integration, and TypeScript best practices.
+This project was built as a backend school assignment at Sundsgården Folkhögskola in 2025.
+Focusing on RESTful API design, MongoDB integration, and TypeScript best practices.
 
 ---
 
