@@ -3,9 +3,9 @@
 A fun accessible game time tracker for users, games, and sessions.  
 Track your playtime, view statistics, and compete on the leaderboard!
 
-![Game Timer Screenshot](frontend/GameTimer_Register.gif)
+![Registration flow demonstration](frontend/GameTimer_Register.gif)
 
-![Game Timer Screenshot](frontend/GameTimer_Users_Stats.gif)
+![User statistics dashboard](frontend/GameTimer_Users_Stats.gif)
 
 ---
 

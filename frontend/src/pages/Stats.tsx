@@ -8,10 +8,6 @@ import GameFrequencyGraph from "../components/Statistics/GameFrequencyGraph";
 import defaultAvatar from "../components/assets/user_default.jpeg";
 import Layout from "../components/Navigation/Layout";
 import GameStatsRow from "../components/Statistics/GameStatsRow";
-import pacmanIcon from "../components/assets/pacman_btn.jpeg";
-import asteroidsIcon from "../components/assets/asteroids_btn.jpeg";
-import tetrisIcon from "../components/assets/tetris_btn.jpeg";
-import spaceIcon from "../components/assets/space_btn.jpeg";
 import allPlayersIcon from "../components/assets/all_players.png";
 import { fetchUserStats, fetchGames } from "../components/api/apiClient";
 
@@ -48,12 +44,7 @@ function Stats() {
 
         // Fetch games from API and map with local icons
         const apiGames = await fetchGames();
-        const iconMap: Record<string, string> = {
-          "Pac-man": pacmanIcon,
-          Tetris: tetrisIcon,
-          Asteroids: asteroidsIcon,
-          "Space Invaders": spaceIcon,
-        };
+        const iconMap: Record<string, string> = {};
 
         const gamesWithPercent = apiGames.map((game: any) => {
           const stat = gameStats.find(
@@ -76,10 +67,10 @@ function Stats() {
         console.error("Error fetching user stats:", error);
         setTotalTimePlayed(0);
         setGamesData([
-          { name: "Pac-man", icon: pacmanIcon, percent: 0 },
-          { name: "Tetris", icon: tetrisIcon, percent: 0 },
-          { name: "Asteroids", icon: asteroidsIcon, percent: 0 },
-          { name: "Space Invaders", icon: spaceIcon, percent: 0 },
+          { name: "Pac-man", icon: "", percent: 0 },
+          { name: "Tetris", icon: "", percent: 0 },
+          { name: "Asteroids", icon: "", percent: 0 },
+          { name: "Space Invaders", icon: "", percent: 0 },
         ]);
       } finally {
         setLoading(false);
@@ -97,7 +88,7 @@ function Stats() {
         {/* Center the main content */}
         <div className="flex flex-col items-center justify-center min-h-screen w-full">
           <div className="flex justify-center">
-            <h1 className="text-3xl sm:text-5xl font-bold text-center font-['Jersey_20'] sm:ml-2 md:ml-20 sm:mt-6 mb-5 text-white drop-shadow-lg">
+            <h1 className="text-3xl sm:text-5xl font-bold text-center font-['Jersey_20'] sm:ml-2 md:ml-20 sm:mt-6 text-white drop-shadow-lg">
               STATS
             </h1>
           </div>
@@ -111,8 +102,8 @@ function Stats() {
             </div>
 
             {/* Two Graphs Container */}
-            <div className="flex justify-center w-full mb-2">
-              <div className="bg-black/30 rounded-b-2xl shadow-lg p-4 sm:p-8 w-full max-w-6xl mb-8">
+            <div className="flex justify-center w-full">
+              <div className="bg-black/30 rounded-b-2xl shadow-lg p-4 sm:p-8 w-full max-w-6xl">
                 <div className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-8">
                   {/* PieChart - narrower */}
                   <div className="flex flex-col">
@@ -143,7 +134,7 @@ function Stats() {
               </div>
             </div>
 
-            <div className="bg-black/50 rounded-t-2xl shadow-lg p-4 sm:p-8 w-full max-w-6xl mb-2">
+            <div className="bg-black/60 rounded-t-2xl shadow-lg p-4 sm:p-8 w-full mt-8 max-w-6xl">
               <div className="flex items-center  font-['Jersey_20'] text-yellow-300 font-bold text-3xl sm:text-5xl mb-2">
                 <img
                   src={allPlayersIcon}
@@ -156,7 +147,7 @@ function Stats() {
               </div>
             </div>
 
-            <div className="parentDiv bg-black/30 rounded-b-2xl shadow-lg p-4 sm:p-8 w-full max-w-6xl mb-8">
+            <div className="parentDiv bg-black/30 rounded-b-2xl shadow-lg p-4 sm:p-8 w-full max-w-6xl">
               {/* Statistics Graphs */}
               <div className="flex flex-col gap-8 w-full">
                 <div className="bg-white/10 rounded-xl shadow w-full">
