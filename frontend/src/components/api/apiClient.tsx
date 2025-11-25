@@ -1,6 +1,5 @@
 import axios from "axios";
 
-// Export base URL for use in components (e.g., image URLs)
 export const API_BASE_URL = "http://localhost:3000";
 
 export const apiClient = axios.create({
@@ -10,7 +9,6 @@ export const apiClient = axios.create({
   },
 });
 
-// ========== GAMES ==========
 export const fetchGames = async () => {
   const res = await apiClient.get("/games");
   return res.data;
@@ -26,7 +24,6 @@ export const fetchGameById = async (gameId: string) => {
   }
 };
 
-// ========== USERS ==========
 export const createUser = async (userData: {
   email: string;
   firstName: string;
@@ -47,7 +44,6 @@ export const fetchUserById = async (userId: string) => {
   }
 };
 
-// ========== SESSIONS ==========
 export const startSession = async (userId: string, gameId: string) => {
   const response = await apiClient.post("/sessions/start", { userId, gameId });
   return response.data;
@@ -75,7 +71,6 @@ export const logSession = async ({
   return response.data;
 };
 
-// ========== STATISTICS ==========
 export const fetchUserStats = async (userId: string) => {
   const response = await apiClient.get(`/statistics/user/${userId}`);
   return response.data;

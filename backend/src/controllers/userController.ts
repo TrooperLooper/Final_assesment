@@ -5,8 +5,8 @@ import { z } from "zod";
 const userSchema = z.object({
   email: z.string().email(),
   firstName: z.string().min(1),
-  lastName: z.string().min(1), // Add lastName to the schema
-  profilePicture: z.string().optional(), // Use profilePicture for consistency
+  lastName: z.string().min(1), 
+  profilePicture: z.string().optional(), 
 });
 
 export const getAllUsers = async (req: Request, res: Response) => {
@@ -53,7 +53,7 @@ export const uploadAvatar = async (req: Request, res: Response) => {
   const { userId } = req.body;
   const avatarPath = req.file ? `/uploads/${req.file.filename}` : null;
 
-  // Update user in DB with avatarPath
+  
   await User.findByIdAndUpdate(userId, { profilePicture: avatarPath });
 
   res.status(201).json({ profilePicture: avatarPath });

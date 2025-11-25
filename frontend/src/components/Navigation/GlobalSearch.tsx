@@ -20,7 +20,6 @@ const GlobalSearch: React.FC = () => {
   const searchRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (
@@ -35,7 +34,6 @@ const GlobalSearch: React.FC = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Search function
   useEffect(() => {
     const searchData = async () => {
       if (query.trim().length < 2) {

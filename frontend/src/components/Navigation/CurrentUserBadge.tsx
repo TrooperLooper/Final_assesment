@@ -1,6 +1,6 @@
 import React from "react";
 
-const defaultAvatar = "/path/to/default/avatar.png"; // Update path
+const defaultAvatar = "/path/to/default/avatar.png";
 
 export const CurrentUserBadge: React.FC = () => {
   const user = JSON.parse(localStorage.getItem("currentUser") || "null");

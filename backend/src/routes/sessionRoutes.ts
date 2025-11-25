@@ -5,8 +5,8 @@ import {
   getStats,
   createSession,
 } from "../controllers/sessionController";
-import mongoose from "mongoose"; // Import mongoose
-import { GameSession } from "../models/GameSession"; // Import the GameSession model
+import mongoose from "mongoose"; 
+import { GameSession } from "../models/GameSession"; 
 import { validate } from "../middleware/validation";
 import { 
   createSessionSchema, 
@@ -16,7 +16,7 @@ import {
 
 const router = express.Router();
 
-// Direct session logging endpoint (used by frontend)
+
 router.post("/", validate(createSessionSchema), async (req, res) => {
   try {
     const { userId, gameId, playedSeconds } = req.body;
@@ -26,7 +26,7 @@ router.post("/", validate(createSessionSchema), async (req, res) => {
       gameId,
       startTime: new Date(),
       endTime: new Date(),
-      playedSeconds, // Frontend sends playedSeconds (1 second = 1 minute in system)
+      playedSeconds, 
     });
 
     res.status(201).json(session);
@@ -56,7 +56,7 @@ router.get("/statistics/:userId", async (req, res) => {
   try {
     const stats = await GameSession.aggregate([
       { $match: { userId: new mongoose.Types.ObjectId(req.params.userId) } },
-      // ... aggregation pipeline
+      
     ]);
     res.json(stats);
   } catch (error) {

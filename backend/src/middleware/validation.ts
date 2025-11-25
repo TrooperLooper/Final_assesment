@@ -23,7 +23,6 @@ export const validate = (schema: ZodTypeAny) => {
   };
 };
 
-// Session validation schemas
 export const createSessionSchema = z.object({
   body: z.object({
     userId: z.string().min(1, 'User ID is required'),
