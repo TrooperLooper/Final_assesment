@@ -45,7 +45,7 @@ mongoose
 
     // Start server only after DB connection
     app.listen(PORT, () => {
-      logger.info(`🚀 Server started successfully`, {
+      logger.info(`Server started successfully`, {
         port: PORT,
         environment: process.env.NODE_ENV || "development",
         apiUrl: `http://localhost:${PORT}/api`,

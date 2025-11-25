@@ -47,19 +47,43 @@ router.put("/:id/stop", stopSession);
 router.get("/stats", getStats);
 
 router.get("/user/:userId", async (req, res) => {
-  const sessions = await GameSession.find({
-    userId: req.params.userId,
-  }).populate("gameId");
-  res.json(sessions);
+  try {
+    const sessions = await GameSession.find({
+      userId: req.params.userId,
+    }).populate("gameId");
+    logger.info(`Retrieved sessions for user`, {
+      userId: req.params.userId,
+      sessionCount: sessions.length,
+    });
+    res.json(sessions);
+  } catch (error) {
+    logger.error("Error fetching user sessions", {
+      error: String(error),
+      userId: req.params.userId,
+    });
+    res.status(500).json({ message: "Error fetching sessions", error });
+  }
 });
 
 router.get("/statistics/:userId", async (req, res) => {
-  // Add statistics aggregation here
-  const stats = await GameSession.aggregate([
-    { $match: { userId: new mongoose.Types.ObjectId(req.params.userId) } },
-    // ... aggregation pipeline
-  ]);
-  res.json(stats);
+  try {
+    // Add statistics aggregation here
+    const stats = await GameSession.aggregate([
+      { $match: { userId: new mongoose.Types.ObjectId(req.params.userId) } },
+      // ... aggregation pipeline
+    ]);
+    logger.info(`Retrieved statistics for user`, {
+      userId: req.params.userId,
+      statsCount: stats.length,
+    });
+    res.json(stats);
+  } catch (error) {
+    logger.error("Error fetching user statistics", {
+      error: String(error),
+      userId: req.params.userId,
+    });
+    res.status(500).json({ message: "Error fetching statistics", error });
+  }
 });
 
 export default router;

@@ -3,9 +3,9 @@
 A fun accessible game time tracker for users, games, and sessions.  
 Track your playtime, view statistics, and compete on the leaderboard!
 
-![Registration flow demonstration](frontend/GameTimer_Register.gif)
+![Registration flow demonstration](GameTimer_Register.gif)
 
-![User statistics dashboard](frontend/GameTimer_Users_Stats.gif)
+![User statistics dashboard](GameTimer_Users_Stats.gif)
 
 ---
 
@@ -78,7 +78,7 @@ See the ERD below for relationships:
 
 ## 📊 ERD
 
-![ERD](frontend/src/assets/screenshots/game-timer-erd.png)
+![ERD](ERD-game.drawio.png)
 
 ---
 
