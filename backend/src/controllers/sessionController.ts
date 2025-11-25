@@ -17,7 +17,7 @@ export const stopSession = async (req: Request, res: Response) => {
     const session = await GameSession.findById(id);
     
     if (!session) {
-      console.error("❌ Session not found:", id);
+      console.error("Session not found:", id);
       return res.status(404).json({ message: "Session not found" });
     }
 
@@ -29,18 +29,18 @@ export const stopSession = async (req: Request, res: Response) => {
     // Cap at 30 minutes (1800 seconds)
     session.playedSeconds = Math.min(actualPlayedSeconds, 1800);
 
-    console.log("✅ Calculated playedSeconds:", actualPlayedSeconds);
-    console.log("✅ Capped playedSeconds:", session.playedSeconds);
+    console.log("Calculated playedSeconds:", actualPlayedSeconds);
+    console.log("Capped playedSeconds:", session.playedSeconds);
 
     session.isActive = false;
 
     // IMPORTANT: Save the session
     await session.save();
 
-    console.log("✅ Session saved:", session);
+    console.log("Session saved:", session);
     res.json(session);
   } catch (error) {
-    console.error("❌ Error stopping session:", error);
+    console.error("Error stopping session:", error);
     res.status(500).json({ message: "Failed to stop session" });
   }
 };

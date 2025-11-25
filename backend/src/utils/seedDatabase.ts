@@ -32,26 +32,26 @@ async function seedDatabase() {
   ];
 
   try {
-    console.log("🔌 Connecting to MongoDB...");
+    console.log("Connecting to MongoDB...");
     await mongoose.connect(MONGODB_URI);
-    console.log("✅ Connected to MongoDB");
+    console.log("Connected to MongoDB");
     
-    console.log("🗑️  Clearing existing games...");
+    console.log("Clearing existing games...");
     await Game.deleteMany({});
     
-    console.log("🌱 Seeding games into the database...");
+    console.log("Seeding games into the database...");
     const createdGames = await Game.insertMany(games);
-    console.log(`✅ Successfully seeded ${createdGames.length} games:`);
+    console.log(`Successfully seeded ${createdGames.length} games:`);
     createdGames.forEach(game => {
-      console.log(`  - ${game.name} (ID: ${game._id})`);
+      console.log(`- ${game.name} (ID: ${game._id})`);
     });
     
   } catch (error) {
-    console.error("❌ Error seeding the database:", error);
+    console.error("Error seeding the database:", error);
     process.exit(1);
   } finally {
     await mongoose.connection.close();
-    console.log("🔌 Database connection closed");
+    console.log("Database connection closed");
     process.exit(0);
   }
 }

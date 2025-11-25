@@ -15,28 +15,28 @@ export const getAllGames = async (req: Request, res: Response) => {
   try {
     console.log('📦 Fetching all games...');
     const games = await Game.find();
-    console.log(`✅ Found ${games.length} games:`, games);
+    console.log(`Found ${games.length} games:`, games);
     res.json(games);
   } catch (error) {
-    console.error('❌ Error fetching games:', error);
+    console.error('Error fetching games:', error);
     res.status(500).json({ message: 'Error fetching games', error });
   }
 };
 
 export const getGameById = async (req: Request, res: Response) => {
   try {
-    console.log('📦 Fetching game by ID:', req.params.id);
+    console.log('Fetching game by ID:', req.params.id);
     const game = await Game.findById(req.params.id);
     
     if (!game) {
-      console.log('❌ Game not found');
+      console.log('Game not found');
       return res.status(404).json({ message: 'Game not found' });
     }
     
-    console.log('✅ Game found:', game);
+    console.log('Game found:', game);
     res.json(game);
   } catch (error) {
-    console.error('❌ Error fetching game:', error);
+    console.error('Error fetching game:', error);
     res.status(500).json({ message: 'Error fetching game', error });
   }
 };
