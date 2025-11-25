@@ -6,10 +6,10 @@ export interface IGameSession {
   startTime: Date;
   endTime?: Date;
   playedSeconds?: number;
-  isActive: boolean;           // Make required (not optional)
-  createdAt: Date;             // Make required (not optional)
-  durationMinutes?: number;    // Add this property to match the schema
-  playedAt?: Date;             // Add this property to match the schema
+  isActive: boolean; // Make required (not optional)
+  createdAt: Date; // Make required (not optional)
+  durationMinutes?: number; // Add this property to match the schema
+  playedAt?: Date; // Add this property to match the schema
 }
 
 const gameSessionSchema = new Schema<IGameSession>({

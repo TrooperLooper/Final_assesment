@@ -2,7 +2,7 @@ import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
 import dotenv from "dotenv";
-import logger from './utils/logger';
+import logger from "./utils/logger";
 import userRouter from "./routes/userRoutes";
 import gamesRouter from "./routes/GameRoutes";
 import sessionRouter from "./routes/sessionRoutes";
@@ -19,7 +19,11 @@ const MONGODB_URI =
 // Middleware
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: [
+      "http://localhost:5173",
+      "http://localhost:5174",
+      "http://localhost:5175",
+    ],
     credentials: true,
   })
 );
@@ -37,22 +41,22 @@ app.use("/api/statistics", statisticsRouter); //Statistics routes
 mongoose
   .connect(MONGODB_URI)
   .then(() => {
-    logger.info('Successfully connected to MongoDB', { database: MONGODB_URI });
+    logger.info("Successfully connected to MongoDB", { database: MONGODB_URI });
 
     // Start server only after DB connection
     app.listen(PORT, () => {
       logger.info(`🚀 Server started successfully`, {
         port: PORT,
-        environment: process.env.NODE_ENV || 'development',
-        apiUrl: `http://localhost:${PORT}/api`
+        environment: process.env.NODE_ENV || "development",
+        apiUrl: `http://localhost:${PORT}/api`,
       });
     });
   })
   .catch((error) => {
-    logger.error('Failed to connect to MongoDB', { 
-      error: String(error), 
+    logger.error("Failed to connect to MongoDB", {
+      error: String(error),
       database: MONGODB_URI,
-      retrying: 'Check connection string and database availability'
+      retrying: "Check connection string and database availability",
     });
     process.exit(1);
   });

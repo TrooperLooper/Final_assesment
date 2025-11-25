@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { User } from "../models/User";
 import { GameSession } from "../models/GameSession";
 import mongoose from "mongoose";
-import logger from '../utils/logger';
+import logger from "../utils/logger";
 
 export const getLeaderboard = async (req: Request, res: Response) => {
   try {
@@ -10,7 +10,7 @@ export const getLeaderboard = async (req: Request, res: Response) => {
 
     let leaderboard;
     const matchStage: any = {};
-    
+
     if (gameId) {
       matchStage.gameId = new mongoose.Types.ObjectId(gameId as string);
     }
@@ -22,19 +22,19 @@ export const getLeaderboard = async (req: Request, res: Response) => {
           {
             $group: {
               _id: "$userId",
-              totalWins: { 
-                $sum: { $cond: [{ $eq: ["$result", "win"] }, 1, 0] }
+              totalWins: {
+                $sum: { $cond: [{ $eq: ["$result", "win"] }, 1, 0] },
               },
-              totalGames: { $sum: 1 }
-            }
+              totalGames: { $sum: 1 },
+            },
           },
           {
             $lookup: {
               from: "users",
               localField: "_id",
               foreignField: "_id",
-              as: "userInfo"
-            }
+              as: "userInfo",
+            },
           },
           { $unwind: "$userInfo" },
           {
@@ -44,11 +44,11 @@ export const getLeaderboard = async (req: Request, res: Response) => {
               username: "$userInfo.username",
               profilePicture: "$userInfo.profilePicture",
               totalWins: 1,
-              totalGames: 1
-            }
+              totalGames: 1,
+            },
           },
           { $sort: { totalWins: -1 } },
-          { $limit: Number(limit) }
+          { $limit: Number(limit) },
         ]);
         break;
 
@@ -59,16 +59,16 @@ export const getLeaderboard = async (req: Request, res: Response) => {
             $group: {
               _id: "$userId",
               totalPlaytime: { $sum: "$playedSeconds" },
-              totalGames: { $sum: 1 }
-            }
+              totalGames: { $sum: 1 },
+            },
           },
           {
             $lookup: {
               from: "users",
               localField: "_id",
               foreignField: "_id",
-              as: "userInfo"
-            }
+              as: "userInfo",
+            },
           },
           { $unwind: "$userInfo" },
           {
@@ -78,11 +78,11 @@ export const getLeaderboard = async (req: Request, res: Response) => {
               username: "$userInfo.username",
               profilePicture: "$userInfo.profilePicture",
               totalPlaytime: 1,
-              totalGames: 1
-            }
+              totalGames: 1,
+            },
           },
           { $sort: { totalPlaytime: -1 } },
-          { $limit: Number(limit) }
+          { $limit: Number(limit) },
         ]);
         break;
 
@@ -92,32 +92,29 @@ export const getLeaderboard = async (req: Request, res: Response) => {
           {
             $group: {
               _id: "$userId",
-              wins: { 
-                $sum: { $cond: [{ $eq: ["$result", "win"] }, 1, 0] }
+              wins: {
+                $sum: { $cond: [{ $eq: ["$result", "win"] }, 1, 0] },
               },
-              totalGames: { $sum: 1 }
-            }
+              totalGames: { $sum: 1 },
+            },
           },
           {
-            $match: { totalGames: { $gte: 5 } } // Minimum 5 games
+            $match: { totalGames: { $gte: 5 } }, // Minimum 5 games
           },
           {
             $addFields: {
               winRate: {
-                $multiply: [
-                  { $divide: ["$wins", "$totalGames"] },
-                  100
-                ]
-              }
-            }
+                $multiply: [{ $divide: ["$wins", "$totalGames"] }, 100],
+              },
+            },
           },
           {
             $lookup: {
               from: "users",
               localField: "_id",
               foreignField: "_id",
-              as: "userInfo"
-            }
+              as: "userInfo",
+            },
           },
           { $unwind: "$userInfo" },
           {
@@ -128,11 +125,11 @@ export const getLeaderboard = async (req: Request, res: Response) => {
               profilePicture: "$userInfo.profilePicture",
               wins: 1,
               totalGames: 1,
-              winRate: { $round: ["$winRate", 2] }
-            }
+              winRate: { $round: ["$winRate", 2] },
+            },
           },
           { $sort: { winRate: -1 } },
-          { $limit: Number(limit) }
+          { $limit: Number(limit) },
         ]);
         break;
 
@@ -143,15 +140,15 @@ export const getLeaderboard = async (req: Request, res: Response) => {
     // Add rank to each entry
     const rankedLeaderboard = leaderboard.map((entry: any, index: number) => ({
       rank: index + 1,
-      ...entry
+      ...entry,
     }));
 
     res.json(rankedLeaderboard);
   } catch (error) {
     logger.error("Leaderboard error", {
       error: String(error),
-      type: req.query.type || 'wins',
-      gameId: req.query.gameId
+      type: req.query.type || "wins",
+      gameId: req.query.gameId,
     });
     res.status(500).json({ error: "Failed to fetch leaderboard" });
   }

@@ -3,7 +3,7 @@ import { GameSession } from "../models/GameSession";
 import { User } from "../models/User";
 import { Game } from "../models/Game";
 import mongoose from "mongoose";
-import logger from '../utils/logger';
+import logger from "../utils/logger";
 
 // Get user's game statistics
 export const getUserStats = async (req: Request, res: Response) => {
@@ -39,12 +39,15 @@ export const getUserStats = async (req: Request, res: Response) => {
       userId,
       gamesPlayed: gameStats.length,
       totalMinutes,
-      sessionCount: sessions.length
+      sessionCount: sessions.length,
     });
 
     res.json({ gameStats, totalMinutes });
   } catch (error) {
-    logger.error('Error fetching user statistics', { error: String(error), userId: req.params.userId });
+    logger.error("Error fetching user statistics", {
+      error: String(error),
+      userId: req.params.userId,
+    });
     res.status(500).json({ error: "Failed to fetch user stats" });
   }
 };
@@ -57,10 +60,12 @@ export const getAllSessions = async (req: Request, res: Response) => {
       .populate("gameId")
       .sort({ createdAt: -1 });
 
-    logger.info(`Retrieved all game sessions`, { sessionCount: sessions.length });
+    logger.info(`Retrieved all game sessions`, {
+      sessionCount: sessions.length,
+    });
     res.json(sessions);
   } catch (error) {
-    logger.error('Error fetching all sessions', { error: String(error) });
+    logger.error("Error fetching all sessions", { error: String(error) });
     res.status(500).json({ error: "Failed to fetch sessions" });
   }
 };
@@ -82,13 +87,16 @@ export const getUserSessions = async (req: Request, res: Response) => {
       .lean();
 
     logger.info(`User sessions retrieved`, {
-      userId: userId || 'all',
-      sessionCount: sessions.length
+      userId: userId || "all",
+      sessionCount: sessions.length,
     });
 
     res.json(sessions);
   } catch (error) {
-    logger.error('Error fetching user sessions', { error: String(error), userId: req.params.userId });
+    logger.error("Error fetching user sessions", {
+      error: String(error),
+      userId: req.params.userId,
+    });
     res.status(500).json({ message: "Failed to fetch sessions" });
   }
 };
@@ -122,7 +130,7 @@ export const getLeaderboard = async (req: Request, res: Response) => {
     logger.info(`Leaderboard retrieved`, { totalEntries: leaderboard.length });
     res.json(leaderboard);
   } catch (error) {
-    logger.error('Error fetching leaderboard', { error: String(error) });
+    logger.error("Error fetching leaderboard", { error: String(error) });
     res.status(500).json({ error: "Failed to fetch leaderboard" });
   }
 };
@@ -169,12 +177,14 @@ export const getAllUsersLeaderboard = async (req: Request, res: Response) => {
     logger.info(`All users leaderboard retrieved`, {
       totalUsers: leaderboard.length,
       topUser: leaderboard[0]?.userName,
-      topUserMinutes: leaderboard[0]?.totalMinutes
+      topUserMinutes: leaderboard[0]?.totalMinutes,
     });
 
     res.json(leaderboard);
   } catch (error) {
-    logger.error('Error fetching all users leaderboard', { error: String(error) });
+    logger.error("Error fetching all users leaderboard", {
+      error: String(error),
+    });
     res.status(500).json({ error: "Failed to fetch all users leaderboard" });
   }
 };
@@ -217,12 +227,17 @@ export const getGameFrequencyStats = async (req: Request, res: Response) => {
 
     logger.info(`Game frequency statistics retrieved`, {
       gamesAnalyzed: games.length,
-      totalRecords: Object.values(gameData).reduce((sum, arr) => sum + arr.length, 0)
+      totalRecords: Object.values(gameData).reduce(
+        (sum, arr) => sum + arr.length,
+        0
+      ),
     });
 
     res.json(gameData);
   } catch (error) {
-    logger.error('Error fetching game frequency stats', { error: String(error) });
+    logger.error("Error fetching game frequency stats", {
+      error: String(error),
+    });
     res.status(500).json({ message: "Failed to fetch game frequency stats" });
   }
 };

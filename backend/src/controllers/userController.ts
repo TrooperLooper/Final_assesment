@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { User } from "../models/User";
 import { z } from "zod";
-import logger from '../utils/logger';
+import logger from "../utils/logger";
 
 const userSchema = z.object({
   email: z.string().email(),
@@ -16,8 +16,8 @@ export const getAllUsers = async (req: Request, res: Response) => {
     logger.info(`Retrieved ${users.length} users from database`);
     res.json(users);
   } catch (error) {
-    logger.error('Error fetching users', { error: String(error) });
-    res.status(500).json({ message: 'Error fetching users', error });
+    logger.error("Error fetching users", { error: String(error) });
+    res.status(500).json({ message: "Error fetching users", error });
   }
 };
 
@@ -31,8 +31,11 @@ export const getUserById = async (req: Request, res: Response) => {
     logger.info(`Retrieved user: ${req.params.id}`);
     res.json(user);
   } catch (error) {
-    logger.error('Error fetching user by ID', { error: String(error), userId: req.params.id });
-    res.status(500).json({ message: 'Error fetching user', error });
+    logger.error("Error fetching user by ID", {
+      error: String(error),
+      userId: req.params.id,
+    });
+    res.status(500).json({ message: "Error fetching user", error });
   }
 };
 
@@ -50,11 +53,14 @@ export const createUser = async (req: Request, res: Response) => {
       userId: newUser._id,
       firstName: validated.firstName,
       lastName: validated.lastName,
-      hasProfilePicture: !!avatarPath
+      hasProfilePicture: !!avatarPath,
     });
     res.status(201).json(newUser);
   } catch (err) {
-    logger.error('Error creating user', { error: String(err), email: req.body.email });
+    logger.error("Error creating user", {
+      error: String(err),
+      email: req.body.email,
+    });
     res.status(400).json(err);
   }
 };
@@ -68,11 +74,16 @@ export const updateUserById = async (req: Request, res: Response) => {
       logger.warn(`Attempted to update non-existent user: ${req.params.id}`);
       return res.status(404).json({ message: "User not found" });
     }
-    logger.info(`User updated: ${req.params.id}`, { updateFields: Object.keys(req.body) });
+    logger.info(`User updated: ${req.params.id}`, {
+      updateFields: Object.keys(req.body),
+    });
     res.json(user);
   } catch (error) {
-    logger.error('Error updating user', { error: String(error), userId: req.params.id });
-    res.status(500).json({ message: 'Error updating user', error });
+    logger.error("Error updating user", {
+      error: String(error),
+      userId: req.params.id,
+    });
+    res.status(500).json({ message: "Error updating user", error });
   }
 };
 
@@ -86,8 +97,11 @@ export const deleteUserById = async (req: Request, res: Response) => {
     logger.info(`User deleted: ${req.params.id}`, { userEmail: user.email });
     res.json({ message: "User deleted" });
   } catch (error) {
-    logger.error('Error deleting user', { error: String(error), userId: req.params.id });
-    res.status(500).json({ message: 'Error deleting user', error });
+    logger.error("Error deleting user", {
+      error: String(error),
+      userId: req.params.id,
+    });
+    res.status(500).json({ message: "Error deleting user", error });
   }
 };
 
@@ -104,12 +118,17 @@ export const uploadAvatar = async (req: Request, res: Response) => {
 
     // Update user in DB with avatarPath
     await User.findByIdAndUpdate(userId, { profilePicture: avatarPath });
-    logger.info(`Avatar uploaded for user: ${userId}`, { fileName: req.file?.filename });
+    logger.info(`Avatar uploaded for user: ${userId}`, {
+      fileName: req.file?.filename,
+    });
 
     res.status(201).json({ profilePicture: avatarPath });
   } catch (error) {
-    logger.error('Error uploading avatar', { error: String(error), userId: req.body.userId });
-    res.status(500).json({ message: 'Error uploading avatar', error });
+    logger.error("Error uploading avatar", {
+      error: String(error),
+      userId: req.body.userId,
+    });
+    res.status(500).json({ message: "Error uploading avatar", error });
   }
 };
 
