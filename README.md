@@ -5,15 +5,13 @@ Track your playtime, view statistics, and compete on the leaderboard!
 
 This project was built as a backend school assignment at Sundsgården Folkhögskola in 2025. Focusing on RESTful API design, MongoDB integration, and TypeScript best practices.
 
-!Registration & timetracking flow demonstration
+_Registration & timetracking flow demonstration_
 
-(GameTimer_Register.gif)
+![Registration & timetracking flow demonstration](GameTimer_Register.gif)
 
-!User statistics dashboard demonstration
+_User statistics dashboard demonstration_
 
-(GameTimer_Users_Stats.gif)
-
----
+## ![User statistics dashboard demonstration](GameTimer_Users_Stats.gif)
 
 ## 🚀 What It Does
 
