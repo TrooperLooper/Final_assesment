@@ -4,8 +4,9 @@ A fun accessible game time tracker for users, games, and sessions.
 Track your playtime, view statistics, and compete on the leaderboard!
 
 This project was built as a backend school assignment at Sundsgården Folkhögskola in 2025. Focusing on RESTful API design, MongoDB integration, and TypeScript best practices.
-<br>
-<br>
+
+---
+
 _Registration & timetracking flow demonstration_
 
 ![Registration & timetracking flow demonstration](GameTimer_Register.gif)
@@ -13,6 +14,8 @@ _Registration & timetracking flow demonstration_
 _User statistics dashboard demonstration_
 
 ## ![User statistics dashboard demonstration](GameTimer_Users_Stats.gif)
+
+---
 
 ## 🚀 What It Does
 
