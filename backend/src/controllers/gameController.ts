@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import { z } from "zod";
 import { Game } from "../models/Game";
 import logger from '../utils/logger';
@@ -8,72 +8,81 @@ const gameSchema = z.object({
   name: z.string(),
   description: z.string().optional(),
   imageUrl: z.string().optional(),
-  gifUrl: z.string().optional(), // Add gifUrl to validation schema
+  gifUrl: z.string().optional(), 
 });
 
-export const getAllGames = async (req: Request, res: Response) => {
+export const getAllGames = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    console.log('📦 Fetching all games...');
+    logger.info('Fetching all games');
     const games = await Game.find();
-    console.log(`Found ${games.length} games:`, games);
+    logger.info(`Found ${games.length} games`);
     res.json(games);
   } catch (error) {
-    console.error('Error fetching games:', error);
-    res.status(500).json({ message: 'Error fetching games', error });
+    logger.error('Error fetching games', { error });
+    next(error);
   }
 };
 
-export const getGameById = async (req: Request, res: Response) => {
+export const getGameById = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    console.log('Fetching game by ID:', req.params.id);
+    logger.info('Fetching game by ID', { gameId: req.params.id });
     const game = await Game.findById(req.params.id);
     
     if (!game) {
-      console.log('Game not found');
+      logger.warn('Game not found', { gameId: req.params.id });
       return res.status(404).json({ message: 'Game not found' });
     }
     
-    console.log('Game found:', game);
+    logger.info('Game found', { gameId: req.params.id });
     res.json(game);
   } catch (error) {
-    console.error('Error fetching game:', error);
-    res.status(500).json({ message: 'Error fetching game', error });
+    logger.error('Error fetching game by ID', { gameId: req.params.id, error });
+    next(error);
   }
 };
 
-export const createGame = async (req: Request, res: Response) => {
+export const createGame = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const data = gameSchema.parse(req.body);
-    const newGame = await Game.create(data);
-
-    logger.info('Game started', {
-      gameId: newGame._id,
-      startTime: new Date().toISOString(),
-      timerMultiplier: config.timerMultiplier
-    });
-
-    res.status(201).json(newGame);
-  } catch (err) {
-    res.status(400).json(err);
+    logger.info('Creating new game', { name: req.body.name });
+    const validatedData = gameSchema.parse(req.body);
+    const game = new Game(validatedData);
+    await game.save();
+    logger.info('Game created successfully', { gameId: game._id });
+    res.status(201).json(game);
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      logger.warn('Validation error creating game', { errors: error.errors });
+      return res.status(400).json({ message: 'Validation error', errors: error.errors });
+    }
+    logger.error('Error creating game', { error });
+    next(error);
   }
 };
 
-export const updateGame = async (req: Request, res: Response) => {
+export const updateGame = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const data = gameSchema.partial().parse(req.body);
-    const updatedGame = await Game.findByIdAndUpdate(
-      req.params.id, 
-      data, 
-      { new: true }
+    logger.info('Updating game', { gameId: req.params.id });
+    const validatedData = gameSchema.partial().parse(req.body);
+    const game = await Game.findByIdAndUpdate(
+      req.params.id,
+      validatedData,
+      { new: true, runValidators: true }
     );
     
-    if (!updatedGame) {
-      return res.status(404).json({ error: "Game not found" });
+    if (!game) {
+      logger.warn('Game not found for update', { gameId: req.params.id });
+      return res.status(404).json({ message: 'Game not found' });
     }
     
-    res.json(updatedGame);
-  } catch (err) {
-    res.status(400).json(err);
+    logger.info('Game updated successfully', { gameId: game._id });
+    res.json(game);
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      logger.warn('Validation error updating game', { errors: error.errors });
+      return res.status(400).json({ message: 'Validation error', errors: error.errors });
+    }
+    logger.error('Error updating game', { gameId: req.params.id, error });
+    next(error);
   }
 };
 
@@ -104,5 +113,23 @@ export const completeGame = async (req: Request, res: Response) => {
   } catch (err) {
     logger.error('Error completing game', { error: err });
     res.status(500).json({ error: 'Failed to complete game' });
+  }
+};
+
+export const deleteGame = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    logger.info('Deleting game', { gameId: req.params.id });
+    const game = await Game.findByIdAndDelete(req.params.id);
+    
+    if (!game) {
+      logger.warn('Game not found for deletion', { gameId: req.params.id });
+      return res.status(404).json({ message: 'Game not found' });
+    }
+    
+    logger.info('Game deleted successfully', { gameId: req.params.id });
+    res.json({ message: 'Game deleted successfully' });
+  } catch (error) {
+    logger.error('Error deleting game', { gameId: req.params.id, error });
+    next(error);
   }
 };
