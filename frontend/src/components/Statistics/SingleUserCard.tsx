@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import StarIcon from "../StarIcon";
+import StarIcon from "../Stars/StarIcon";
 import defaultAvatar from "../assets/user_default.jpeg";
 
 interface SingleUserCardProps {

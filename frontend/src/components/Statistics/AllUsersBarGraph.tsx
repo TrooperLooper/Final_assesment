@@ -1,74 +1,115 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import { fetchAllSessions, fetchGames } from "../api/apiClient";
 
-interface LeaderboardEntry {
-  userId: string;
-  userName: string;
+interface GameData {
+  gameName: string;
   totalMinutes: number;
-  rank: number;
+  color: string;
 }
 
-const defaultAvatar = "/path/to/default/avatar.png";
+// Game-specific colors matching the theme
+const GAME_COLORS: Record<string, string> = {
+  "Pac-man": "#FACC15", // yellow-400
+  Asteroids: "#3B82F6", // blue-500
+  Tetris: "#EC4899", // pink-500
+  "Space Invaders": "#22C55E", // green-500
+};
 
 const AllUsersBarGraph: React.FC = () => {
-  const [data, setData] = useState<LeaderboardEntry[]>([]);
+  const [gameData, setGameData] = useState<GameData[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchLeaderboard = async () => {
+    const fetchData = async () => {
       try {
-        const res = await axios.get(
-          "http://localhost:3000/api/statistics/all-users"
-        );
-        setData(res.data);
+        // Fetch all sessions and games
+        const [sessionsData, gamesData] = await Promise.all([
+          fetchAllSessions(),
+          fetchGames(),
+        ]);
+
+        // Create a map to accumulate minutes per game
+        const gameMinutes: Record<string, number> = {};
+
+        // Initialize with all games (even if no sessions)
+        gamesData.forEach((game: any) => {
+          gameMinutes[game.name] = 0;
+        });
+
+        // Accumulate minutes from all sessions
+        sessionsData.forEach((session: any) => {
+          const gameName = session.gameId?.name;
+          if (gameName) {
+            const minutes = session.playedSeconds || 0;
+            gameMinutes[gameName] += minutes;
+          }
+        });
+
+        // Convert to array format with colors
+        const data = Object.entries(gameMinutes).map(([name, minutes]) => ({
+          gameName: name,
+          totalMinutes: minutes,
+          color: GAME_COLORS[name] || "#888888",
+        }));
+
+        setGameData(data);
       } catch (error) {
-        console.error("Error fetching leaderboard:", error);
-        setData([]);
+        console.error("Error fetching game statistics:", error);
+        setGameData([]);
       } finally {
         setLoading(false);
       }
     };
-    fetchLeaderboard();
+    fetchData();
   }, []);
 
-  if (loading) return <div className="text-white">Loading leaderboard...</div>;
+  if (loading)
+    return <div className="text-white">Loading game statistics...</div>;
 
-  const maxMinutes = Math.max(...data.map((u) => u.totalMinutes), 1);
+  const maxMinutes = Math.max(...gameData.map((g) => g.totalMinutes), 1);
 
   return (
-    <div className="w-full">
-      <h3 className="text-white text-xl font-bold mb-4">
-        All Users - Total Play Time
-      </h3>
-      <div className="space-y-3">
-        {data.map((user) => {
-          const widthPercent = (user.totalMinutes / maxMinutes) * 100;
-          return (
-            <div key={user.userId} className="flex items-center gap-4">
-              <div className="text-white font-semibold w-8 text-right">
-                #{user.rank}
-              </div>
-              <div className="text-white font-semibold min-w-[150px]">
-                {user.userName}
-              </div>
-              <div className="flex-1 bg-white/20 rounded-full h-8 relative overflow-visible">
-                <div
-                  className="bg-gradient-to-r from-pink-500 to-purple-600 h-full rounded-full"
-                  style={{ width: `${widthPercent}%`, minWidth: "60px" }}
-                />
-                <span className="absolute right-2 top-1/2 -translate-y-1/2 text-white text-sm font-bold z-10">
-                  {user.totalMinutes} min
-                </span>
-              </div>
-            </div>
-          );
-        })}
+    <div className="w-full p-0">
+      <div className="bg-pink-600 rounded-t-xl text-center px-4 py-2 w-full">
+        <span className="text-white text-xl font-normal font-['Jersey_20']">
+          ALL USERS - TOTAL PLAY TIME PER GAME
+        </span>
       </div>
-      {data.length === 0 && (
-        <div className="text-white/70 text-center py-8">
-          No users have played yet
+      <div className="bg-transparent rounded-b-xl p-6">
+        <div className="space-y-7">
+          {gameData.map((game) => {
+            const widthPercent = (game.totalMinutes / maxMinutes) * 100;
+            return (
+              <div key={game.gameName} className="flex items-center gap-4">
+                {/* Game name label */}
+                <div className="text-white font-bold font-['Winky_Sans'] text-base min-w-[120px]">
+                  {game.gameName}
+                </div>
+
+                {/* Bar with minutes */}
+                <div className="flex-1 bg-white/20 rounded-full h-8 relative overflow-visible">
+                  <div
+                    className="h-full rounded-full transition-all duration-300"
+                    style={{
+                      width: `${Math.max(widthPercent, 5)}%`,
+                      backgroundColor: game.color,
+                    }}
+                  />
+                  {/* Minutes text inside or next to bar */}
+                  <span className="absolute right-2 top-1/2 -translate-y-1/2 text-white text-sm font-bold z-10">
+                    {game.totalMinutes} min
+                  </span>
+                </div>
+              </div>
+            );
+          })}
         </div>
-      )}
+        {gameData.length === 0 && (
+          <div className="text-white/70 text-center py-8">
+            No game sessions recorded yet
+          </div>
+        )}
+      </div>
     </div>
   );
 };

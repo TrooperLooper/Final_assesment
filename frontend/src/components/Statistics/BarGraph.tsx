@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import { fetchUserStats } from "../api/apiClient";
 
 const GAME_COLORS: Record<string, string> = {
   "Pac-man": "#FACC15",
@@ -37,10 +37,8 @@ const BarGraph: React.FC<BarGraphProps> = ({ userId }) => {
           return;
         }
 
-        const res = await axios.get(
-          `http://localhost:3000/api/statistics/user/${currentUserId}`
-        );
-        setData(res.data.gameStats || []);
+        const res = await fetchUserStats(currentUserId);
+        setData(res.gameStats || []);
       } catch (error) {
         console.error("Error fetching game stats:", error);
         setData([]);

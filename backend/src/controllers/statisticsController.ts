@@ -1,204 +1,261 @@
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import { GameSession } from "../models/GameSession";
-import { User } from "../models/User";
 import { Game } from "../models/Game";
+import { User } from "../models/User";
 import mongoose from "mongoose";
+import logger from '../utils/logger';
 
-// Get user's game statistics
-export const getUserStats = async (req: Request, res: Response) => {
+export const getOverallStatistics = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { userId } = req.params;
+    logger.info('Fetching overall statistics');
+    
+    const [totalGames, totalUsers, totalSessions, avgScore] = await Promise.all([
+      Game.countDocuments(),
+      User.countDocuments(),
+      GameSession.countDocuments(),
+      GameSession.aggregate([
+        { $group: { _id: null, averageScore: { $avg: "$score" } } }
+      ])
+    ]);
 
-    const sessions = await GameSession.find({ userId })
-      .populate("gameId")
-      .populate("userId");
+    const statistics = {
+      totalGames,
+      totalUsers,
+      totalSessions,
+      averageScore: avgScore[0]?.averageScore || 0
+    };
 
-    // Aggregate by game
-    const gameStats = sessions.reduce((acc: any[], session: any) => {
-      const gameName = session.gameId?.name || "Unknown";
-      const existing = acc.find((g) => g.gameName === gameName);
-      // 1 second = 1 minute in our system
-      const minutes = session.playedSeconds || 0;
-
-      if (existing) {
-        existing.minutesPlayed += minutes;
-      } else {
-        acc.push({
-          gameName,
-          iconUrl: session.gameId?.imageUrl || "",
-          minutesPlayed: minutes,
-        });
-      }
-      return acc;
-    }, []);
-
-    const totalMinutes = gameStats.reduce((sum, g) => sum + g.minutesPlayed, 0);
-
-    res.json({ gameStats, totalMinutes });
+    logger.info('Overall statistics fetched', statistics);
+    res.json(statistics);
   } catch (error) {
-    console.error("getUserStats error:", error);
-    res.status(500).json({ error: "Failed to fetch user stats" });
-  }
-};
-
-// Get all sessions
-export const getAllSessions = async (req: Request, res: Response) => {
-  try {
-    const sessions = await GameSession.find()
-      .populate("userId")
-      .populate("gameId")
-      .sort({ createdAt: -1 });
-
-    res.json(sessions);
-  } catch (error) {
-    res.status(500).json({ error: "Failed to fetch sessions" });
-  }
-};
-
-// Get user's sessions
-export const getUserSessions = async (req: Request, res: Response) => {
-  try {
-    const { userId } = req.params;
-
-    // Validate ObjectId format
-    if (userId && !mongoose.Types.ObjectId.isValid(userId)) {
-      return res.status(400).json({ message: "Invalid userId format" });
-    }
-
-    const sessions = await GameSession.find(userId ? { userId } : {})
-      .populate("userId", "firstName lastName")
-      .populate("gameId", "name")
-      .lean();
-
-    console.log(
-      `Found ${sessions.length} sessions for user ${userId || "all"}`
-    );
-
-    res.json(sessions);
-  } catch (error) {
-    console.error("Error fetching sessions:", error);
-    res.status(500).json({ message: "Failed to fetch sessions" });
-  }
-};
-
-// Get leaderboard - individual game sessions ranked by duration
-export const getLeaderboard = async (req: Request, res: Response) => {
-  try {
-    const sessions = await GameSession.find()
-      .populate({
-        path: "userId",
-        select: "firstName lastName",
-      })
-      .populate({
-        path: "gameId",
-        select: "name",
-      })
-      .sort({ playedSeconds: -1 })
-      .exec();
-
-    const leaderboard = sessions.map((session: any) => {
-      const user = session.userId;
-      const game = session.gameId;
-
-      return {
-        userName: user ? `${user.firstName} ${user.lastName}` : "Unknown User",
-        gameName: game?.name || "Unknown Game",
-        minutes: session.playedSeconds || 0,
-      };
+    logger.error('Error fetching overall statistics', { 
+      error: error instanceof Error ? error.message : 'Unknown error' 
     });
-
-    res.json(leaderboard);
-  } catch (error) {
-    console.error("Leaderboard error:", error);
-    res.status(500).json({ error: "Failed to fetch leaderboard" });
+    next(error);
   }
 };
 
-// Get all users ranked by total play time
-export const getAllUsersLeaderboard = async (req: Request, res: Response) => {
+export const getUserStatistics = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const sessions = await GameSession.find()
-      .populate({
-        path: "userId",
-        select: "firstName lastName",
-      })
-      .exec();
+    const { userId } = req.params;
+    logger.info('Fetching user statistics', { userId });
 
-    // Aggregate total minutes per user
-    const userTotals = sessions.reduce((acc: any, session: any) => {
-      const user = session.userId;
-      if (!user) return acc;
+    const stats = await GameSession.aggregate([
+      { $match: { userId: new mongoose.Types.ObjectId(userId) } },
+      {
+        $group: {
+          _id: "$userId",
+          totalGames: { $sum: 1 },
+          totalWins: { $sum: { $cond: ["$isWinner", 1, 0] } },
+          totalScore: { $sum: "$score" },
+          averageScore: { $avg: "$score" },
+          highestScore: { $max: "$score" },
+          lowestScore: { $min: "$score" },
+        },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "_id",
+          foreignField: "_id",
+          as: "userDetails",
+        },
+      },
+      { $unwind: "$userDetails" },
+      {
+        $project: {
+          userId: "$_id",
+          username: "$userDetails.username",
+          totalGames: 1,
+          totalWins: 1,
+          totalScore: 1,
+          averageScore: { $round: ["$averageScore", 2] },
+          highestScore: 1,
+          lowestScore: 1,
+          winRate: {
+            $round: [
+              { $multiply: [{ $divide: ["$totalWins", "$totalGames"] }, 100] },
+              2,
+            ],
+          },
+          _id: 0,
+        },
+      },
+    ]);
 
-      const userId = user._id.toString();
-      const userName = `${user.firstName} ${user.lastName}`;
-      const minutes = session.playedSeconds || 0;
-
-      if (acc[userId]) {
-        acc[userId].totalMinutes += minutes;
-      } else {
-        acc[userId] = {
-          userId,
-          userName,
-          totalMinutes: minutes,
-        };
-      }
-      return acc;
-    }, {});
-
-    // Convert to array and sort by total minutes
-    const leaderboard = Object.values(userTotals)
-      .sort((a: any, b: any) => b.totalMinutes - a.totalMinutes)
-      .map((user: any, index: number) => ({
-        ...user,
-        rank: index + 1,
-      }));
-
-    res.json(leaderboard);
-  } catch (error) {
-    console.error("All users leaderboard error:", error);
-    res.status(500).json({ error: "Failed to fetch all users leaderboard" });
-  }
-};
-
-export const getGameFrequencyStats = async (req: Request, res: Response) => {
-  try {
-    const games = await Game.find({}, "name").lean();
-    const gameData: Record<string, any[]> = {};
-
-    for (const game of games) {
-      const sessions = await GameSession.find({ gameId: game._id })
-        .populate("userId", "firstName lastName")
-        .lean();
-
-      const userStats: Record<
-        string,
-        { timesPlayed: number; totalMinutes: number }
-      > = {};
-
-      sessions.forEach((session: any) => {
-        if (!session.userId) return;
-
-        const userName = `${session.userId.firstName} ${session.userId.lastName}`;
-        const minutes = session.playedSeconds || 0;
-
-        if (!userStats[userName]) {
-          userStats[userName] = { timesPlayed: 0, totalMinutes: 0 };
-        }
-
-        userStats[userName].timesPlayed += 1;
-        userStats[userName].totalMinutes += minutes;
-      });
-
-      gameData[game.name] = Object.entries(userStats).map(([user, stats]) => ({
-        user,
-        timesPlayed: stats.timesPlayed,
-        totalMinutes: stats.totalMinutes,
-      }));
+    if (!stats || stats.length === 0) {
+      logger.warn('No statistics found for user', { userId });
+      return res.status(404).json({ message: 'No statistics found for this user' });
     }
 
-    res.json(gameData);
+    logger.info('User statistics fetched', { userId });
+    res.json(stats[0]);
   } catch (error) {
-    console.error("Error fetching game frequency stats:", error);
-    res.status(500).json({ message: "Failed to fetch game frequency stats" });
+    logger.error('Error fetching user statistics', { 
+      userId: req.params.userId,
+      error: error instanceof Error ? error.message : 'Unknown error' 
+    });
+    next(error);
+  }
+};
+
+export const getGameStatistics = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { gameId } = req.params;
+    logger.info('Fetching game statistics', { gameId });
+
+    const stats = await GameSession.aggregate([
+      { $match: { gameId: new mongoose.Types.ObjectId(gameId) } },
+      {
+        $group: {
+          _id: "$gameId",
+          totalSessions: { $sum: 1 },
+          uniquePlayers: { $addToSet: "$userId" },
+          averageScore: { $avg: "$score" },
+          highestScore: { $max: "$score" },
+          lowestScore: { $min: "$score" },
+        },
+      },
+      {
+        $lookup: {
+          from: "games",
+          localField: "_id",
+          foreignField: "_id",
+          as: "gameDetails",
+        },
+      },
+      { $unwind: "$gameDetails" },
+      {
+        $project: {
+          gameId: "$_id",
+          gameName: "$gameDetails.name",
+          totalSessions: 1,
+          uniquePlayers: { $size: "$uniquePlayers" },
+          averageScore: { $round: ["$averageScore", 2] },
+          highestScore: 1,
+          lowestScore: 1,
+          _id: 0,
+        },
+      },
+    ]);
+
+    if (!stats || stats.length === 0) {
+      logger.warn('No statistics found for game', { gameId });
+      return res.status(404).json({ message: 'No statistics found for this game' });
+    }
+
+    logger.info('Game statistics fetched', { gameId });
+    res.json(stats[0]);
+  } catch (error) {
+    logger.error('Error fetching game statistics', { 
+      gameId: req.params.gameId,
+      error: error instanceof Error ? error.message : 'Unknown error' 
+    });
+    next(error);
+  }
+};
+
+export const getTopPerformers = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { limit = 10, metric = 'score' } = req.query;
+    logger.info('Fetching top performers', { limit, metric });
+
+    let sortField = 'totalScore';
+    if (metric === 'wins') sortField = 'totalWins';
+    if (metric === 'games') sortField = 'totalGames';
+
+    const topPerformers = await GameSession.aggregate([
+      {
+        $group: {
+          _id: "$userId",
+          totalGames: { $sum: 1 },
+          totalWins: { $sum: { $cond: ["$isWinner", 1, 0] } },
+          totalScore: { $sum: "$score" },
+          averageScore: { $avg: "$score" },
+        },
+      },
+      { $sort: { [sortField]: -1 } },
+      { $limit: parseInt(limit as string) },
+      {
+        $lookup: {
+          from: "users",
+          localField: "_id",
+          foreignField: "_id",
+          as: "userDetails",
+        },
+      },
+      { $unwind: "$userDetails" },
+      {
+        $project: {
+          userId: "$_id",
+          username: "$userDetails.username",
+          totalGames: 1,
+          totalWins: 1,
+          totalScore: 1,
+          averageScore: { $round: ["$averageScore", 2] },
+          _id: 0,
+        },
+      },
+    ]);
+
+    logger.info(`Found ${topPerformers.length} top performers`);
+    res.json(topPerformers);
+  } catch (error) {
+    logger.error('Error fetching top performers', { 
+      error: error instanceof Error ? error.message : 'Unknown error' 
+    });
+    next(error);
+  }
+};
+
+export const getTrendingGames = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { days = 7, limit = 10 } = req.query;
+    logger.info('Fetching trending games', { days, limit });
+
+    const startDate = new Date();
+    startDate.setDate(startDate.getDate() - parseInt(days as string));
+
+    const trendingGames = await GameSession.aggregate([
+      { $match: { createdAt: { $gte: startDate } } },
+      {
+        $group: {
+          _id: "$gameId",
+          sessionCount: { $sum: 1 },
+          uniquePlayers: { $addToSet: "$userId" },
+          averageScore: { $avg: "$score" },
+        },
+      },
+      { $sort: { sessionCount: -1 } },
+      { $limit: parseInt(limit as string) },
+      {
+        $lookup: {
+          from: "games",
+          localField: "_id",
+          foreignField: "_id",
+          as: "gameDetails",
+        },
+      },
+      { $unwind: "$gameDetails" },
+      {
+        $project: {
+          gameId: "$_id",
+          gameName: "$gameDetails.name",
+          category: "$gameDetails.category",
+          sessionCount: 1,
+          uniquePlayers: { $size: "$uniquePlayers" },
+          averageScore: { $round: ["$averageScore", 2] },
+          _id: 0,
+        },
+      },
+    ]);
+
+    logger.info(`Found ${trendingGames.length} trending games`);
+    res.json(trendingGames);
+  } catch (error) {
+    logger.error('Error fetching trending games', { 
+      error: error instanceof Error ? error.message : 'Unknown error' 
+    });
+    next(error);
   }
 };

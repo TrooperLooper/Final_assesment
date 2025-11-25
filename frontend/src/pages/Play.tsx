@@ -2,12 +2,11 @@ import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import Layout from "../components/Navigation/Layout";
 import { GameCard } from "../components/Timer/GameCard";
-import { fetchGameById } from "../components/api/apiClient";
+import { logSession, fetchGameById } from "../components/api/apiClient";
 import pacmanGif from "../components/assets/pacman_gameicon.gif";
 import asteroidsGif from "../components/assets/asteroids_gameicon.gif";
 import tetrisGif from "../components/assets/tetris_gameicon.gif";
 import spaceGif from "../components/assets/space_gameicon.gif";
-import axios from "axios";
 
 interface Game {
   id: string;
@@ -47,7 +46,6 @@ function Play() {
   const [hasStarted, setHasStarted] = useState(false);
   const [hasStopped, setHasStopped] = useState(false);
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
-  const [sessionId, setSessionId] = useState<string | null>(null);
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const [error, setError] = useState<string | null>(null);
 
@@ -99,16 +97,14 @@ function Play() {
     setIsPlaying(true);
 
     if (currentUser && gameId) {
+      console.log("Logging START session...");
       try {
-        const response = await axios.post(
-          "http://localhost:3000/api/sessions",
-          {
-            userId: currentUser._id,
-            gameId: gameId,
-          }
-        );
-        setSessionId(response.data._id);
-        console.log(`Session started: ${response.data._id}`);
+        await logSession({
+          userId: currentUser._id,
+          gameId,
+          playedSeconds: 0,
+        });
+        console.log("Start session logged");
       } catch (err) {
         console.error("Failed to start session:", err);
       }
@@ -120,12 +116,12 @@ function Play() {
     setHasStopped(true);
 
     if (elapsedSeconds > 0 && currentUser && gameId) {
+      console.log("Logging STOP session with", elapsedSeconds, "seconds");
       try {
-        // Log session with elapsed seconds
-        await axios.post("http://localhost:3000/api/sessions", {
+        await logSession({
           userId: currentUser._id,
           gameId,
-          minutesPlayed: elapsedSeconds,
+          playedSeconds: elapsedSeconds,
         });
         console.log(
           `Session logged: ${elapsedSeconds} minutes (${elapsedSeconds} real seconds)`

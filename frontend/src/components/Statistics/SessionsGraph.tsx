@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import axios from "axios";
+import { fetchAllSessions, fetchUserSessions } from "../api/apiClient";
 
 interface SessionsGraphProps {
   userId?: string; // Optional: filter by user
@@ -64,33 +64,39 @@ const SessionsGraph: React.FC<SessionsGraphProps> = ({ userId }) => {
   );
 
   return (
-    <div className="w-full">
-      <h3 className="text-white text-xl font-bold mb-4">Sessions Overview</h3>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {Object.entries(sessionsByGame).map(
-          ([gameName, stats]: [string, GameStats]) => (
-            <div
-              key={gameName}
-              className="bg-white/20 rounded-lg p-6 flex flex-col items-center justify-center"
-            >
-              <div className="text-white text-4xl font-bold mb-2">
-                {stats.sessions}
+    <div className="w-full p-0">
+      <div className="bg-indigo-950 rounded-t-xl text-center px-4 py-2 w-full">
+        <span className="text-yellow-300 text-xl font-normal font-['Jersey_20']">
+          SESSIONS OVERVIEW
+        </span>
+      </div>
+      <div className="bg-transparent rounded-b-xl p-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          {Object.entries(sessionsByGame).map(
+            ([gameName, stats]: [string, GameStats]) => (
+              <div
+                key={gameName}
+                className="bg-white/20 rounded-lg p-6 flex flex-col items-center justify-center"
+              >
+                <div className="text-white text-4xl font-bold mb-2">
+                  {stats.sessions}
+                </div>
+                <div className="text-white text-sm font-semibold mb-1">
+                  {gameName}
+                </div>
+                <div className="text-white/70 text-xs">
+                  {stats.totalMinutes} min total
+                </div>
               </div>
-              <div className="text-white text-sm font-semibold mb-1">
-                {gameName}
-              </div>
-              <div className="text-white/70 text-xs">
-                {stats.totalMinutes} min total
-              </div>
-            </div>
-          )
+            )
+          )}
+        </div>
+        {Object.keys(sessionsByGame).length === 0 && (
+          <div className="text-white/70 text-center py-8">
+            No sessions recorded yet
+          </div>
         )}
       </div>
-      {Object.keys(sessionsByGame).length === 0 && (
-        <div className="text-white/70 text-center py-8">
-          No sessions recorded yet
-        </div>
-      )}
     </div>
   );
 };

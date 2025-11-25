@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import BarGraph from "../components/Statistics/BarGraph";
-import SessionsGraph from "../components/Statistics/SessionsGraph";
 import WeeklyPlayTimeGraph from "../components/Statistics/WeeklyPlayTimeGraph";
 import AllUsersBarGraph from "../components/Statistics/AllUsersBarGraph";
 import SingleUserCard from "../components/Statistics/SingleUserCard";
@@ -13,7 +12,8 @@ import pacmanIcon from "../components/assets/pacman_btn.jpeg";
 import asteroidsIcon from "../components/assets/asteroids_btn.jpeg";
 import tetrisIcon from "../components/assets/tetris_btn.jpeg";
 import spaceIcon from "../components/assets/space_btn.jpeg";
-import axios from "axios";
+import allPlayersIcon from "../components/assets/all_players.png";
+import { fetchUserStats, fetchGames } from "../components/api/apiClient";
 
 function Stats() {
   const [totalTimePlayed, setTotalTimePlayed] = useState(0);
@@ -21,7 +21,6 @@ function Stats() {
     { name: string; icon: string; percent: number }[]
   >([]);
   const [loading, setLoading] = useState(true);
-  const [selectedGame, setSelectedGame] = useState("Pac-man");
 
   // Get current user from localStorage
   const currentUser = JSON.parse(
@@ -33,31 +32,30 @@ function Stats() {
   };
 
   useEffect(() => {
-    const fetchUserStats = async () => {
+    const fetchStats = async () => {
       try {
         if (!currentUser._id) {
           setLoading(false);
           return;
         }
 
-        const res = await axios.get(
-          `http://localhost:3000/api/statistics/user/${currentUser._id}`
-        );
+        const res = await fetchUserStats(currentUser._id);
 
-        const totalMinutes = res.data.totalMinutes || 0;
-        const gameStats = res.data.gameStats || [];
+        const totalMinutes = res.totalMinutes || 0;
+        const gameStats = res.gameStats || [];
 
         setTotalTimePlayed(totalMinutes);
 
-        // Map game stats to percentage data
-        const allGames = [
-          { name: "Pac-man", icon: pacmanIcon },
-          { name: "Tetris", icon: tetrisIcon },
-          { name: "Asteroids", icon: asteroidsIcon },
-          { name: "Space Invaders", icon: spaceIcon },
-        ];
+        // Fetch games from API and map with local icons
+        const apiGames = await fetchGames();
+        const iconMap: Record<string, string> = {
+          "Pac-man": pacmanIcon,
+          Tetris: tetrisIcon,
+          Asteroids: asteroidsIcon,
+          "Space Invaders": spaceIcon,
+        };
 
-        const gamesWithPercent = allGames.map((game) => {
+        const gamesWithPercent = apiGames.map((game: any) => {
           const stat = gameStats.find(
             (s: { gameName: string; minutesPlayed: number }) =>
               s.gameName.toLowerCase() === game.name.toLowerCase()
@@ -68,7 +66,7 @@ function Stats() {
 
           return {
             name: game.name,
-            icon: game.icon,
+            icon: iconMap[game.name] || "",
             percent,
           };
         });
@@ -87,7 +85,7 @@ function Stats() {
         setLoading(false);
       }
     };
-    fetchUserStats();
+    fetchStats();
   }, [currentUser._id]);
 
   if (loading) return <p>Loading...</p>;
@@ -118,8 +116,8 @@ function Stats() {
                 <div className="grid grid-cols-1 md:grid-cols-[1fr_2fr] gap-8">
                   {/* PieChart - narrower */}
                   <div className="flex flex-col">
-                    <div className="bg-indigo-950  rounded-t-xl text-center px-4 py-2 w-full">
-                      <span className="text-yellow-300 text-xl font-normal font-['Jersey_20']">
+                    <div className="bg-pink-600 rounded-t-xl text-center px-4 py-2 w-full">
+                      <span className="text-white text-xl font-normal font-['Jersey_20']">
                         TIME PER GAME
                       </span>
                     </div>
@@ -130,8 +128,8 @@ function Stats() {
 
                   {/* BarGraph - wider */}
                   <div className="bg-white/10 rounded-xl shadow w-full p-0">
-                    <div className="bg-indigo-950  rounded-t-xl text-center px-4 py-2 w-full">
-                      <span className="text-yellow-300 text-xl font-normal font-['Jersey_20']">
+                    <div className="bg-pink-600 rounded-t-xl text-center px-4 py-2 w-full">
+                      <span className="text-white text-xl font-normal font-['Jersey_20']">
                         MINUTES PLAYED PER GAME
                       </span>
                     </div>
@@ -147,7 +145,11 @@ function Stats() {
 
             <div className="bg-black/50 rounded-t-2xl shadow-lg p-4 sm:p-8 w-full max-w-6xl mb-2">
               <div className="flex items-center  font-['Jersey_20'] text-yellow-300 font-bold text-3xl sm:text-5xl mb-2">
-                <div className="w-30 h-30 justify-center md:justify-start bg-amber-600 mr-8"></div>
+                <img
+                  src={allPlayersIcon}
+                  alt="Pixel art avatar representing all players"
+                  className="w-24 h-24 sm:w-32 sm:h-32 rounded-lg border-2 border-white mr-4 sm:mr-8 object-cover"
+                />
                 <div className="justify-start">
                   <h2 className="">All players</h2>
                 </div>
@@ -157,22 +159,16 @@ function Stats() {
             <div className="parentDiv bg-black/30 rounded-b-2xl shadow-lg p-4 sm:p-8 w-full max-w-6xl mb-8">
               {/* Statistics Graphs */}
               <div className="flex flex-col gap-8 w-full">
-                <div className="bg-white/10 rounded-xl p-6 shadow w-full">
-                  <SessionsGraph />
+                <div className="bg-white/10 rounded-xl shadow w-full">
+                  <WeeklyPlayTimeGraph />
                 </div>
-                <div className="bg-white/10 rounded-xl p-6 shadow w-full">
-                  <WeeklyPlayTimeGraph
-                    selectedGame={selectedGame}
-                    onGameChange={(game) => setSelectedGame(game)}
-                  />
-                </div>
-                <div className="bg-white/10 rounded-xl p-6 shadow w-full">
+                <div className="bg-white/10 rounded-xl shadow w-full">
                   <GameFrequencyGraph />
                 </div>
-                <div className="bg-white/10 rounded-xl p-6 shadow w-full">
+                <div className="bg-white/10 rounded-xl shadow w-full">
                   <AllUsersBarGraph />
                 </div>
-                <div className="bg-white/10 rounded-xl p-6 shadow w-full">
+                <div className="bg-white/10 rounded-xl shadow w-full">
                   <LeaderboardTable />
                 </div>
                 {/* Scroll to Top Button */}

@@ -1,75 +1,194 @@
-import { Request, Response } from "express";
-import { User } from "../models/User";
+import { Request, Response, NextFunction } from "express";
 import { z } from "zod";
+import { User } from "../models/User";
+import logger from '../utils/logger';
 
 const userSchema = z.object({
+  firstName: z.string().min(1, "First name is required"),
+  lastName: z.string().optional(),
   email: z.string().email(),
-  firstName: z.string().min(1),
-  lastName: z.string().min(1), // Add lastName to the schema
-  profilePicture: z.string().optional(), // Use profilePicture for consistency
+  profilePicture: z.string().url().optional(),
 });
 
-export const getAllUsers = async (req: Request, res: Response) => {
-  const users = await User.find();
-  res.json(users);
-};
+const updateUserSchema = z.object({
+  firstName: z.string().min(1).optional(),
+  lastName: z.string().optional(),
+  email: z.string().email().optional(),
+  profilePicture: z.string().url().optional(),
+});
 
-export const getUserById = async (req: Request, res: Response) => {
-  const user = await User.findById(req.params.id);
-  if (!user) return res.status(404).json({ message: "User not found" });
-  res.json(user);
-};
-
-export const createUser = async (req: Request, res: Response) => {
+export const getAllUsers = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const avatarPath = req.file
-      ? `/uploads/${req.file.filename}`
-      : req.body.profilePicture;
-    const validated = userSchema.parse({
-      ...req.body,
-      profilePicture: avatarPath,
+    logger.info('Fetching all users');
+    const users = await User.find();
+    logger.info(`Found ${users.length} users`);
+    res.json(users);
+  } catch (error) {
+    logger.error('Error fetching users', { 
+      error: error instanceof Error ? error.message : 'Unknown error' 
     });
-    const newUser = await User.create(validated);
-    res.status(201).json(newUser);
-  } catch (err) {
-    res.status(400).json(err);
+    next(error);
   }
 };
 
-export const updateUserById = async (req: Request, res: Response) => {
-  const user = await User.findByIdAndUpdate(req.params.id, req.body, {
-    new: true,
-  });
-  res.json(user);
-};
-
-export const deleteUserById = async (req: Request, res: Response) => {
-  await User.findByIdAndDelete(req.params.id);
-  res.json({ message: "User deleted" });
-};
-
-// Picture upload endpoint
-export const uploadAvatar = async (req: Request, res: Response) => {
-  const { userId } = req.body;
-  const avatarPath = req.file ? `/uploads/${req.file.filename}` : null;
-
-  // Update user in DB with avatarPath
-  await User.findByIdAndUpdate(userId, { profilePicture: avatarPath });
-
-  res.status(201).json({ profilePicture: avatarPath });
-};
-
-// Middleware to check required fields
-export const checkRequiredFields = (
-  req: Request,
-  res: Response,
-  next: () => void
-) => {
-  const { email, firstName, lastName } = req.body;
-  if (!email || !firstName || !lastName) {
-    return res
-      .status(400)
-      .json({ error: "Email, firstName, and lastName are required." });
+export const getUserById = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { id } = req.params;
+    logger.info('Fetching user by ID', { userId: id });
+    
+    const user = await User.findById(id);
+    
+    if (!user) {
+      logger.warn('User not found', { userId: id });
+      return res.status(404).json({ message: 'User not found' });
+    }
+    
+    logger.info('User found', { userId: id });
+    res.json(user);
+  } catch (error) {
+    logger.error('Error fetching user', { 
+      userId: req.params.id,
+      error: error instanceof Error ? error.message : 'Unknown error' 
+    });
+    next(error);
   }
-  next();
+};
+
+export const createUser = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    logger.info('Creating new user', { firstName: req.body.firstName, email: req.body.email });
+    const validatedData = userSchema.parse(req.body);
+    
+    const existingUser = await User.findOne({ email: validatedData.email });
+    
+    if (existingUser) {
+      logger.warn('User already exists', { email: validatedData.email });
+      return res.status(409).json({ message: 'User with this email already exists' });
+    }
+    
+    const user = new User(validatedData);
+    await user.save();
+    
+    logger.info('User created successfully', { userId: user._id });
+    res.status(201).json(user);
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      logger.warn('Validation error creating user', { error });
+      return res.status(400).json({ message: 'Validation error', error });
+    }
+    logger.error('Error creating user', { 
+      error: error instanceof Error ? error.message : 'Unknown error' 
+    });
+    next(error);
+  }
+};
+
+export const updateUser = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { id } = req.params;
+    logger.info('Updating user', { userId: id });
+    
+    const validatedData = updateUserSchema.parse(req.body);
+    
+    const user = await User.findByIdAndUpdate(
+      id,
+      validatedData,
+      { new: true, runValidators: true }
+    );
+    
+    if (!user) {
+      logger.warn('User not found for update', { userId: id });
+      return res.status(404).json({ message: 'User not found' });
+    }
+    
+    logger.info('User updated successfully', { userId: id });
+    res.json(user);
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      logger.warn('Validation error updating user', { error });
+      return res.status(400).json({ message: 'Validation error', error });
+    }
+    logger.error('Error updating user', { 
+      userId: req.params.id,
+      error: error instanceof Error ? error.message : 'Unknown error' 
+    });
+    next(error);
+  }
+};
+
+export const deleteUser = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { id } = req.params;
+    logger.info('Deleting user', { userId: id });
+    
+    const user = await User.findByIdAndDelete(id);
+    
+    if (!user) {
+      logger.warn('User not found for deletion', { userId: id });
+      return res.status(404).json({ message: 'User not found' });
+    }
+    
+    logger.info('User deleted successfully', { userId: id });
+    res.json({ message: 'User deleted successfully' });
+  } catch (error) {
+    logger.error('Error deleting user', { 
+      userId: req.params.id,
+      error: error instanceof Error ? error.message : 'Unknown error' 
+    });
+    next(error);
+  }
+};
+
+export const getUserByEmail = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { email } = req.params;
+    logger.info('Fetching user by email', { email });
+    
+    const user = await User.findOne({ email });
+    
+    if (!user) {
+      logger.warn('User not found', { email });
+      return res.status(404).json({ message: 'User not found' });
+    }
+    
+    logger.info('User found', { email });
+    res.json(user);
+  } catch (error) {
+    logger.error('Error fetching user by email', { 
+      email: req.params.email,
+      error: error instanceof Error ? error.message : 'Unknown error' 
+    });
+    next(error);
+  }
+};
+
+export const searchUsers = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { query } = req.query;
+    
+    if (!query || typeof query !== 'string') {
+      logger.warn('Invalid search query');
+      return res.status(400).json({ message: 'Query parameter is required' });
+    }
+    
+    logger.info('Searching users', { query });
+    
+    const searchRegex = new RegExp(query, 'i');
+    const users = await User.find({
+      $or: [
+        { firstName: searchRegex },
+        { lastName: searchRegex },
+        { email: searchRegex }
+      ]
+    });
+    
+    logger.info(`Found ${users.length} users`);
+    res.json(users);
+  } catch (error) {
+    logger.error('Error searching users', { 
+      query: req.query.query,
+      error: error instanceof Error ? error.message : 'Unknown error' 
+    });
+    next(error);
+  }
 };

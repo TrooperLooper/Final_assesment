@@ -9,7 +9,8 @@ import {
   ResponsiveContainer,
   CartesianGrid,
 } from "recharts";
-import axios from "axios";
+import { fetchAllSessions, fetchGames } from "../api/apiClient";
+import { getUserColor } from "../../utils/userColors";
 
 interface SessionData {
   _id: string;
@@ -20,39 +21,33 @@ interface SessionData {
 }
 
 interface WeeklyPlayTimeGraphProps {
-  userId?: string;
-  selectedGame: string;
-  onGameChange: (game: string) => void;
+  // No props needed - shows all users for selected game
 }
 
-const WeeklyPlayTimeGraph: React.FC<WeeklyPlayTimeGraphProps> = ({
-  userId,
-  selectedGame,
-  onGameChange,
-}) => {
+const WeeklyPlayTimeGraph: React.FC<WeeklyPlayTimeGraphProps> = () => {
   const [sessions, setSessions] = useState<SessionData[]>([]);
   const [loading, setLoading] = useState(true);
   const [games, setGames] = useState<string[]>([]);
+  const [selectedGame, setSelectedGame] = useState<string>("");
 
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Fetch sessions
-        const sessionsEndpoint = userId
-          ? `http://localhost:3000/api/statistics/sessions/${userId}`
-          : "http://localhost:3000/api/statistics/sessions";
-        const sessionsRes = await axios.get(sessionsEndpoint);
-        
-        console.log("Fetched sessions:", sessionsRes.data);
-        setSessions(sessionsRes.data);
+        // Fetch ALL sessions (not filtered by user)
+        const sessionsData = await fetchAllSessions();
+        console.log("Fetched all sessions:", sessionsData);
+        setSessions(sessionsData);
 
-        // Fetch ALL games (not just from sessions)
-        const gamesRes = await axios.get("http://localhost:3000/api/games");
-        const allGames = gamesRes.data.map((g: any) => g.name);
-        
+        // Fetch games
+        const gamesData = await fetchGames();
+        const allGames = gamesData.map((g: any) => g.name);
         console.log("All games:", allGames);
         setGames(allGames);
-        
+
+        // Set first game as default
+        if (allGames.length > 0) {
+          setSelectedGame(allGames[0]);
+        }
       } catch (error) {
         console.error("Error fetching data:", error);
         setSessions([]);
@@ -61,57 +56,78 @@ const WeeklyPlayTimeGraph: React.FC<WeeklyPlayTimeGraphProps> = ({
       }
     };
     fetchData();
-  }, [userId]);
+  }, []);
 
   if (loading) return <div className="text-white">Loading weekly stats...</div>;
 
   // Filter sessions by selected game
-  const filteredSessions = selectedGame === "all"
-    ? sessions
-    : sessions.filter((s) => s.gameId?.name === selectedGame);
+  const filteredSessions = sessions.filter(
+    (s) => s.gameId?.name === selectedGame
+  );
 
-  // Get last 7 days starting from Monday
-  const getLast7DaysFromMonday = () => {
-    const today = new Date();
-    const currentDay = today.getDay(); // 0 = Sunday, 1 = Monday, etc.
-    const daysFromMonday = currentDay === 0 ? 6 : currentDay - 1;
-    
+  // Get last 7 days ending on today
+  const getLast7Days = () => {
     return Array.from({ length: 7 }, (_, i) => {
       const date = new Date();
-      date.setDate(date.getDate() - daysFromMonday + i);
-      return date.toISOString().split("T")[0];
+      date.setDate(date.getDate() - 6 + i); // Last 7 days ending today
+      return {
+        dateStr: date.toISOString().split("T")[0],
+        dayName: date.toLocaleDateString("en-US", { weekday: "short" }),
+      };
     });
   };
 
-  const last7Days = getLast7DaysFromMonday();
+  const last7Days = getLast7Days();
 
-  // Group sessions by day
-  const dailyData = last7Days.map((day) => {
-    const daySessions = filteredSessions.filter(
-      (s) => s.createdAt.split("T")[0] === day
-    );
-    const totalMinutes = daySessions.reduce((sum, s) => {
-      return sum + (s.playedSeconds ? Math.round(s.playedSeconds / 60) : 0);
-    }, 0);
+  // Get unique users from filtered sessions
+  const users = Array.from(
+    new Set(
+      filteredSessions
+        .filter((s) => s.userId && typeof s.userId === "object")
+        .map((s) => {
+          const user = s.userId as any;
+          return `${user.firstName} ${user.lastName}`;
+        })
+    )
+  );
 
-    return {
-      day: new Date(day).toLocaleDateString("en-US", { weekday: "short" }),
-      minutes: totalMinutes,
+  // Create data structure: each day has minutes per user
+  const chartData = last7Days.map(({ dateStr, dayName }) => {
+    const dayData: any = {
+      day: dayName, // Dynamic day name (Mon, Tue, etc.)
+      date: dateStr,
     };
+
+    // For each user, calculate minutes played on this day
+    users.forEach((userName) => {
+      const userSessions = filteredSessions.filter((s) => {
+        if (!s.userId || typeof s.userId !== "object") return false;
+        const user = s.userId as any;
+        const fullName = `${user.firstName} ${user.lastName}`;
+        return fullName === userName && s.createdAt.split("T")[0] === dateStr;
+      });
+
+      const totalMinutes = userSessions.reduce(
+        (sum, s) => sum + (s.playedSeconds || 0),
+        0
+      );
+      dayData[userName] = totalMinutes;
+    });
+
+    return dayData;
   });
 
   return (
-    <div className="w-full">
-      <div className="flex justify-between items-center mb-4">
-        <h3 className="text-white text-xl font-bold">
-          Weekly Play Time (Last 7 Days)
-        </h3>
+    <div className="w-full p-0">
+      <div className="bg-pink-600 rounded-t-xl text-center px-4 py-2 w-full flex justify-between items-center">
+        <span className="text-white text-xl font-normal font-['Jersey_20']">
+          WEEKLY PLAY TIME BY USER
+        </span>
         <select
           value={selectedGame}
-          onChange={(e) => onGameChange(e.target.value)}
-          className="bg-gray-700 text-white px-4 py-2 rounded-lg border border-gray-600 focus:outline-none focus:ring-2 focus:ring-pink-500"
+          onChange={(e) => setSelectedGame(e.target.value)}
+          className="px-4 py-2 bg-gradient-to-r from-pink-500 to-purple-600 text-white font-bold rounded-lg border-2 border-yellow-300 focus:outline-none focus:border-yellow-400 cursor-pointer shadow-lg hover:from-pink-600 hover:to-purple-700"
         >
-          
           {games.map((game) => (
             <option key={game} value={game}>
               {game}
@@ -119,44 +135,54 @@ const WeeklyPlayTimeGraph: React.FC<WeeklyPlayTimeGraphProps> = ({
           ))}
         </select>
       </div>
-      <ResponsiveContainer width="100%" height={300}>
-        <LineChart data={dailyData}>
-          <CartesianGrid strokeDasharray="3 3" stroke="#ffffff20" />
-          <XAxis dataKey="day" stroke="#fff" />
-          <YAxis
-            stroke="#fff"
-            label={{
-              value: "Minutes",
-              angle: -90,
-              position: "insideLeft",
-              style: { fill: "#fff" },
-            }}
-          />
-          <Tooltip
-            contentStyle={{
-              backgroundColor: "#1a1a1a",
-              border: "1px solid #333",
-              borderRadius: "8px",
-            }}
-            labelStyle={{ color: "#fff" }}
-          />
-          <Legend wrapperStyle={{ color: "#fff" }} />
-          <Line
-            type="monotone"
-            dataKey="minutes"
-            stroke="#ec4899"
-            strokeWidth={3}
-            dot={{ fill: "#ec4899", r: 5 }}
-            activeDot={{ r: 7 }}
-            name="Minutes Played"
-          />
-        </LineChart>
-      </ResponsiveContainer>
-      {dailyData.every((d) => d.minutes === 0) && (
-        <div className="text-white/70 text-center mt-4">
-          No play time recorded in the last 7 days
-        </div>
-      )}
+      <div className="bg-transparent rounded-b-xl p-6">
+        <ResponsiveContainer width="100%" height={400}>
+          <LineChart data={chartData}>
+            <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
+            <XAxis dataKey="day" stroke="#fff" tick={{ fill: "#fff" }} />
+            <YAxis
+              stroke="#fff"
+              tick={{ fill: "#fff" }}
+              label={{
+                value: "Minutes Played",
+                angle: -90,
+                position: "insideLeft",
+                fill: "#fff",
+                style: { fontSize: "14px" },
+              }}
+            />
+            <Tooltip
+              contentStyle={{
+                backgroundColor: "#1f2937",
+                border: "1px solid #374151",
+                borderRadius: "8px",
+              }}
+              labelStyle={{ color: "#fff" }}
+            />
+            <Legend wrapperStyle={{ color: "#fff", paddingTop: "20px" }} />
+
+            {/* Create a line for each user */}
+            {users.map((userName) => (
+              <Line
+                key={userName}
+                type="monotone"
+                dataKey={userName}
+                stroke={getUserColor(userName)}
+                strokeWidth={2}
+                dot={{ r: 4 }}
+                activeDot={{ r: 6 }}
+                name={userName}
+              />
+            ))}
+          </LineChart>
+        </ResponsiveContainer>
+
+        {users.length === 0 && (
+          <div className="text-white/70 text-center mt-4">
+            No play time recorded for {selectedGame} in the last 7 days
+          </div>
+        )}
+      </div>
     </div>
   );
 };
