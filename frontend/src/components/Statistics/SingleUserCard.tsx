@@ -18,7 +18,7 @@ const SingleUserCard: React.FC<SingleUserCardProps> = ({
   const navigate = useNavigate();
 
   return (
-    <div className="bg-black/50 mb-2 rounded-tr-xl rounded-tl-xl shadow-lg p-6 sm:p-8 w-full max-w-6xl">
+    <div className="bg-black/60 rounded-tr-xl rounded-tl-xl shadow-lg p-6 sm:p-8 w-full max-w-6xl">
       <div className="grid grid-cols-1 md:grid-cols-[auto_1fr_auto] gap-4 md:gap-8 items-center">
         {/* Profile Picture */}
         <div className="flex items-center justify-center md:justify-start">
