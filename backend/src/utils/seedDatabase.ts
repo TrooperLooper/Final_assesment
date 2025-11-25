@@ -42,7 +42,7 @@ async function seedDatabase() {
     const createdGames = await Game.insertMany(games);
     console.log(`Successfully seeded ${createdGames.length} games:`);
     createdGames.forEach(game => {
-      console.log(`  - ${game.name} (ID: ${game._id})`);
+      console.log(`- ${game.name} (ID: ${game._id})`);
     });
     
   } catch (error) {
