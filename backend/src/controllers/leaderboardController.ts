@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { User } from "../models/User";
 import { GameSession } from "../models/GameSession";
 import mongoose from "mongoose";
+import logger from '../utils/logger';
 
 export const getLeaderboard = async (req: Request, res: Response) => {
   try {
@@ -147,7 +148,11 @@ export const getLeaderboard = async (req: Request, res: Response) => {
 
     res.json(rankedLeaderboard);
   } catch (error) {
-    console.error("Leaderboard error:", error);
+    logger.error("Leaderboard error", {
+      error: String(error),
+      type: req.query.type || 'wins',
+      gameId: req.query.gameId
+    });
     res.status(500).json({ error: "Failed to fetch leaderboard" });
   }
 };

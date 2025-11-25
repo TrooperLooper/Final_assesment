@@ -7,6 +7,7 @@ import {
 } from "../controllers/sessionController";
 import mongoose from "mongoose"; // Import mongoose
 import { GameSession } from "../models/GameSession"; // Import the GameSession model
+import logger from "../utils/logger";
 
 const router = express.Router();
 
@@ -23,9 +24,20 @@ router.post("/", async (req, res) => {
       playedSeconds, // Frontend sends playedSeconds (1 second = 1 minute in system)
     });
 
+    logger.info('Session created via direct endpoint', {
+      sessionId: session._id,
+      userId,
+      gameId,
+      playedSeconds
+    });
+
     res.status(201).json(session);
   } catch (error) {
-    console.error("Error creating session:", error);
+    logger.error("Error creating session via direct endpoint", {
+      error: String(error),
+      userId: req.body.userId,
+      gameId: req.body.gameId
+    });
     res.status(500).json({ message: "Error creating session", error });
   }
 });

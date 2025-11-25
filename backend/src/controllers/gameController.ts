@@ -13,30 +13,28 @@ const gameSchema = z.object({
 
 export const getAllGames = async (req: Request, res: Response) => {
   try {
-    console.log('📦 Fetching all games...');
     const games = await Game.find();
-    console.log(`✅ Found ${games.length} games:`, games);
+    logger.info(`Retrieved all games from database`, { gameCount: games.length });
     res.json(games);
   } catch (error) {
-    console.error('❌ Error fetching games:', error);
+    logger.error('Error fetching all games', { error: String(error) });
     res.status(500).json({ message: 'Error fetching games', error });
   }
 };
 
 export const getGameById = async (req: Request, res: Response) => {
   try {
-    console.log('📦 Fetching game by ID:', req.params.id);
     const game = await Game.findById(req.params.id);
     
     if (!game) {
-      console.log('❌ Game not found');
+      logger.warn(`Game not found with ID: ${req.params.id}`);
       return res.status(404).json({ message: 'Game not found' });
     }
     
-    console.log('✅ Game found:', game);
+    logger.info(`Retrieved game by ID`, { gameId: req.params.id, gameName: game.name });
     res.json(game);
   } catch (error) {
-    console.error('❌ Error fetching game:', error);
+    logger.error('Error fetching game by ID', { error: String(error), gameId: req.params.id });
     res.status(500).json({ message: 'Error fetching game', error });
   }
 };
@@ -46,14 +44,17 @@ export const createGame = async (req: Request, res: Response) => {
     const data = gameSchema.parse(req.body);
     const newGame = await Game.create(data);
 
-    logger.info('Game started', {
+    logger.info('New game created', {
       gameId: newGame._id,
-      startTime: new Date().toISOString(),
-      timerMultiplier: config.timerMultiplier
+      gameName: data.name,
+      hasDescription: !!data.description,
+      hasImageUrl: !!data.imageUrl,
+      createdAt: new Date().toISOString()
     });
 
     res.status(201).json(newGame);
   } catch (err) {
+    logger.error('Error creating game', { error: String(err) });
     res.status(400).json(err);
   }
 };
@@ -68,11 +69,18 @@ export const updateGame = async (req: Request, res: Response) => {
     );
     
     if (!updatedGame) {
+      logger.warn(`Attempted to update non-existent game: ${req.params.id}`);
       return res.status(404).json({ error: "Game not found" });
     }
     
+    logger.info('Game updated', { 
+      gameId: req.params.id,
+      gameName: updatedGame.name,
+      updateFields: Object.keys(data)
+    });
     res.json(updatedGame);
   } catch (err) {
+    logger.error('Error updating game', { error: String(err), gameId: req.params.id });
     res.status(400).json(err);
   }
 };
@@ -83,15 +91,17 @@ export const completeGame = async (req: Request, res: Response) => {
     
     const game = await Game.findById(gameId);
     if (!game) {
+      logger.warn(`Attempted to complete non-existent game: ${gameId}`);
       return res.status(404).json({ error: 'Game not found' });
     }
 
+    const gameHours = (durationInSeconds / config.timerMultiplier).toFixed(2);
+    
     logger.info('Game completed', {
       gameId,
       gameName: game.name,
       durationInSeconds,
-      gameHoursPlayed: (durationInSeconds / config.timerMultiplier).toFixed(2),
-      realTimeSpent: `${durationInSeconds} seconds`,
+      gameHoursPlayed: gameHours,
       timerMultiplier: config.timerMultiplier,
       completedAt: new Date().toISOString()
     });
@@ -99,10 +109,10 @@ export const completeGame = async (req: Request, res: Response) => {
     res.json({ 
       message: 'Game completed',
       duration: durationInSeconds,
-      gameHours: (durationInSeconds / config.timerMultiplier).toFixed(2)
+      gameHours: gameHours
     });
   } catch (err) {
-    logger.error('Error completing game', { error: err });
+    logger.error('Error completing game', { error: String(err), gameId: req.body.gameId });
     res.status(500).json({ error: 'Failed to complete game' });
   }
 };

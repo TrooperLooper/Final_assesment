@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import { Game } from "../models/Game";
+import logger from "./logger";
 
 dotenv.config();
 
@@ -32,26 +33,29 @@ async function seedDatabase() {
   ];
 
   try {
-    console.log("🔌 Connecting to MongoDB...");
+    logger.info("Starting database seeding process");
     await mongoose.connect(MONGODB_URI);
-    console.log("✅ Connected to MongoDB");
+    logger.info('Connected to MongoDB for seeding', { database: MONGODB_URI });
     
-    console.log("🗑️  Clearing existing games...");
+    logger.info("Clearing existing games from database");
     await Game.deleteMany({});
     
-    console.log("🌱 Seeding games into the database...");
+    logger.info("Seeding games into the database");
     const createdGames = await Game.insertMany(games);
-    console.log(`✅ Successfully seeded ${createdGames.length} games:`);
-    createdGames.forEach(game => {
-      console.log(`  - ${game.name} (ID: ${game._id})`);
+    logger.info(`Successfully seeded games`, {
+      gameCount: createdGames.length,
+      games: createdGames.map(g => g.name)
     });
     
   } catch (error) {
-    console.error("❌ Error seeding the database:", error);
+    logger.error("Error seeding the database", {
+      error: String(error),
+      database: MONGODB_URI
+    });
     process.exit(1);
   } finally {
     await mongoose.connection.close();
-    console.log("🔌 Database connection closed");
+    logger.info("Database connection closed after seeding");
     process.exit(0);
   }
 }

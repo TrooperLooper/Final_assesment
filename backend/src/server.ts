@@ -2,6 +2,7 @@ import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
 import dotenv from "dotenv";
+import logger from './utils/logger';
 import userRouter from "./routes/userRoutes";
 import gamesRouter from "./routes/GameRoutes";
 import sessionRouter from "./routes/sessionRoutes";
@@ -36,16 +37,22 @@ app.use("/api/statistics", statisticsRouter); //Statistics routes
 mongoose
   .connect(MONGODB_URI)
   .then(() => {
-    console.log("Connected to MongoDB");
-    console.log("Database:", MONGODB_URI);
+    logger.info('Successfully connected to MongoDB', { database: MONGODB_URI });
 
     // Start server only after DB connection
     app.listen(PORT, () => {
-      console.log(`Server running on http://localhost:${PORT}`);
-      console.log(`API available at http://localhost:${PORT}/api`);
+      logger.info(`🚀 Server started successfully`, {
+        port: PORT,
+        environment: process.env.NODE_ENV || 'development',
+        apiUrl: `http://localhost:${PORT}/api`
+      });
     });
   })
   .catch((error) => {
-    console.error("MongoDB connection error:", error);
+    logger.error('Failed to connect to MongoDB', { 
+      error: String(error), 
+      database: MONGODB_URI,
+      retrying: 'Check connection string and database availability'
+    });
     process.exit(1);
   });
