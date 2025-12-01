@@ -76,7 +76,7 @@ const GlobalSearch: React.FC = () => {
             type: "game" as const,
             id: game._id,
             name: game.name,
-            route: `/games`,
+            route: `/play/${game._id}`,
           }));
 
         setResults([...userResults, ...gameResults]);
@@ -94,6 +94,23 @@ const GlobalSearch: React.FC = () => {
   }, [query]);
 
   const handleResultClick = (result: SearchResult) => {
+    if (result.type === "user") {
+      // Fetch full user data and store in localStorage
+      const getUserData = async () => {
+        try {
+          const response = await apiClient.get(`/users`);
+          const users = response.data;
+          const user = users.find((u: any) => u._id === result.id);
+          if (user) {
+            localStorage.setItem("currentUser", JSON.stringify(user));
+            window.dispatchEvent(new Event("userChanged")); // Notify other components
+          }
+        } catch (error) {
+          console.error("Error fetching user data:", error);
+        }
+      };
+      getUserData();
+    }
     navigate(result.route);
     setQuery("");
     setIsOpen(false);

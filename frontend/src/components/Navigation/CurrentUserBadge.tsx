@@ -1,9 +1,37 @@
-import React from "react";
-
-const defaultAvatar = "/path/to/default/avatar.png"; // Update path
+import React, { useState, useEffect } from "react";
+import defaultAvatar from "../assets/user_default.jpeg";
 
 export const CurrentUserBadge: React.FC = () => {
-  const user = JSON.parse(localStorage.getItem("currentUser") || "null");
+  const [user, setUser] = useState<any>(null);
+
+  useEffect(() => {
+    // Load user on mount
+    const storedUser = localStorage.getItem("currentUser");
+    if (storedUser) {
+      try {
+        setUser(JSON.parse(storedUser));
+      } catch (error) {
+        console.error("Error parsing currentUser:", error);
+        setUser(null);
+      }
+    }
+
+    // Listen for user changes from GlobalSearch
+    const handleUserChanged = () => {
+      const storedUser = localStorage.getItem("currentUser");
+      if (storedUser) {
+        try {
+          setUser(JSON.parse(storedUser));
+        } catch (error) {
+          console.error("Error parsing currentUser:", error);
+          setUser(null);
+        }
+      }
+    };
+
+    window.addEventListener("userChanged", handleUserChanged);
+    return () => window.removeEventListener("userChanged", handleUserChanged);
+  }, []);
 
   if (!user) return null;
 

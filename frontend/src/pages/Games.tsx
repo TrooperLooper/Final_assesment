@@ -64,6 +64,33 @@ function Games() {
   const navigate = useNavigate();
 
   useEffect(() => {
+    // Load user on mount
+    const user = localStorage.getItem("currentUser");
+    if (user) {
+      try {
+        setCurrentUser(JSON.parse(user));
+      } catch {
+        setCurrentUser(null);
+      }
+    }
+
+    // Listen for user changes from GlobalSearch
+    const handleUserChanged = () => {
+      const user = localStorage.getItem("currentUser");
+      if (user) {
+        try {
+          setCurrentUser(JSON.parse(user));
+        } catch {
+          setCurrentUser(null);
+        }
+      }
+    };
+
+    window.addEventListener("userChanged", handleUserChanged);
+    return () => window.removeEventListener("userChanged", handleUserChanged);
+  }, []);
+
+  useEffect(() => {
     fetchGames()
       .then((data) => {
         // Merge API data with local assets
@@ -81,16 +108,6 @@ function Games() {
         console.error("Failed to fetch games:", error);
         setGames([]);
       });
-
-    // Check for current user in localStorage
-    const user = localStorage.getItem("currentUser");
-    if (user) {
-      try {
-        setCurrentUser(JSON.parse(user));
-      } catch {
-        setCurrentUser(null);
-      }
-    }
   }, []);
 
   const renderGameCard = (game: {
@@ -101,6 +118,22 @@ function Games() {
     small: boolean;
   }) => {
     const isDisabled = !currentUser;
+
+    const handleGameClick = () => {
+      if (!isDisabled) {
+        // Store the full game object in localStorage
+        localStorage.setItem(
+          "selectedGame",
+          JSON.stringify({
+            _id: game._id,
+            name: game.name,
+            color: game.color,
+            image: game.image,
+          })
+        );
+        navigate(`/play/${game._id}`);
+      }
+    };
 
     return (
       <div
@@ -114,11 +147,7 @@ function Games() {
         }
         w-[180px] h-[260px] m-2
       `}
-        onClick={() => {
-          if (!isDisabled) {
-            navigate(`/play/${game._id}`);
-          }
-        }}
+        onClick={handleGameClick}
         style={{
           minWidth: "120px",
           minHeight: "160px",

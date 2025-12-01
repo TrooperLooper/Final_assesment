@@ -17,20 +17,32 @@ function Stats() {
     { name: string; icon: string; percent: number }[]
   >([]);
   const [loading, setLoading] = useState(true);
+  const [currentUser, setCurrentUser] = useState<any>(null);
 
-  // Get current user from localStorage
-  const currentUser = JSON.parse(
-    localStorage.getItem("currentUser") || "null"
-  ) || {
-    firstName: "Testy",
-    lastName: "McTestface",
-    profilePicture: defaultAvatar,
-  };
+  // Load currentUser on mount and listen for changes
+  useEffect(() => {
+    const loadUser = () => {
+      const user = JSON.parse(
+        localStorage.getItem("currentUser") || "null"
+      ) || {
+        firstName: "Testy",
+        lastName: "McTestface",
+        profilePicture: defaultAvatar,
+      };
+      setCurrentUser(user);
+    };
+
+    loadUser();
+
+    // Listen for user changes from GlobalSearch
+    window.addEventListener("userChanged", loadUser);
+    return () => window.removeEventListener("userChanged", loadUser);
+  }, []);
 
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        if (!currentUser._id) {
+        if (!currentUser || !currentUser._id) {
           setLoading(false);
           return;
         }
@@ -77,7 +89,7 @@ function Stats() {
       }
     };
     fetchStats();
-  }, [currentUser._id]);
+  }, [currentUser]);
 
   if (loading) return <p>Loading...</p>;
 
