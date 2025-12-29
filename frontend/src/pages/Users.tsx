@@ -12,6 +12,18 @@ type User = {
   profilePicture?: string;
 };
 
+// Helper to get correct image URL
+const getImageUrl = (profilePictureUrl: string | undefined): string => {
+  if (!profilePictureUrl) return defaultAvatar;
+  // If it's already a full URL (starts with http), use it as-is
+  if (profilePictureUrl.startsWith("http")) return profilePictureUrl;
+  // If it's an /uploads path, prepend API_BASE_URL
+  if (profilePictureUrl.startsWith("/uploads"))
+    return `${API_BASE_URL}${profilePictureUrl}`;
+  // Otherwise use as-is
+  return profilePictureUrl;
+};
+
 function Users() {
   const [users, setUsers] = useState<User[]>([]);
   const navigate = useNavigate();
@@ -73,6 +85,8 @@ function Users() {
                     className="flex flex-col items-center cursor-pointer transition-transform hover:scale-105 active:scale-95"
                     onClick={() => {
                       localStorage.setItem("currentUser", JSON.stringify(user));
+                      // Dispatch custom event to notify CurrentUserBadge
+                      window.dispatchEvent(new Event("currentUserChanged"));
                       navigate(`/stats/${user._id}`);
                     }}
                     tabIndex={0}
@@ -81,14 +95,7 @@ function Users() {
                   >
                     <div className="w-32 h-32  bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden mb-2">
                       <img
-                        src={
-                          user.profilePicture &&
-                          user.profilePicture.startsWith("/uploads")
-                            ? `${API_BASE_URL}${user.profilePicture}`
-                            : user.profilePicture
-                            ? user.profilePicture
-                            : defaultAvatar
-                        }
+                        src={getImageUrl(user.profilePicture)}
                         alt={
                           user.firstName && user.lastName
                             ? `Profile picture of ${user.firstName} ${user.lastName}`

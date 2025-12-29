@@ -1,11 +1,33 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
+import defaultAvatarImage from "../assets/user_default.jpeg";
 
-const defaultAvatar = "/path/to/default/avatar.png"; // Update path
+const defaultAvatar = defaultAvatarImage;
 
 export const CurrentUserBadge: React.FC = () => {
-  const user = JSON.parse(localStorage.getItem("currentUser") || "null");
+  const [user, setUser] = useState(
+    JSON.parse(localStorage.getItem("currentUser") || "null")
+  );
 
-  if (!user) return null;
+  useEffect(() => {
+    // Listen for changes to localStorage
+    const handleStorageChange = () => {
+      const updatedUser = JSON.parse(
+        localStorage.getItem("currentUser") || "null"
+      );
+      setUser(updatedUser);
+    };
+
+    // Listen to storage events (works across tabs/windows)
+    window.addEventListener("storage", handleStorageChange);
+
+    // Also listen for custom events (same tab updates)
+    window.addEventListener("currentUserChanged", handleStorageChange);
+
+    return () => {
+      window.removeEventListener("storage", handleStorageChange);
+      window.removeEventListener("currentUserChanged", handleStorageChange);
+    };
+  }, []);
 
   return (
     <div className="flex flex-col items-center justify-end mr-4">

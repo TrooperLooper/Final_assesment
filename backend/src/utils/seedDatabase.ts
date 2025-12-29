@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 import { Game } from "../models/Game";
+import { User } from "../models/User";
 import logger from "./logger";
 
 dotenv.config();
@@ -33,19 +34,54 @@ async function seedDatabase() {
     },
   ];
 
+  const users = [
+    {
+      email: "anders@retrogaming.se",
+      firstName: "Anders",
+      lastName: "Svensson",
+      profilePicture: "http://localhost:3000/avatars/sabineWren.jpg",
+    },
+    {
+      email: "ingrid@retrogaming.se",
+      firstName: "Ingrid",
+      lastName: "Norström",
+      profilePicture: "http://localhost:3000/avatars/mazKanata.jpg",
+    },
+    {
+      email: "lars@retrogaming.se",
+      firstName: "Lars",
+      lastName: "Bergström",
+      profilePicture: "http://localhost:3000/avatars/galenErso.jpg",
+    },
+    {
+      email: "maja@retrogaming.se",
+      firstName: "Maja",
+      lastName: "Lundgren",
+      profilePicture: "http://localhost:3000/avatars/antBeru.jpg",
+    },
+  ];
+
   try {
     logger.info("Starting database seeding process");
     await mongoose.connect(MONGODB_URI);
     logger.info("Connected to MongoDB for seeding", { database: MONGODB_URI });
 
-    logger.info("Clearing existing games from database");
+    logger.info("Clearing existing games and users from database");
     await Game.deleteMany({});
+    await User.deleteMany({});
 
     logger.info("Seeding games into the database");
     const createdGames = await Game.insertMany(games);
     logger.info(`Successfully seeded games`, {
       gameCount: createdGames.length,
       games: createdGames.map((g) => g.name),
+    });
+
+    logger.info("Seeding test users into the database");
+    const createdUsers = await User.insertMany(users);
+    logger.info(`Successfully seeded users`, {
+      userCount: createdUsers.length,
+      users: createdUsers.map((u) => `${u.firstName} ${u.lastName}`),
     });
   } catch (error) {
     logger.error("Error seeding the database", {

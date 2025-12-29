@@ -30,8 +30,9 @@ app.use(
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ limit: "10mb", extended: true }));
 
-// Routes
-app.use("/uploads", express.static("uploads")); //Profile pictures (static folder)
+// Static files
+app.use("/uploads", express.static("uploads")); //Profile pictures (user uploads)
+app.use("/avatars", express.static("public/avatars")); //Seed avatars
 app.use("/api/users", userRouter); //User routes
 app.use("/api/games", gamesRouter); //Games routes
 app.use("/api/sessions", sessionRouter); //Sessions routes

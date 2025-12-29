@@ -18,6 +18,7 @@ interface SessionData {
   gameId: { name?: string } | null;
   playedSeconds?: number;
   createdAt: string;
+  startTime: string;
 }
 
 interface WeeklyPlayTimeGraphProps {
@@ -104,7 +105,7 @@ const WeeklyPlayTimeGraph: React.FC<WeeklyPlayTimeGraphProps> = () => {
         if (!s.userId || typeof s.userId !== "object") return false;
         const user = s.userId as any;
         const fullName = `${user.firstName} ${user.lastName}`;
-        return fullName === userName && s.createdAt.split("T")[0] === dateStr;
+        return fullName === userName && s.startTime.split("T")[0] === dateStr;
       });
 
       const totalMinutes = userSessions.reduce(

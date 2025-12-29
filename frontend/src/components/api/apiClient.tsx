@@ -1,10 +1,11 @@
 import axios from "axios";
 
 // Export base URL for use in components (e.g., image URLs)
-export const API_BASE_URL = "http://localhost:3000";
+export const API_BASE_URL =
+  import.meta.env.VITE_API_URL || "http://localhost:3000/api";
 
 export const apiClient = axios.create({
-  baseURL: `${API_BASE_URL}/api`,
+  baseURL: API_BASE_URL.endsWith("/api") ? API_BASE_URL : `${API_BASE_URL}/api`,
   headers: {
     "Content-Type": "application/json",
   },

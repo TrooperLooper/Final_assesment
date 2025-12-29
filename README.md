@@ -1,36 +1,36 @@
-# 🎮 Game Timer
+# 🎮 RetroTimer
 
-A fun accessible game time tracker for users, games, and sessions.  
-Track your playtime, view statistics, and compete on the leaderboard!
+A fullstack game session tracker built with retro arcade aesthetics. Track playtime, view statistics, and climb the leaderboard.
 
-This project was built as a backend school assignment at Sundsgården Folkhögskola in 2025.
-Focusing on RESTful API design, MongoDB integration, and TypeScript best practices.
+**What this is:** A school capstone project where I combined fullstack development, API design, and design thinking to create a functional game tracker with personality.
+
+**Why I built it:** To practice translating design thinking into code—building something that's not just functional, but enjoyable to use.
 
 ---
 
-_Registration & timetracking flow demonstration_
+## Demo
 
+**Registration & Time Tracking**  
 ![Registration & timetracking flow demonstration](GameTimer_Register.gif)
 
-_User statistics dashboard demonstration_
-
-## ![User statistics dashboard demonstration](GameTimer_Users_Stats.gif)
-
----
-
-## 🚀 What It Does
-
-- **Register:** Create a user profile with avatar.
-- **Games:** Browse and select retro games to play.
-- **Play:** Start a session, track your playtime with a retro timer.
-- **Stats:** View personal and global statistics, charts, and leaderboards.
-- **Users:** Search and view all registered users.
-- **Search Function:** Quickly find users with the global search bar.
-- **Weather Widget:** See live weather updates in the header.
+**User Statistics Dashboard**  
+![User statistics dashboard demonstration](GameTimer_Users_Stats.gif)
 
 ---
 
-## 🗂️ Pages
+## 🎮Features
+
+- **Register:** Create user profile with custom uploaded avatar
+- **Select Games:** Browse retro games (Pac-Man, Space Invaders, Tetris, etc.)
+- **Play:** Start sessions and track playtime with a custom-built retro timer
+- **Statistics:** View personal stats, charts, and global leaderboards
+- **Search Users:** Find other players and compare stats
+- **Weather Widget:** Live weather updates in header
+- **Retro UI:** Custom animated components built with CSS, GIFs, and dynamic divs
+
+---
+
+## Pages
 
 - `/register` — User registration
 - `/games` — Game selection
@@ -40,51 +40,73 @@ _User statistics dashboard demonstration_
 
 ---
 
-## 🗄️ Database Functions
+## Architecture
 
-See the ERD below for relationships:
+See the ERD below for data relationships:
 
 ![ERD](ERD-game.drawio.png)
 
-- **User:** Stores user info and profile picture
-- **Game:** Stores game info and icons
-- **GameSession:** Tracks play sessions, time played, and links to user/game
+**Models:**
+
+- **User** — Profile, avatar, timestamp tracking
+- **Game** — Game metadata (name, description, icon)
+- **GameSession** — Links user + game + playtime, tracks session history
 
 ---
 
 ## 🛠️ Tech Stack
 
-- **Frontend:** React, TypeScript, Tailwind CSS, Chart.js
-- **Backend:** Node.js, Express, MongoDB
-- **APIs:** RESTful endpoints for users, games, sessions, statistics
-- **Weather:** OpenWeatherMap API for live weather widget
+**Frontend:**
+
+- React 19 + TypeScript
+- Tailwind CSS (responsive design)
+- Chart.js + Recharts (data visualization)
+- Axios (API client)
+- Vite (build tool)
+
+**Backend:**
+
+- Node.js + Express
+- MongoDB + Mongoose (data layer)
+- Winston Logger (structured logging)
+- Docker (containerization)
+- TypeScript (type safety)
+
+**APIs & Integrations:**
+
+- REST API (users, games, sessions, statistics)
+- OpenWeatherMap API (live weather)
+- MongoDB Aggregation Pipeline (leaderboards & statistics)
 
 ---
 
-## 🏁 Quick Start
+## Quick Start
 
 **Prerequisites:**
 
-- Node.js & npm installed
-- Docker installed (runs MongoDB automatically)
+- Node.js & npm
+- Docker (optional, for MongoDB)
 
 **Setup:**
 
-1. Clone the repo
-2. `npm install` (installs both frontend & backend)
-3. `npm run seed` (seed 4 games to database)
-4. `./dev.sh` (starts Docker, backend, and frontend)
+```bash
+# Clone
+git clone https://github.com/TrooperLooper/RetroTimer.git
+cd RetroTimer
+
+# Install dependencies
+npm install
+
+# Seed initial data
+npm run seed
+
+# Start (Docker + services)
+./dev.sh
+```
 
 **Open:** http://localhost:5173
 
-**To See Data in Action:**
-
-1. Register a user (go to `/register`)
-2. Select the user on the Games page
-3. Play a game and log some time
-4. View stats on the Stats page
-
-**Alternatively (Manual - without Docker):**
+**Manual Setup (without Docker):**
 
 ```bash
 # Terminal 1 - Backend
@@ -94,8 +116,62 @@ cd backend && npm install && npm run dev
 cd frontend && npm install && npm run dev
 ```
 
+## Notes
+
+**Credit:** Built with @s-weberg as a collaborative learning project.
+
+**Next Steps:** This project was the foundation for understanding fullstack development. Future iterations could perhaps include real-time features (WebSockets), PWA capabilities, or expanded game library integration.
+
+---
+
+\*\*Happy playing! 🎮
+
+- Started with wireframes, ended with pixel-perfect retro UI
+- Used custom CSS animations and GIFs instead of libraries
+- Built dynamic timer component from divs (no SVG)
+
+**Fullstack Thinking**
+
+- Frontend consumes REST API (Axios)
+- Backend aggregates data for dashboards (MongoDB aggregation pipeline)
+- Understood data flow: form → API → database → visualization
+
+**Technical Skills Practiced**
+
+- TypeScript strictness caught bugs early
+- MongoDB aggregation for complex queries (leaderboards, stats)
+- Component reusability (stats charts, user cards)
+- Docker containerization for consistency
+- Winston logging for debugging production behavior
+
+**Real Problems**
+
+- Handling image uploads with file validation
+- Real-time data synchronization across pages
+- Performance optimization for charts with large datasets
+
+---
+
+## 📊 Key Features Breakdown
+
+**Custom Retro Timer**
+
+- Digital screens & buttons built from dynamic divs + CSS animations (not a library)
+- Color-coded segments for game type identification
+- Smooth transitions and visual feedback
+
+**Dashboard & Leaderboards**
+
+- MongoDB aggregation pipeline for ranking
+- Real-time stat calculations
+- Multiple chart types (bar, line, pie)
+
+**User System**
+
+- Avatar upload with validation
+- Session history per user
+- Comparative statistics
+
 ---
 
 Credits: Shared effort by @s-weberg and @TrooperLooper
-
-**Enjoy tracking your game time and climbing the leaderboard!**
