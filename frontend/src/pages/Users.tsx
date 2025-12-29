@@ -85,8 +85,6 @@ function Users() {
                     className="flex flex-col items-center cursor-pointer transition-transform hover:scale-105 active:scale-95"
                     onClick={() => {
                       localStorage.setItem("currentUser", JSON.stringify(user));
-                      // Dispatch custom event to notify CurrentUserBadge
-                      window.dispatchEvent(new Event("currentUserChanged"));
                       navigate(`/stats/${user._id}`);
                     }}
                     tabIndex={0}

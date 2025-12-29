@@ -39,25 +39,25 @@ async function seedDatabase() {
       email: "anders@retrogaming.se",
       firstName: "Anders",
       lastName: "Svensson",
-      profilePicture: "http://localhost:3000/avatars/sabineWren.jpg",
+      profilePictureUrl: "http://localhost:3000/avatars/sabineWren.jpg",
     },
     {
       email: "ingrid@retrogaming.se",
       firstName: "Ingrid",
       lastName: "Norström",
-      profilePicture: "http://localhost:3000/avatars/mazKanata.jpg",
+      profilePictureUrl: "http://localhost:3000/avatars/mazKanata.jpg",
     },
     {
       email: "lars@retrogaming.se",
       firstName: "Lars",
       lastName: "Bergström",
-      profilePicture: "http://localhost:3000/avatars/galenErso.jpg",
+      profilePictureUrl: "http://localhost:3000/avatars/galenErso.jpg",
     },
     {
       email: "maja@retrogaming.se",
       firstName: "Maja",
       lastName: "Lundgren",
-      profilePicture: "http://localhost:3000/avatars/antBeru.jpg",
+      profilePictureUrl: "http://localhost:3000/avatars/antBeru.jpg",
     },
   ];
 
