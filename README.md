@@ -8,13 +8,10 @@ A fullstack game session tracker built with retro arcade aesthetics. Track playt
 
 ---
 
-## Demo
-
 **Registration & Time Tracking**  
-![Registration & timetracking flow demonstration](GameTimer_Register.gif)
+![Responsive, colorfull and engaging design](index.png)
 
-**User Statistics Dashboard**  
-![User statistics dashboard demonstration](GameTimer_Users_Stats.gif)
+![The timer/ retro gamingconsole](gametimer.png)
 
 ---
 
