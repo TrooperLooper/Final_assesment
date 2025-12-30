@@ -1,4 +1,6 @@
-# 🎮 RetroTimer
+**Live Demo:** [Try the RetroTimer here](https://retro-timer-two.vercel.app)
+
+A colorful, responsive game timer and statistics app. Track your play, view stats, and enjoy a fun, dynamic UI!
 
 A fullstack game session tracker built with retro arcade aesthetics. Track playtime, view statistics, and climb the leaderboard.
 
@@ -74,6 +76,12 @@ See the ERD below for data relationships:
 - REST API (users, games, sessions, statistics)
 - OpenWeatherMap API (live weather)
 - MongoDB Aggregation Pipeline (leaderboards & statistics)
+
+**Deployment:**
+
+- Vercel (frontend), Railway (backend), MongoDB Atlas (database)
+
+**Tooling:** ESLint, Prettier
 
 ---
 
