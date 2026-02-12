@@ -10,9 +10,8 @@ Designed and implemented RESTful APIs with proper HTTP standards. Built MongoDB 
 ---
 
 **Registration & Time Tracking**  
-![Responsive, colorful and engaging design](./frontend/src/components/assets/index.png)
-
-![The timer/ retro gaming console](./frontend/src/components/assets/gametimer.png)
+![Responsive, colorful and engaging design](./index.png)
+![The timer/ retro gaming console](./gametimer.png)
 
 ---
 
