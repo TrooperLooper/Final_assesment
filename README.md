@@ -1,12 +1,11 @@
 **Live Demo:** [Try the RetroTimer here](https://retro-timer-two.vercel.app)
 
-A colorful, responsive game timer and statistics app. Track your play, view stats, and enjoy a fun, dynamic UI!
+A colorful, responsive "gaming time tracker" and statistics app. Where users can create profile and keep track of the time they played each game, view stats, leaderboard and enjoy a fun, handcrafted quality UI!
 
-A fullstack game session tracker built with retro arcade aesthetics. Track playtime, view statistics, and climb the leaderboard.
+This was a backend school capstone project (Sundsgården Folkhögskola).
 
-**What this is:** A school capstone project where I combined fullstack development, API design, and design thinking to create a functional game tracker with personality.
+Designed and implemented RESTful APIs with proper HTTP standards. Built MongoDB databases with schema design, migrations, and query optimization. Implemented secure authentication and data validation using Zod. Managed application state across frontend and backend. Built global error handling and logging systems. Solved algorithmic challenges with efficient code. Practiced TDD and wrote unit tests. Ensured responsive, more accessible design. Collaborated using Git, pull requests, and Agile workflows. Used TypeScript across the stack for type safety and reliability.
 
-**Why I built it:** To practice translating design thinking into code—building something that's not just functional, but enjoyable to use.
 
 ---
 
