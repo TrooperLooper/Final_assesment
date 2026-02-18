@@ -1,6 +1,6 @@
 ### GAME TIME TRACKER
 
-A colorful, responsive "gaming time tracker" and statistics app. Where users can create profile and keep track of the time they played each game, view stats, leaderboard and enjoy a fun, handcrafted quality UI!
+A Fullstack responsive "gaming time tracker" and statistics app. Where users can create profile and keep track of the time they played each game, view stats, leaderboard and enjoy a fun, handcrafted quality UI!
 
 This was a backend school capstone project (Sundsgården Folkhögskola).
 
