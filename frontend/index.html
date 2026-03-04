@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>GameTime Tracker</title>
+
+    <!-- Preload Google Fonts to prevent FOUC -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Jersey+20&family=Winky+Sans&family=Sofia+Sans+Extra+Condensed:wght@800&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      html {
+        visibility: hidden;
+        opacity: 0;
+      }
+      html.fonts-loaded {
+        visibility: visible;
+        opacity: 1;
+        transition: opacity 0.2s ease-in;
+      }
+      body {
+        margin: 0;
+        padding: 0;
+        background: linear-gradient(to bottom, #1a1a2e, #16213e, #0f3460);
+        min-height: 100vh;
+      }
+      /* Loading spinner */
+      #loading {
+        position: fixed;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(to bottom, #1a1a2e, #16213e, #0f3460);
+        z-index: 9999;
+      }
+      .spinner {
+        width: 50px;
+        height: 50px;
+        border: 4px solid rgba(255, 255, 255, 0.3);
+        border-top-color: #facc15;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+      @keyframes spin {
+        to {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="loading">
+      <div class="spinner"></div>
+    </div>
+    <div id="root"></div>
+    <script>
+      // Hide loading spinner when fonts are loaded
+      if (document.fonts) {
+        document.fonts.ready.then(() => {
+          document.documentElement.classList.add("fonts-loaded");
+          const loading = document.getElementById("loading");
+          if (loading) {
+            loading.style.opacity = "0";
+            setTimeout(() => loading.remove(), 200);
+          }
+        });
+      } else {
+        // Fallback for older browsers
+        setTimeout(() => {
+          document.documentElement.classList.add("fonts-loaded");
+          const loading = document.getElementById("loading");
+          if (loading) loading.remove();
+        }, 1000);
+      }
+    </script>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

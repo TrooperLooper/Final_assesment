@@ -1,0 +1,26 @@
+@import url("https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@400..700&family=Winky+Sans:ital,wght@0,300..900;1,300..900&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Tulpen+One&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Jersey+20&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Jersey+10+Charted&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Sofia+Sans+Extra+Condensed:ital,wght@0,100..900;1,100..900&display=swap");
+
+@import "tailwindcss";
+
+.jersey-20-regular {
+  font-family: "Jersey 20", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.jersey-10-charted-regular {
+  font-family: "Jersey 10 Charted", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.sofia-sans-extra-condensed-regular {
+  font-family: "Sofia Sans Extra Condensed", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 400;
+  font-style: normal;
+}
