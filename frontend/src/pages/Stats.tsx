@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import BarGraph from "../components/Statistics/BarGraph";
 import WeeklyPlayTimeGraph from "../components/Statistics/WeeklyPlayTimeGraph";
 import AllUsersBarGraph from "../components/Statistics/AllUsersBarGraph";
@@ -11,14 +12,28 @@ import GameStatsRow from "../components/Statistics/GameStatsRow";
 import allPlayersIcon from "../components/assets/all_players.png";
 import { fetchUserStats, fetchGames } from "../components/api/apiClient";
 
+// Helper function to validate MongoDB ObjectId format
+const isValidObjectId = (id: string): boolean => {
+  return /^[0-9a-f]{24}$/i.test(id);
+};
+
 function Stats() {
+  const { userId } = useParams<{ userId: string }>();
+  const navigate = useNavigate();
   const [totalTimePlayed, setTotalTimePlayed] = useState(0);
   const [gamesData, setGamesData] = useState<
     { name: string; icon: string; percent: number }[]
   >([]);
   const [loading, setLoading] = useState(true);
 
-  // Get current user from localStorage
+  // Validate userId from URL and redirect if invalid
+  useEffect(() => {
+    if (!userId || !isValidObjectId(userId)) {
+      navigate("/users", { replace: true });
+    }
+  }, [userId, navigate]);
+
+  // Get current user from localStorage for display purposes
   const currentUser = JSON.parse(
     localStorage.getItem("currentUser") || "null"
   ) || {
@@ -28,14 +43,15 @@ function Stats() {
   };
 
   useEffect(() => {
+    // Skip if userId is invalid (redirect will happen in previous effect)
+    if (!userId || !isValidObjectId(userId)) {
+      setLoading(false);
+      return;
+    }
+
     const fetchStats = async () => {
       try {
-        if (!currentUser._id) {
-          setLoading(false);
-          return;
-        }
-
-        const res = await fetchUserStats(currentUser._id);
+        const res = await fetchUserStats(userId);
 
         const totalMinutes = res.totalMinutes || 0;
         const gameStats = res.gameStats || [];
@@ -64,7 +80,6 @@ function Stats() {
 
         setGamesData(gamesWithPercent);
       } catch (error) {
-        console.error("Error fetching user stats:", error);
         setTotalTimePlayed(0);
         setGamesData([
           { name: "Pac-man", icon: "", percent: 0 },
@@ -77,7 +92,7 @@ function Stats() {
       }
     };
     fetchStats();
-  }, [currentUser._id]);
+  }, [userId]);
 
   if (loading) return <p>Loading...</p>;
 

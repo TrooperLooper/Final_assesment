@@ -39,25 +39,25 @@ async function seedDatabase() {
       email: "anders@retrogaming.se",
       firstName: "Anders",
       lastName: "Svensson",
-      profilePictureUrl: "http://localhost:3000/avatars/sabineWren.jpg",
+      profilePicture: "https://backend-time4.vercel.app/avatars/sabineWren.jpg",
     },
     {
       email: "ingrid@retrogaming.se",
       firstName: "Ingrid",
       lastName: "Norström",
-      profilePictureUrl: "http://localhost:3000/avatars/mazKanata.jpg",
+      profilePicture: "https://backend-time4.vercel.app/avatars/mazKanata.jpg",
     },
     {
       email: "lars@retrogaming.se",
       firstName: "Lars",
       lastName: "Bergström",
-      profilePictureUrl: "http://localhost:3000/avatars/galenErso.jpg",
+      profilePicture: "https://backend-time4.vercel.app/avatars/galenErso.jpg",
     },
     {
       email: "maja@retrogaming.se",
       firstName: "Maja",
       lastName: "Lundgren",
-      profilePictureUrl: "http://localhost:3000/avatars/antBeru.jpg",
+      profilePicture: "https://backend-time4.vercel.app/avatars/antBeru.jpg",
     },
   ];
 
@@ -66,23 +66,31 @@ async function seedDatabase() {
     await mongoose.connect(MONGODB_URI);
     logger.info("Connected to MongoDB for seeding", { database: MONGODB_URI });
 
-    logger.info("Clearing existing games and users from database");
-    await Game.deleteMany({});
-    await User.deleteMany({});
+    // Check if games exist
+    const existingGames = await Game.countDocuments();
+    if (existingGames === 0) {
+      logger.info("No games found. Seeding games into the database");
+      const createdGames = await Game.insertMany(games);
+      logger.info(`Successfully seeded games`, {
+        gameCount: createdGames.length,
+        games: createdGames.map((g) => g.name),
+      });
+    } else {
+      logger.info(`Games already exist in database (${existingGames} found). Skipping game seeding`);
+    }
 
-    logger.info("Seeding games into the database");
-    const createdGames = await Game.insertMany(games);
-    logger.info(`Successfully seeded games`, {
-      gameCount: createdGames.length,
-      games: createdGames.map((g) => g.name),
-    });
-
-    logger.info("Seeding test users into the database");
-    const createdUsers = await User.insertMany(users);
-    logger.info(`Successfully seeded users`, {
-      userCount: createdUsers.length,
-      users: createdUsers.map((u) => `${u.firstName} ${u.lastName}`),
-    });
+    // Check if users exist
+    const existingUsers = await User.countDocuments();
+    if (existingUsers === 0) {
+      logger.info("No users found. Seeding test users into the database");
+      const createdUsers = await User.insertMany(users);
+      logger.info(`Successfully seeded users`, {
+        userCount: createdUsers.length,
+        users: createdUsers.map((u) => `${u.firstName} ${u.lastName}`),
+      });
+    } else {
+      logger.info(`Users already exist in database (${existingUsers} found). Skipping user seeding`);
+    }
   } catch (error) {
     logger.error("Error seeding the database", {
       error: String(error),
