@@ -50,7 +50,7 @@ function Play() {
   const [error, setError] = useState<string | null>(null);
 
   const currentUser: User | null = JSON.parse(
-    localStorage.getItem("currentUser") || "null"
+    localStorage.getItem("currentUser") || "null",
   );
 
   useEffect(() => {
@@ -70,7 +70,7 @@ function Play() {
         console.error("Error response:", err.response?.data);
         console.error("Error status:", err.response?.status);
         setError(
-          `Game not found. Error: ${err.response?.data?.message || err.message}`
+          `Game not found. Error: ${err.response?.data?.message || err.message}`,
         );
       });
   }, [gameId]);
@@ -124,7 +124,7 @@ function Play() {
           playedSeconds: elapsedSeconds,
         });
         console.log(
-          `Session logged: ${elapsedSeconds} minutes (${elapsedSeconds} real seconds)`
+          `Session logged: ${elapsedSeconds} minutes (${elapsedSeconds} real seconds)`,
         );
       } catch (err) {
         console.error("Failed to log session:", err);
@@ -182,7 +182,6 @@ function Play() {
         <div className="min-h-screen flex flex-col items-center pt-24 px-2 sm:px-8">
           <div className="flex flex-row gap-8 items-start">
             <GameCard
-              gameName={game.name}
               gameImage={gameImageMap[game.name] || ""}
               gameColor={gameColorMap[game.name] || "bg-gray-400"}
               buttonState={getButtonState()}

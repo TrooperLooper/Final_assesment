@@ -1,12 +1,8 @@
-import React from "react";
-
 interface TotalTimePlayedProps {
-  userId?: string;
   mockMinutes?: number;
 }
 
-const TotalTimePlayed = ({ userId, mockMinutes }: TotalTimePlayedProps) => {
-  // Use mock data if provided, otherwise fallback to 0
+const TotalTimePlayed = ({ mockMinutes }: TotalTimePlayedProps) => {
   const totalMinutes = mockMinutes ?? 164;
 
   return (
@@ -20,8 +16,5 @@ const TotalTimePlayed = ({ userId, mockMinutes }: TotalTimePlayedProps) => {
     </div>
   );
 };
-
-// Example usage with mock data
-// <TotalTimePlayed mockMinutes={164} />
 
 export default TotalTimePlayed;

@@ -62,7 +62,7 @@ function Users() {
                   </p>
                 </div>
               </div>
-              <div className="flex justify-end mt-20 sm:-mt-0">
+              <div className="flex justify-end mt-20 sm:mt-0">
                 <button
                   className="flex items-center gap-2 text-white "
                   style={{ fontSize: "0.9rem" }}

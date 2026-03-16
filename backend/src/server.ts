@@ -7,6 +7,7 @@ import userRouter from "./routes/userRoutes";
 import gamesRouter from "./routes/GameRoutes";
 import sessionRouter from "./routes/sessionRoutes";
 import statisticsRouter from "./routes/statisticsRoutes";
+import healthRoutes from "./routes/healthRoutes";
 import { seedDatabase } from "./utils/seedDatabase";
 
 dotenv.config();
@@ -25,7 +26,7 @@ app.use(
       "http://localhost:5175",
     ],
     credentials: true,
-  })
+  }),
 );
 app.use(express.json({ limit: "10mb" }));
 app.use(express.urlencoded({ limit: "10mb", extended: true }));
@@ -37,6 +38,7 @@ app.use("/api/users", userRouter); //User routes
 app.use("/api/games", gamesRouter); //Games routes
 app.use("/api/sessions", sessionRouter); //Sessions routes
 app.use("/api/statistics", statisticsRouter); //Statistics routes
+app.use("/api", healthRoutes); //Health routes
 
 // MongoDB Connection
 mongoose

@@ -2,7 +2,6 @@ import React from "react";
 import { GameTimer } from "./GameTimer";
 
 interface GameCardProps {
-  gameName: string;
   gameImage: string;
   gameColor: string;
   buttonState: "START" | "STOP" | "EXIT";
@@ -15,7 +14,6 @@ interface GameCardProps {
 }
 
 export const GameCard: React.FC<GameCardProps> = ({
-  gameName,
   gameImage,
   gameColor,
   buttonState,

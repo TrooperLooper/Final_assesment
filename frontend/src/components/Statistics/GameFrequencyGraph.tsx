@@ -7,7 +7,6 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  Legend,
   Cell,
 } from "recharts";
 import { fetchGameFrequencyStats } from "../api/apiClient";
@@ -27,7 +26,7 @@ const GameFrequencyGraph: React.FC<GameFrequencyGraphProps> = ({
   gameData: propGameData,
 }) => {
   const [gameData, setGameData] = useState<Record<string, UserGameData[]>>(
-    propGameData || {}
+    propGameData || {},
   );
   const [selectedGame, setSelectedGame] = useState("");
   const [loading, setLoading] = useState(true);
