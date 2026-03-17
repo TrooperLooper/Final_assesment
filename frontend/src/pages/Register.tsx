@@ -7,6 +7,7 @@ import { createUser } from "../components/api/apiClient";
 import { useNavigate } from "react-router-dom";
 import defaultAvatar from "../components/assets/user_default.jpeg";
 import Layout from "../components/Navigation/Layout";
+import { useUserStore } from "../stores/userStore";
 
 const registerSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -74,14 +75,14 @@ const Register: React.FC = () => {
 
       const newUser = await createUser(userData);
 
-      localStorage.setItem("currentUser", JSON.stringify(newUser));
+      useUserStore.getState().setCurrentUser(newUser);
       navigate(`/stats/${newUser._id}`);
     } catch (error) {
       console.error("Registration error:", error.response?.data || error);
       alert(
         `Registration failed: ${
           error.response?.data?.message || error.message || "Please try again"
-        }`
+        }`,
       );
     } finally {
       setLoading(false);

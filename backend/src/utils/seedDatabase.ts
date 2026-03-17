@@ -76,7 +76,9 @@ async function seedDatabase() {
         games: createdGames.map((g) => g.name),
       });
     } else {
-      logger.info(`Games already exist in database (${existingGames} found). Skipping game seeding`);
+      logger.info(
+        `Games already exist in database (${existingGames} found). Skipping game seeding`,
+      );
     }
 
     // Check if users exist
@@ -89,7 +91,9 @@ async function seedDatabase() {
         users: createdUsers.map((u) => `${u.firstName} ${u.lastName}`),
       });
     } else {
-      logger.info(`Users already exist in database (${existingUsers} found). Skipping user seeding`);
+      logger.info(
+        `Users already exist in database (${existingUsers} found). Skipping user seeding`,
+      );
     }
   } catch (error) {
     logger.error("Error seeding the database", {

@@ -1,9 +1,9 @@
 import React from "react";
-
-const defaultAvatar = "/path/to/default/avatar.png"; // Update to your actual default avatar path
+import { useUserStore } from "../../stores/userStore";
+import defaultAvatar from "../assets/user_default.jpeg";
 
 const CurrentUserBadge: React.FC = () => {
-  const user = JSON.parse(localStorage.getItem("currentUser") || "null");
+  const user = useUserStore((state) => state.currentUser);
 
   if (!user) return null;
 

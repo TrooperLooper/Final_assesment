@@ -2,6 +2,7 @@ import Layout from "../components/Navigation/Layout";
 import { useNavigate } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { fetchGames } from "../components/api/apiClient";
+import { useUserStore } from "../stores/userStore";
 import pacmanGif from "../components/assets/pacman_gameicon.gif";
 import asteroidsGif from "../components/assets/asteroids_gameicon.gif";
 import tetrisGif from "../components/assets/tetris_gameicon.gif";
@@ -82,15 +83,9 @@ function Games() {
         setGames([]);
       });
 
-    // Check for current user in localStorage
-    const user = localStorage.getItem("currentUser");
-    if (user) {
-      try {
-        setCurrentUser(JSON.parse(user));
-      } catch {
-        setCurrentUser(null);
-      }
-    }
+    // Get current user from Zustand store
+    const user = useUserStore.getState().currentUser;
+    setCurrentUser(user);
   }, []);
 
   const renderGameCard = (game: {

@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { fetchUserStats } from "../api/apiClient";
+import { useUserStore } from "../../stores/userStore";
 
 const GAME_COLORS: Record<string, string> = {
   "Pac-man": "#FACC15",
@@ -28,8 +29,7 @@ const BarGraph: React.FC<BarGraphProps> = ({ userId }) => {
     const fetchStats = async () => {
       try {
         const currentUserId =
-          userId ||
-          JSON.parse(localStorage.getItem("currentUser") || "null")?._id;
+          userId || useUserStore.getState().currentUser?._id;
 
         if (!currentUserId) {
           setData([]);

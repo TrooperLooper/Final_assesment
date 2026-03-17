@@ -3,6 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import Layout from "../components/Navigation/Layout";
 import { GameCard } from "../components/Timer/GameCard";
 import { logSession, fetchGameById } from "../components/api/apiClient";
+import { useUserStore } from "../stores/userStore";
 import pacmanGif from "../components/assets/pacman_gameicon.gif";
 import asteroidsGif from "../components/assets/asteroids_gameicon.gif";
 import tetrisGif from "../components/assets/tetris_gameicon.gif";
@@ -49,9 +50,7 @@ function Play() {
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  const currentUser: User | null = JSON.parse(
-    localStorage.getItem("currentUser") || "null",
-  );
+  const currentUser = useUserStore((state) => state.currentUser);
 
   useEffect(() => {
     if (!gameId) {

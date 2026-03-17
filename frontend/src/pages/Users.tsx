@@ -4,13 +4,7 @@ import Layout from "../components/Navigation/Layout";
 import { apiClient, API_BASE_URL } from "../components/api/apiClient";
 import defaultAvatar from "../components/assets/user_default.jpeg";
 import { FiPlus } from "react-icons/fi";
-
-type User = {
-  _id: string;
-  firstName?: string;
-  lastName?: string;
-  profilePicture?: string;
-};
+import { useUserStore, User } from "../stores/userStore";
 
 // Helper to get correct image URL
 const getImageUrl = (profilePictureUrl: string | undefined): string => {
@@ -84,7 +78,7 @@ function Users() {
                     key={user._id}
                     className="flex flex-col items-center cursor-pointer transition-transform hover:scale-105 active:scale-95"
                     onClick={() => {
-                      localStorage.setItem("currentUser", JSON.stringify(user));
+                      useUserStore.getState().setCurrentUser(user);
                       navigate(`/stats/${user._id}`);
                     }}
                     tabIndex={0}

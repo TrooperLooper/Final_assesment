@@ -11,6 +11,7 @@ import Layout from "../components/Navigation/Layout";
 import GameStatsRow from "../components/Statistics/GameStatsRow";
 import allPlayersIcon from "../components/assets/all_players.png";
 import { fetchUserStats, fetchGames } from "../components/api/apiClient";
+import { useUserStore } from "../stores/userStore";
 
 // Helper function to validate MongoDB ObjectId format
 const isValidObjectId = (id: string): boolean => {
@@ -33,12 +34,10 @@ function Stats() {
     }
   }, [userId, navigate]);
 
-  // Get current user from localStorage for display purposes
-  const currentUser = JSON.parse(
-    localStorage.getItem("currentUser") || "null"
-  ) || {
-    firstName: "Testy",
-    lastName: "McTestface",
+  // Get current user from Zustand store
+  const currentUser = useUserStore((state) => state.currentUser) || {
+    firstName: "No user",
+    lastName: "Selected",
     profilePicture: defaultAvatar,
   };
 
@@ -65,7 +64,7 @@ function Stats() {
         const gamesWithPercent = apiGames.map((game: any) => {
           const stat = gameStats.find(
             (s: { gameName: string; minutesPlayed: number }) =>
-              s.gameName.toLowerCase() === game.name.toLowerCase()
+              s.gameName.toLowerCase() === game.name.toLowerCase(),
           );
           const minutes = stat?.minutesPlayed || 0;
           const percent =
