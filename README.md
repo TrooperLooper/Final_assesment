@@ -85,6 +85,14 @@ See the ERD below for data relationships:
 
 ---
 
+## Monitoring health
+
+- **Uptime Monitor:** [Status page](https://trooperlooper.github.io/gametimer-status/) We added an uptime tracking so we know when things break
+- **Error Tracking:** Sentry catches production bugs automatically
+- **Health Endpoint:** `/api/health` so we can verify the server's responding
+
+---
+
 ## Quick Start
 
 **Prerequisites:**
